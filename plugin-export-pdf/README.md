@@ -21,7 +21,15 @@ import { jsPDF } from 'jspdf'
 
 // 1：NPM install, inject jsPDF objects
 VxeUI.use(VxeUIPluginExportPDF, {
-  jsPDF
+  jsPDF,
+  // 支持中文字体
+  // fontName: 'SourceHanSans-Normal',
+  // fonts: [
+  //   {
+  //     fontName: 'SourceHanSans-Normal',
+  //     fontUrl: 'https://cdn.jsdelivr.net/npm/vxe-table-plugin-export-pdf/fonts/source-han-sans-normal.js'
+  //   }
+  // ]
 })
 
 // 2：CDN install, just make sure window.jsPDF exists
