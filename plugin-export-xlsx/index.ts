@@ -458,7 +458,7 @@ function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExpor
 }
 
 /**
- * 基于 vxe-table 表格的扩展插件，支持导出 xlsx 格式
+ * 基于 Vxe UI 的扩展插件，支持导出 xlsx 文件
  */
 export const VxeUIPluginExportXLSX = {
   install (core: VxeUIExport, options?: {
