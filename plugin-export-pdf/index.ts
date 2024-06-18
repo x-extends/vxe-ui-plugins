@@ -197,7 +197,7 @@ export const VxeUIPluginExportPDF = {
       table: {
         exportConfig: {
           _typeMaps: {
-            xlsx: 1
+            pdf: 1
           }
         }
       }
