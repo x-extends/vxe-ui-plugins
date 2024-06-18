@@ -181,9 +181,6 @@ function pluginSetup (options: VxeUIPluginExportPDFOptions) {
   Object.assign(globalOptions, options)
 }
 
-/**
- * 基于 Vxe UI 的扩展插件，支持导出 pdf 文件
- */
 export const VxeUIPluginExportPDF = {
   config: pluginSetup,
   install (core: VxeUIExport, options?: VxeUIPluginExportPDFOptions) {

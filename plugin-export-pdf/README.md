@@ -16,15 +16,15 @@ npm install vxe-pc-ui @vxe-ui/plugin-export-pdf jspdf
 // ...
 import { VxeUI } from 'vxe-pc-ui'
 import VxeUIPluginExportPDF from '@vxe-ui/plugin-export-pdf'
-import ExcelJS from 'exceljs'
+import { jsPDF } from 'jspdf'
 // ...
 
-// 1：NPM install, inject ExcelJS objects
+// 1：NPM install, inject jsPDF objects
 VxeUI.use(VxeUIPluginExportPDF, {
-  ExcelJS
+  jsPDF
 })
 
-// 2：CDN install, just make sure window.ExcelJS exists
+// 2：CDN install, just make sure window.jsPDF exists
 // VxeUI.use(VxeUIPluginExportPDF)
 ```
 
