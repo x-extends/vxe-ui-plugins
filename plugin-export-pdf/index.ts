@@ -182,7 +182,7 @@ function pluginSetup (options: VxeUIPluginExportPDFOptions) {
 }
 
 export const VxeUIPluginExportPDF = {
-  config: pluginSetup,
+  setConfig: pluginSetup,
   install (core: VxeUIExport, options?: VxeUIPluginExportPDFOptions) {
     VxeUI = core
 
