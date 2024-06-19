@@ -1,0 +1,136 @@
+$vxe-table-row-height-default: 48px;
+$vxe-table-row-height-medium: 44px;
+$vxe-table-row-height-small: 40px;
+$vxe-table-row-height-mini: 36px;
+
+.vxe-renderer-bar {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 0.8em;
+  line-height: 0.8em;
+  text-align: left;
+  margin: 1px 0;
+  &.label--inner {
+    .vxe-renderer-bar--label {
+      color: #fff;
+      transform: translateX(-100%) scale(0.8);
+    }
+  }
+  .vxe-renderer-bar--chart,
+  .vxe-renderer-bar--label {
+    float: left;
+    height: 100%;
+  }
+  .vxe-renderer-bar--chart {
+    background-color: #409eff;
+  }
+  .vxe-renderer-bar--label {
+    position: absolute;
+    max-width: 2.8em;
+    text-align: center;
+    transform: scale(0.8);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.vxe-table {
+  &.size--medium {
+    .vxe-renderer-pie {
+      width: $vxe-table-row-height-medium - 2;
+      height: $vxe-table-row-height-medium - 2;
+    }
+  }
+  &.size--small {
+    .vxe-renderer-pie {
+      width: $vxe-table-row-height-small - 2;
+      height: $vxe-table-row-height-small - 2;
+    }
+  }
+  &.size--mini {
+    .vxe-renderer-pie {
+      width: $vxe-table-row-height-mini - 2;
+      height: $vxe-table-row-height-mini - 2;
+    }
+  }
+}
+
+.vxe-renderer-pie {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  overflow: hidden;
+  width: $vxe-table-row-height-default - 2;
+  height: $vxe-table-row-height-default - 2;
+  border-radius: 50%;
+  margin: 0 1px;
+  .vxe-renderer-pie--prve-half,
+  .vxe-renderer-pie--next-half {
+    float: left;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  .vxe-renderer-pie--prve-half {
+    .vxe-renderer-pie--block {
+      transform-origin: center left;
+      z-index: 1;
+    }
+  }
+  .vxe-renderer-pie--next-half {
+    .vxe-renderer-pie--block {
+      transform-origin: center right;
+      z-index: 2;
+    }
+  }
+  .vxe-renderer-pie--block {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(0deg);
+    background-color: #409eff;
+  }
+  .vxe-renderer-pie--ring-bg {
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+  }
+  .vxe-renderer-pie--ring-label {
+    top: 50%;
+    left: 50%;
+    max-width: 3em;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  .vxe-renderer-pie--ring-bg,
+  .vxe-renderer-pie--ring-label {
+    position: absolute;
+    z-index: 3;
+  }
+}
+
+.vxe-renderer-rate {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  .vxe-renderer-rate-item {
+    padding: 0 0.1em;;
+    font-size: 1.3em;
+    user-select: none;
+    &:before{
+      content: "\2605";
+    }
+  }
+}
