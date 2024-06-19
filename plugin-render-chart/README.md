@@ -1,4 +1,4 @@
-# @vxe-ui/plugin-renderer
+# @vxe-ui/plugin-render-chart
 
 [Vxe UI](https://vxeui.com/) plug-in, provides some common renderers.
 
@@ -9,17 +9,17 @@ It corresponds to [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)
 ## Installing
 
 ```shell
-npm install vxe-pc-ui @vxe-ui/plugin-renderer
+npm install vxe-pc-ui @vxe-ui/plugin-render-chart
 ```
 
 ```javascript
 // ...
 import { VxeUI } from 'vxe-pc-ui'
-import VxeUIPluginRenderer from '@vxe-ui/plugin-renderer'
-import '@vxe-ui/plugin-renderer/dist/style.css'
+import VxeUIPluginRenderChart from '@vxe-ui/plugin-render-chart'
+import '@vxe-ui/plugin-render-chart/dist/style.css'
 // ...
 
-VxeUI.use(VxeUIPluginRenderer)
+VxeUI.use(VxeUIPluginRenderChart)
 ```
 
 ## API

@@ -244,13 +244,13 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, ren
   })
 }
 
-export const VxeUIPluginRenderer = {
+export const VxeUIPluginRenderChart = {
   install (core: VxeUIExport) {
     VxeUI = core
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-renderer 4.x] Version vxe-pc-ui 4.x is required')
+      console.error('[plugin-render-chart 4.x] Version vxe-pc-ui 4.x is required')
     }
 
     VxeUI.renderer.mixin({
@@ -330,7 +330,7 @@ export const VxeUIPluginRenderer = {
 }
 
 if (typeof window !== 'undefined' && window.VxeUI && window.VxeUI.use) {
-  window.VxeUI.use(VxeUIPluginRenderer)
+  window.VxeUI.use(VxeUIPluginRenderChart)
 }
 
-export default VxeUIPluginRenderer
+export default VxeUIPluginRenderChart

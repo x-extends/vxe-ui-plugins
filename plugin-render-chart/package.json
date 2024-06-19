@@ -1,5 +1,5 @@
 {
-  "name": "@vxe-ui/plugin-renderer",
+  "name": "@vxe-ui/plugin-render-chart",
   "version": "4.0.0",
   "description": "Vxe UI plug-in, provides some common renderers.",
   "scripts": {
