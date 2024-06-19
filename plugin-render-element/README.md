@@ -25,6 +25,64 @@ import '@vxe-ui/plugin-render-element/dist/style.css'
 VxeUI.use(VxeUIPluginRenderElement)
 ```
 
+## API
+
+### cell-render 默认的渲染配置项说明
+
+| 属性 | 描述 | 类型 | 可选值 | 默认值 |
+|------|------|-----|-----|-----|
+| name | 支持的渲染组件 | String | ElInput, ElAutocomplete, ElInputNumber, ElSwitch, ElRate, ElSlider, ElButton, ElButtons | — |
+| attrs | 渲染组件附加属性，参数请查看被渲染的 Component attrs | Object | — | {} |
+| props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
+| options | 只对 name=ElSelect 有效，下拉组件选项列表 | Array | — | [] |
+| optionProps | 只对 name=ElSelect 有效，下拉组件选项属性参数配置 | Object | — | { value: 'value', label: 'label' } |
+| optionGroups | 只对 name=ElSelect 有效，下拉组件分组选项列表 | Array | — | [] |
+| optionGroupProps | 只对 name=ElSelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
+| events | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
+| nativeEvents | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
+
+### edit-render 可编辑渲染器配置项说明
+
+| 属性 | 描述 | 类型 | 可选值 | 默认值 |
+|------|------|-----|-----|-----|
+| name | 支持的渲染组件 | String | ElInput, ElAutocomplete, ElInputNumber, ElSelect, ElCascader, ElTimeSelect, ElTimePicker, ElDatePicker, ElSwitch, ElRate, ElSlider, ElButton, ElButtons | — |
+| attrs | 渲染组件附加属性，参数请查看被渲染的 Component attrs | Object | — | {} |
+| props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
+| options | 只对 name=ElSelect 有效，下拉组件选项列表 | Array | — | [] |
+| optionProps | 只对 name=ElSelect 有效，下拉组件选项属性参数配置 | Object | — | { value: 'value', label: 'label' } |
+| optionGroups | 只对 name=ElSelect 有效，下拉组件分组选项列表 | Array | — | [] |
+| optionGroupProps | 只对 name=ElSelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
+| events | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
+| nativeEvents | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
+
+### filter-render 筛选渲染器配置项说明
+
+| 属性 | 描述 | 类型 | 可选值 | 默认值 |
+|------|------|-----|-----|-----|
+| name | 支持的渲染组件 | String | ElInput, ElInputNumber, ElAutocomplete, ElSelect, ElDatePicker, ElSwitch, ElRate, ElSlider | — |
+| attrs | 渲染组件附加属性，参数请查看被渲染的 Component attrs | Object | — | {} |
+| props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
+| options | 只对 name=ElSelect 有效，下拉组件选项列表 | Array | — | [] |
+| optionProps | 只对 name=ElSelect 有效，下拉组件选项属性参数配置 | Object | — | { value: 'value', label: 'label' } |
+| optionGroups | 只对 name=ElSelect 有效，下拉组件分组选项列表 | Array | — | [] |
+| optionGroupProps | 只对 name=ElSelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
+| events | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
+| nativeEvents | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
+
+### item-render 表单-项渲染器配置项说明
+
+| 属性 | 描述 | 类型 | 可选值 | 默认值 |
+|------|------|-----|-----|-----|
+| name | 支持的渲染组件 | String | ElInput, ElInputNumber, ElAutocomplete, ElSelect, ElDatePicker, ElSwitch, ElRate, ElSlider, ElRadio, ElCheckbox, ElButton, ElButtons | — |
+| attrs | 渲染组件附加属性，参数请查看被渲染的 Component attrs | Object | — | {} |
+| props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
+| options | 只对 name=ElSelect 有效，下拉组件选项列表 | Array | — | [] |
+| optionProps | 只对 name=ElSelect 有效，下拉组件选项属性参数配置 | Object | — | { value: 'value', label: 'label' } |
+| optionGroups | 只对 name=ElSelect 有效，下拉组件分组选项列表 | Array | — | [] |
+| optionGroupProps | 只对 name=ElSelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
+| events | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
+| nativeEvents | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
+
 ## Cell demo
 
 ```html

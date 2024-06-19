@@ -250,7 +250,7 @@ export const VxeUIPluginRenderChart = {
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-chart 4.x] Version vxe-pc-ui 4.x is required')
+      console.error('[plugin-render-chart 4.x] Version 4.x is required')
     }
 
     VxeUI.renderer.mixin({
