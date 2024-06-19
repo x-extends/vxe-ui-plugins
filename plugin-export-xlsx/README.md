@@ -4,17 +4,20 @@
 
 ## Compatibility
 
-It corresponds to [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
+It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) | [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
 
 ## Installing
 
 ```shell
-npm install vxe-pc-ui @vxe-ui/plugin-export-xlsx exceljs
+npm install @vxe-ui/plugin-export-xlsx exceljs
 ```
 
 ```javascript
 // ...
+// Use vxe-pc-ui
 import { VxeUI } from 'vxe-pc-ui'
+// Use vxe-table
+// import { VxeUI } from 'vxe-table'
 import VxeUIPluginExportXLSX from '@vxe-ui/plugin-export-xlsx'
 import ExcelJS from 'exceljs'
 // ...

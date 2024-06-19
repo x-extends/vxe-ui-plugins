@@ -4,17 +4,20 @@
 
 ## Compatibility
 
-It corresponds to [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
+It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) | [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
 
 ## Installing
 
 ```shell
-npm install vxe-pc-ui @vxe-ui/plugin-render-chart
+npm install @vxe-ui/plugin-render-chart
 ```
 
 ```javascript
 // ...
+// Use vxe-pc-ui
 import { VxeUI } from 'vxe-pc-ui'
+// Use vxe-table
+// import { VxeUI } from 'vxe-table'
 import VxeUIPluginRenderChart from '@vxe-ui/plugin-render-chart'
 import '@vxe-ui/plugin-render-chart/dist/style.css'
 // ...
