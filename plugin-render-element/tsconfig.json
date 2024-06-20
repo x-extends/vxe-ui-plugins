@@ -1,6 +1,7 @@
 {
-  "files": [
-    "index.ts"
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ],
   "compilerOptions": {
     "strict": true,

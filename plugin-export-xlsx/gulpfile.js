@@ -14,10 +14,26 @@ const ts = require('gulp-typescript')
 const pack = require('./package.json')
 const tsconfig = require('./tsconfig.json')
 
-const exportModuleName = 'VXETablePluginExportXLSX'
+const exportModuleName = 'VxeUIPluginExportXLSX'
+
+gulp.task('build_style', function () {
+  return gulp.src('style.scss')
+    .pipe(sass())
+    .pipe(prefixer({
+      borwsers: ['last 1 version', '> 1%', 'not ie <= 8'],
+      cascade: true,
+      remove: true
+    }))
+    .pipe(gulp.dest('dist'))
+    .pipe(cleanCSS())
+    .pipe(rename({
+      extname: '.min.css'
+    }))
+    .pipe(gulp.dest('dist'))
+})
 
 gulp.task('build_commonjs', function () {
-  return gulp.src(['index.ts'])
+  return gulp.src(['src/index.ts'])
     // .pipe(sourcemaps.init())
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
@@ -32,7 +48,7 @@ gulp.task('build_commonjs', function () {
 })
 
 gulp.task('build_umd', function () {
-  return gulp.src(['index.ts'])
+  return gulp.src(['src/index.ts'])
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
       moduleId: pack.name,
@@ -43,10 +59,9 @@ gulp.task('build_umd', function () {
         ['@babel/transform-modules-umd', {
           globals: {
             [pack.name]: exportModuleName,
-            'vue': 'Vue',
+            vue: 'Vue',
             'vxe-table': 'VXETable',
-            'xe-utils': 'XEUtils',
-            'exceljs': 'ExcelJS'
+            'xe-utils': 'XEUtils'
           },
           exactGlobals: true
         }]
@@ -73,4 +88,4 @@ gulp.task('clear', () => {
   ])
 })
 
-gulp.task('build', gulp.series(gulp.parallel('build_commonjs', 'build_umd'), 'clear'))
+gulp.task('build', gulp.series(gulp.parallel('build_commonjs', 'build_umd', 'build_style'), 'clear'))
