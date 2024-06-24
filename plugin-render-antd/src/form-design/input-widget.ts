@@ -1,15 +1,15 @@
 import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
 
-import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent, VxeInputComponent } from 'vxe-pc-ui'
 
-interface WidgetADatePickerFormObjVO {
+interface WidgetAInputFormObjVO {
   placeholder: string
 }
 
-export function createWidgetADatePicker (VxeUI: VxeUIExport) {
-  const getWidgetADatePickerConfig = (params: VxeGlobalRendererHandles.CreateFormDesignWidgetConfigParams): VxeGlobalRendererHandles.CreateFormDesignWidgetConfigObj<WidgetADatePickerFormObjVO> => {
+export function createWidgetAInput (VxeUI: VxeUIExport) {
+  const getWidgetAInputConfig = (params: VxeGlobalRendererHandles.CreateFormDesignWidgetConfigParams): VxeGlobalRendererHandles.CreateFormDesignWidgetConfigObj<WidgetAInputFormObjVO> => {
     return {
-      title: '日期',
+      title: '输入框',
       icon: 'vxe-icon-input',
       options: {
         placeholder: ''
@@ -17,14 +17,14 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
     }
   }
 
-  const WidgetADatePickerFormComponent = defineComponent({
+  const WidgetAInputFormComponent = defineComponent({
     props: {
       renderOpts: {
         type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewOptions>,
         default: () => ({})
       },
       renderParams: {
-        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewParams<WidgetADatePickerFormObjVO>>,
+        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewParams<WidgetAInputFormObjVO>>,
         default: () => ({})
       }
     },
@@ -33,10 +33,12 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
       const VxeUIFormComponent = VxeUI.getComponent<VxeFormComponent>('VxeForm')
       const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
       const VxeUISwitchComponent = VxeUI.getComponent<VxeSwitchComponent>('VxeSwitch')
+      const VxeUIInputComponent = VxeUI.getComponent<VxeInputComponent>('VxeInput')
 
       return () => {
         const { renderParams } = props
         const { widget } = renderParams
+        const { options } = widget
 
         return h(VxeUIFormComponent, {
           class: 'vxe-form-design--widget-render-form-wrapper',
@@ -44,7 +46,7 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
           span: 24,
           titleBold: true,
           titleOverflow: true,
-          data: widget.options
+          data: options
         }, {
           default () {
             return [
@@ -52,8 +54,9 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.name')
               }, {
                 default () {
-                  return h(resolveComponent('a-date-picker') as ComponentOptions, {
+                  return h(VxeUIInputComponent, {
                     modelValue: widget.title,
+                    placeholder: options.placeholder,
                     'onUpdate:modelValue' (val: any) {
                       widget.title = val
                     }
@@ -84,14 +87,14 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
     }
   })
 
-  const WidgetADatePickerViewComponent = defineComponent({
+  const WidgetAInputViewComponent = defineComponent({
     props: {
       renderOpts: {
         type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewOptions>,
         default: () => ({})
       },
       renderParams: {
-        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewParams<WidgetADatePickerFormObjVO>>,
+        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewParams<WidgetAInputFormObjVO>>,
         default: () => ({})
       }
     },
@@ -111,7 +114,6 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
       return () => {
         const { renderParams } = props
         const { widget, $formView } = renderParams
-        const { options } = widget
 
         return h(VxeUIFormItemComponent, {
           class: ['vxe-form-design--widget-render-form-item'],
@@ -119,11 +121,10 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('a-date-picker') as ComponentOptions, {
-              modelValue: $formView ? $formView.getItemValue(widget) : null,
-              placeholder: options.placeholder,
+            return h(resolveComponent('a-input') as ComponentOptions, {
+              value: $formView ? $formView.getItemValue(widget) : null,
               onChange: changeEvent,
-              'onUpdate:modelValue' (val: any) {
+              'onUpdate:value' (val: any) {
                 if ($formView) {
                   $formView.setItemValue(widget, val)
                 }
@@ -136,8 +137,8 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
   })
 
   return {
-    getWidgetADatePickerConfig,
-    WidgetADatePickerFormComponent,
-    WidgetADatePickerViewComponent
+    getWidgetAInputConfig,
+    WidgetAInputFormComponent,
+    WidgetAInputViewComponent
   }
 }

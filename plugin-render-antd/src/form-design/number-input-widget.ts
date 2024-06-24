@@ -1,30 +1,30 @@
 import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
 
-import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent, VxeInputComponent } from 'vxe-pc-ui'
 
-interface WidgetElDatePickerFormObjVO {
+interface WidgetAInputNumberFormObjVO {
   placeholder: string
 }
 
-export function createWidgetElDatePicker (VxeUI: VxeUIExport) {
-  const getWidgetElDatePickerConfig = (params: VxeGlobalRendererHandles.CreateFormDesignWidgetConfigParams): VxeGlobalRendererHandles.CreateFormDesignWidgetConfigObj<WidgetElDatePickerFormObjVO> => {
+export function createWidgetAInputNumber (VxeUI: VxeUIExport) {
+  const getWidgetAInputNumberConfig = (params: VxeGlobalRendererHandles.CreateFormDesignWidgetConfigParams): VxeGlobalRendererHandles.CreateFormDesignWidgetConfigObj<WidgetAInputNumberFormObjVO> => {
     return {
-      title: '日期',
-      icon: 'vxe-icon-input',
+      title: '数字',
+      icon: 'vxe-icon-number',
       options: {
-        placeholder: ''
+        placeholder: '请输入'
       }
     }
   }
 
-  const WidgetElDatePickerFormComponent = defineComponent({
+  const WidgetAInputNumberFormComponent = defineComponent({
     props: {
       renderOpts: {
         type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewOptions>,
         default: () => ({})
       },
       renderParams: {
-        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewParams<WidgetElDatePickerFormObjVO>>,
+        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewParams<WidgetAInputNumberFormObjVO>>,
         default: () => ({})
       }
     },
@@ -33,6 +33,7 @@ export function createWidgetElDatePicker (VxeUI: VxeUIExport) {
       const VxeUIFormComponent = VxeUI.getComponent<VxeFormComponent>('VxeForm')
       const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
       const VxeUISwitchComponent = VxeUI.getComponent<VxeSwitchComponent>('VxeSwitch')
+      const VxeUIInputComponent = VxeUI.getComponent<VxeInputComponent>('VxeInput')
 
       return () => {
         const { renderParams } = props
@@ -52,7 +53,7 @@ export function createWidgetElDatePicker (VxeUI: VxeUIExport) {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.name')
               }, {
                 default () {
-                  return h(resolveComponent('el-date-picker') as ComponentOptions, {
+                  return h(VxeUIInputComponent, {
                     modelValue: widget.title,
                     'onUpdate:modelValue' (val: any) {
                       widget.title = val
@@ -63,7 +64,7 @@ export function createWidgetElDatePicker (VxeUI: VxeUIExport) {
               h(VxeUIFormItemComponent, {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.placeholder'),
                 field: 'placeholder',
-                itemRender: { name: 'ElDatePicker' }
+                itemRender: { name: 'ElInput' }
               }),
               h(VxeUIFormItemComponent, {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.required')
@@ -84,14 +85,14 @@ export function createWidgetElDatePicker (VxeUI: VxeUIExport) {
     }
   })
 
-  const WidgetElDatePickerViewComponent = defineComponent({
+  const WidgetAInputNumberViewComponent = defineComponent({
     props: {
       renderOpts: {
         type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewOptions>,
         default: () => ({})
       },
       renderParams: {
-        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewParams<WidgetElDatePickerFormObjVO>>,
+        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewParams<WidgetAInputNumberFormObjVO>>,
         default: () => ({})
       }
     },
@@ -119,11 +120,11 @@ export function createWidgetElDatePicker (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('el-date-picker') as ComponentOptions, {
-              modelValue: $formView ? $formView.getItemValue(widget) : null,
+            return h(resolveComponent('a-input-number') as ComponentOptions, {
+              value: $formView ? $formView.getItemValue(widget) : null,
               placeholder: options.placeholder,
               onChange: changeEvent,
-              'onUpdate:modelValue' (val: any) {
+              'onUpdate:value' (val: any) {
                 if ($formView) {
                   $formView.setItemValue(widget, val)
                 }
@@ -136,8 +137,8 @@ export function createWidgetElDatePicker (VxeUI: VxeUIExport) {
   })
 
   return {
-    getWidgetElDatePickerConfig,
-    WidgetElDatePickerFormComponent,
-    WidgetElDatePickerViewComponent
+    getWidgetAInputNumberConfig,
+    WidgetAInputNumberFormComponent,
+    WidgetAInputNumberViewComponent
   }
 }

@@ -39,7 +39,6 @@ VxeUI.use(VxeUIPluginRenderAntd)
 | optionGroups | 只对 name=ASelect 有效，下拉组件分组选项列表 | Array | — | [] |
 | optionGroupProps | 只对 name=ASelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
 | events | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
-| nativeEvents | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
 
 ### edit-render 可编辑渲染器配置项说明
 
@@ -52,7 +51,6 @@ VxeUI.use(VxeUIPluginRenderAntd)
 | optionGroups | 只对 name=ASelect 有效，下拉组件分组选项列表 | Array | — | [] |
 | optionGroupProps | 只对 name=ASelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
 | events | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
-| nativeEvents | 渲染组件附加事件，参数为 ( {row,rowIndex,column,columnIndex}, ...Component arguments ) | Object | — | — |
 
 ### filter-render 筛选渲染器配置项说明
 
@@ -65,7 +63,6 @@ VxeUI.use(VxeUIPluginRenderAntd)
 | optionGroups | 只对 name=ASelect 有效，下拉组件分组选项列表 | Array | — | [] |
 | optionGroupProps | 只对 name=ASelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
 | events | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
-| nativeEvents | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
 
 ### item-render 表单-项选渲染器配置项说明
 
@@ -78,7 +75,12 @@ VxeUI.use(VxeUIPluginRenderAntd)
 | optionGroups | 只对 name=ASelect 有效，下拉组件分组选项列表 | Array | — | [] |
 | optionGroupProps | 只对 name=ASelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
 | events | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
-| nativeEvents | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
+
+### 表单设计器配置项
+
+| 描述 |
+|------|
+| 'AInputWidget', 'ATextareaWidget', 'ANumberInputWidget', 'ADatePickerWidget', 'ASelectWidget',  'ARadioWidget', 'ACheckboxWidget', 'ASwitchWidget' |
 
 ## Cell demo
 

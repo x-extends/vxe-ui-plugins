@@ -2,29 +2,29 @@ import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from
 
 import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent } from 'vxe-pc-ui'
 
-interface WidgetAInputFormObjVO {
+interface WidgetElTextareaFormObjVO {
   placeholder: string
 }
 
-export function createWidgetAInput (VxeUI: VxeUIExport) {
-  const getWidgetAInputConfig = (params: VxeGlobalRendererHandles.CreateFormDesignWidgetConfigParams): VxeGlobalRendererHandles.CreateFormDesignWidgetConfigObj<WidgetAInputFormObjVO> => {
+export function createWidgetElTextarea (VxeUI: VxeUIExport) {
+  const getWidgetElTextareaConfig = (params: VxeGlobalRendererHandles.CreateFormDesignWidgetConfigParams): VxeGlobalRendererHandles.CreateFormDesignWidgetConfigObj<WidgetElTextareaFormObjVO> => {
     return {
-      title: '输入框',
-      icon: 'vxe-icon-input',
+      title: '文本域',
+      icon: 'vxe-icon-textarea',
       options: {
-        placeholder: ''
+        placeholder: '请输入'
       }
     }
   }
 
-  const WidgetAInputFormComponent = defineComponent({
+  const WidgetElTextareaFormComponent = defineComponent({
     props: {
       renderOpts: {
         type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewOptions>,
         default: () => ({})
       },
       renderParams: {
-        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewParams<WidgetAInputFormObjVO>>,
+        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewParams<WidgetElTextareaFormObjVO>>,
         default: () => ({})
       }
     },
@@ -37,7 +37,6 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
       return () => {
         const { renderParams } = props
         const { widget } = renderParams
-        const { options } = widget
 
         return h(VxeUIFormComponent, {
           class: 'vxe-form-design--widget-render-form-wrapper',
@@ -45,7 +44,7 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
           span: 24,
           titleBold: true,
           titleOverflow: true,
-          data: options
+          data: widget.options
         }, {
           default () {
             return [
@@ -53,9 +52,8 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.name')
               }, {
                 default () {
-                  return h(resolveComponent('a-input') as ComponentOptions, {
+                  return h(resolveComponent('el-input') as ComponentOptions, {
                     modelValue: widget.title,
-                    placeholder: options.placeholder,
                     'onUpdate:modelValue' (val: any) {
                       widget.title = val
                     }
@@ -65,7 +63,7 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
               h(VxeUIFormItemComponent, {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.placeholder'),
                 field: 'placeholder',
-                itemRender: { name: 'VxeInput' }
+                itemRender: { name: 'ElInput' }
               }),
               h(VxeUIFormItemComponent, {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.required')
@@ -86,14 +84,14 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
     }
   })
 
-  const WidgetAInputViewComponent = defineComponent({
+  const WidgetElTextareaViewComponent = defineComponent({
     props: {
       renderOpts: {
         type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewOptions>,
         default: () => ({})
       },
       renderParams: {
-        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewParams<WidgetAInputFormObjVO>>,
+        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewParams<WidgetElTextareaFormObjVO>>,
         default: () => ({})
       }
     },
@@ -113,6 +111,7 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
       return () => {
         const { renderParams } = props
         const { widget, $formView } = renderParams
+        const { options } = widget
 
         return h(VxeUIFormItemComponent, {
           class: ['vxe-form-design--widget-render-form-item'],
@@ -120,8 +119,14 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('a-input') as ComponentOptions, {
+            return h(resolveComponent('el-input') as ComponentOptions, {
               modelValue: $formView ? $formView.getItemValue(widget) : null,
+              placeholder: options.placeholder,
+              type: 'textarea',
+              autosize: {
+                minRows: 2,
+                maxRows: 4
+              },
               onChange: changeEvent,
               'onUpdate:modelValue' (val: any) {
                 if ($formView) {
@@ -136,8 +141,8 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
   })
 
   return {
-    getWidgetAInputConfig,
-    WidgetAInputFormComponent,
-    WidgetAInputViewComponent
+    getWidgetElTextareaConfig,
+    WidgetElTextareaFormComponent,
+    WidgetElTextareaViewComponent
   }
 }
