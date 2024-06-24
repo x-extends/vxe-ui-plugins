@@ -39,7 +39,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   }
 
   function toDayStringDate (value: any, format: string) {
-    return dayjs(value, format).date
+    return dayjs(value, format).toDate()
   }
 
   function toDayDateString (date: any, format: string) {
@@ -51,7 +51,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   }
 
   function getFormatDate (value: any, props: { [key: string]: any }, defaultFormat: string) {
-    return value ? toDayDateString(parseDate(value, props), props.format || defaultFormat) : value
+    return value ? toDayDateString(parseDate(value, props), props.format || props.valueFormat || defaultFormat) : value
   }
 
   function getFormatDates (values: any[], props: { [key: string]: any }, separator: string, defaultFormat: string) {
@@ -243,7 +243,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   function getTimePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.RenderEditParams) {
     const { props = {} } = renderOpts
     const { row, column } = params
-    const { isRange, format = 'hh:mm:ss', rangeSeparator = '-' } = props
+    const { isRange, format = 'HH:mm:ss', rangeSeparator = '-' } = props
     let cellValue = XEUtils.get(row, column.field)
     if (cellValue && isRange) {
       cellValue = XEUtils.map(cellValue, (date) => toDayDateString(parseDate(date, props), format)).join(` ${rangeSeparator} `)
@@ -362,21 +362,21 @@ export function defineTableRender (VxeUI: VxeUIExport) {
 
   VxeUI.renderer.mixin({
     ElAutocomplete: {
-      tableAutoFocus: 'input.el-input__inner',
+      tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
     ElInput: {
-      tableAutoFocus: 'input.el-input__inner',
+      tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
     ElInputNumber: {
-      tableAutoFocus: 'input.el-input__inner',
+      tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
       renderTableFilter: createFilterRender(),

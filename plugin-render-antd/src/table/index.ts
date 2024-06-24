@@ -132,9 +132,25 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
-  function formatDatePicker (defaultFormat: string) {
+  function formatDatePicker (defaultFormat?: string) {
     return function (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams) {
       return getCellLabelVNs(renderOpts, params, getDatePickerCellValue(renderOpts, params, defaultFormat))
+    }
+  }
+
+  function formatTimePicker (defaultFormat?: string) {
+    return function (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams) {
+      const { props = {} } = renderOpts
+      const { row, column } = params
+      let cellValue = XEUtils.get(row, column.field)
+      try {
+        if (cellValue) {
+          if (!XEUtils.isString(cellValue)) {
+            cellValue = cellValue.format ? cellValue.format(props.format || props.valueFormat || defaultFormat) : XEUtils.toDateString(cellValue, dateFormatToVxeFormat(props.format || props.valueFormat || defaultFormat))
+          }
+        }
+      } catch (e) {}
+      return getCellLabelVNs(renderOpts, params, cellValue)
     }
   }
 
@@ -201,12 +217,30 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return cellValue
   }
 
-  function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.ExportMethodParams, defaultFormat: string) {
+  function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.ExportMethodParams, defaultFormat?: string) {
     const { props = {} } = renderOpts
     const { row, column } = params
     let cellValue = XEUtils.get(row, column.field)
     try {
       if (cellValue) {
+        if (!defaultFormat) {
+          if (renderOpts.name === 'ADatePicker') {
+            switch (props.picker) {
+              case 'week':
+                defaultFormat = 'YYYY-WW周'
+                break
+              case 'month':
+                defaultFormat = 'YYYY-MM'
+                break
+              case 'year':
+                defaultFormat = 'YYYY'
+                break
+              default:
+                defaultFormat = props.showTime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'
+                break
+            }
+          }
+        }
         cellValue = cellValue.format ? cellValue.format(props.format || defaultFormat) : XEUtils.toDateString(cellValue, dateFormatToVxeFormat(props.format || defaultFormat))
       }
     } catch (e) {}
@@ -302,7 +336,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return [formatText(cellValue)]
   }
 
-  function createDatePickerExportMethod (defaultFormat: string) {
+  function createDatePickerExportMethod (defaultFormat?: string) {
     return function (params: VxeGlobalRendererHandles.ExportMethodParams) {
       const { row, column, options } = params
       return options && options.original ? XEUtils.get(row, column.field) : getDatePickerCellValue(column.editRender || column.cellRender, params, defaultFormat)
@@ -318,21 +352,21 @@ export function defineTableRender (VxeUI: VxeUIExport) {
 
   VxeUI.renderer.mixin({
     AAutoComplete: {
-      tableAutoFocus: 'input.ant-input',
+      tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
     AInput: {
-      tableAutoFocus: 'input.ant-input',
+      tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
     AInputNumber: {
-      tableAutoFocus: 'input.ant-input-number-input',
+      tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
       renderTableFilter: createFilterRender(),
@@ -433,8 +467,8 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     },
     ADatePicker: {
       renderTableEdit: createEditRender(),
-      renderTableCell: formatDatePicker('YYYY-MM-DD'),
-      tableExportMethod: createDatePickerExportMethod('YYYY-MM-DD')
+      renderTableCell: formatDatePicker(),
+      tableExportMethod: createDatePickerExportMethod()
     },
     AMonthPicker: {
       renderTableEdit: createEditRender(),
@@ -455,7 +489,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     },
     ATimePicker: {
       renderTableEdit: createEditRender(),
-      renderTableCell: formatDatePicker('HH:mm:ss'),
+      renderTableCell: formatTimePicker('HH:mm:ss'),
       tableExportMethod: createDatePickerExportMethod('HH:mm:ss')
     },
     ATreeSelect: {
