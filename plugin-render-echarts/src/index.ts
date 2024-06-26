@@ -49,10 +49,10 @@ function createChartModal (getOptions: (params: VxeGlobalMenusHandles.TableMenuM
             default () {
               return [
                 h('div', {
-                  class: 'vxe-chart--wrapper'
+                  class: 'vxe-ui-plugin-render-echarts'
                 }, [
                   h('div', {
-                    class: 'vxe-chart--panel'
+                    class: 'vxe-ui-plugin-render-echarts--panel'
                   })
                 ])
               ]
@@ -62,7 +62,7 @@ function createChartModal (getOptions: (params: VxeGlobalMenusHandles.TableMenuM
             const { $modal } = evntParams
             const { refElem } = $modal.getRefMaps()
             const elem = refElem.value
-            const chartElem: HTMLDivElement | null = elem ? elem.querySelector('.vxe-chart--wrapper') : null
+            const chartElem: HTMLDivElement | null = elem ? elem.querySelector('.vxe-ui-plugin-render-echarts') : null
             if (chartElem) {
               const $chart = (globalEcharts || (window as any).echarts).init(chartElem)
               $chart.setOption(getOptions(params))

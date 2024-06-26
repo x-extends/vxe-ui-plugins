@@ -1,0 +1,8 @@
+.vxe-ui-plugin-render-echarts {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  .vxe-ui-plugin-render-echarts--panel {
+    flex-grow: 1;
+  }
+}
