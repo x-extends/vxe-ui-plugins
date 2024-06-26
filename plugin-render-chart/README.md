@@ -1,10 +1,10 @@
 # @vxe-ui/plugin-render-chart
 
-[Vxe UI](https://vxeui.com/) plug-in, provides some common renderers.
+[Vxe UI](https://vxeui.com/) plug-in, support for rendering simple charts.
 
 ## Compatibility
 
-It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) | [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
+It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) or [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
 
 ## Installing
 

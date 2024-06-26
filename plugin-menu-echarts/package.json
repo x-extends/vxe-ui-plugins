@@ -1,15 +1,14 @@
 {
-  "name": "@vxe-ui/plugin-render-chart",
-  "version": "4.0.1",
-  "description": "Vxe UI plug-in, support for rendering simple charts.",
+  "name": "@vxe-ui/plugin-render-echarts",
+  "version": "4.0.0",
+  "description": "Vxe UI plug-in for compatibility with the echarts.",
   "scripts": {
     "lib": "gulp build"
   },
   "files": [
     "types",
     "dist",
-    "*.ts",
-    "*.d.ts"
+    "src"
   ],
   "main": "dist/index.common.js",
   "unpkg": "dist/index.umd.js",
@@ -23,7 +22,9 @@
     "@babel/runtime": "^7.12.5",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
+    "browserify": "^17.0.0",
     "del": "^6.0.0",
+    "echarts": "^5.5.0",
     "eslint": "^7.13.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-config-standard": "^16.0.1",
@@ -49,6 +50,7 @@
     "prettier": "^2.1.2",
     "sass": "^1.55.0",
     "typescript": "^4.6.4",
+    "vinyl-source-stream": "^2.0.0",
     "vue": "^3.4.27",
     "vxe-pc-ui": "^4.0.35",
     "vxe-table": "^4.7.36"

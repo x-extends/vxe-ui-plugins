@@ -4,7 +4,7 @@
 
 ## Compatibility
 
-It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) | [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
+It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) or [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
 
 ## Installing
 
