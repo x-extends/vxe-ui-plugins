@@ -144,7 +144,11 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     return []
   }
 
-  function createFormItemRadioAndCheckboxRender () {
+  /**
+   * 已废弃
+   * @deprecated
+   */
+  function createOldFormItemRadioAndCheckboxRender () {
     return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: any) {
       const { name, options = [], optionProps = {}, attrs } = renderOpts
       const { data, field } = params
@@ -286,14 +290,71 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     ElSlider: {
       renderFormItemContent: createFormItemRender()
     },
-    ElRadio: {
-      renderFormItemContent: createFormItemRadioAndCheckboxRender()
+    ElRadioGroup: {
+      renderFormItemContent (renderOpts, params) {
+        const { options = [], optionProps = {}, attrs } = renderOpts
+        const { data, field } = params
+        const labelProp = optionProps.label || 'label'
+        const valueProp = optionProps.value || 'value'
+        const itemValue = XEUtils.get(data, field)
+        return [
+          h(resolveComponent('el-radio-group'), {
+            ...attrs,
+            ...getItemProps(renderOpts, params, itemValue),
+            ...getItemOns(renderOpts, params)
+          }, {
+            default: () => {
+              return options.map((option, oIndex) => {
+                return h(resolveComponent('el-radio'), {
+                  key: oIndex,
+                  value: option[valueProp],
+                  disabled: option.disabled
+                }, {
+                  default: () => cellText(option[labelProp])
+                })
+              })
+            }
+          })
+        ]
+      }
     },
-    ElCheckbox: {
-      renderFormItemContent: createFormItemRadioAndCheckboxRender()
+    ElCheckboxGroup: {
+      renderFormItemContent (renderOpts, params) {
+        const { options = [], optionProps = {}, attrs } = renderOpts
+        const { data, field } = params
+        const labelProp = optionProps.label || 'label'
+        const valueProp = optionProps.value || 'value'
+        const itemValue = XEUtils.get(data, field)
+        return [
+          h(resolveComponent('el-checkbox-group'), {
+            ...attrs,
+            ...getItemProps(renderOpts, params, itemValue),
+            ...getItemOns(renderOpts, params)
+          }, {
+            default: () => {
+              return options.map((option, oIndex) => {
+                return h(resolveComponent('el-checkbox'), {
+                  key: oIndex,
+                  value: option[valueProp],
+                  label: option[labelProp],
+                  disabled: option.disabled
+                })
+              })
+            }
+          })
+        ]
+      }
     },
     ElButton: {
       renderFormItemContent: defaultButtonItemRender
+    },
+
+    // 已废弃
+    ElRadio: {
+      renderFormItemContent: createOldFormItemRadioAndCheckboxRender()
+    },
+    ElCheckbox: {
+      renderFormItemContent: createOldFormItemRadioAndCheckboxRender()
     },
     ElButtons: {
       renderFormItemContent: defaultButtonsItemRender

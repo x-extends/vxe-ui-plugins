@@ -133,7 +133,12 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     return []
   }
 
-  function createFormItemRadioAndCheckboxRender () {
+  /**
+   *
+   * 已废弃
+   * @deprecated
+   */
+  function createOldFormItemRadioAndCheckboxRender () {
     return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: FormItemContentRenderParams) {
       const { name, options = [], optionProps = {} } = renderOpts
       const { data, field } = params
@@ -228,14 +233,74 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     ASwitch: {
       renderFormItemContent: createFormItemRender()
     },
-    ARadio: {
-      renderFormItemContent: createFormItemRadioAndCheckboxRender()
+    ARadioGroup: {
+      renderFormItemContent (renderOpts, params) {
+        const { options = [], optionProps = {} } = renderOpts
+        const { data, field } = params
+        const { attrs } = renderOpts
+        const labelProp = optionProps.label || 'label'
+        const valueProp = optionProps.value || 'value'
+        const itemValue = XEUtils.get(data, field)
+        return [
+          h(resolveComponent('a-radio-group'), {
+            ...attrs,
+            ...getItemProps(renderOpts, params, itemValue),
+            ...getItemOns(renderOpts, params)
+          }, {
+            default: () => {
+              return options.map((option, oIndex) => {
+                return h(resolveComponent('a-radio'), {
+                  key: oIndex,
+                  value: option[valueProp],
+                  disabled: option.disabled
+                }, {
+                  default: () => cellText(option[labelProp])
+                })
+              })
+            }
+          })
+        ]
+      }
     },
-    ACheckbox: {
-      renderFormItemContent: createFormItemRadioAndCheckboxRender()
+    ACheckboxGroup: {
+      renderFormItemContent (renderOpts, params) {
+        const { options = [], optionProps = {} } = renderOpts
+        const { data, field } = params
+        const { attrs } = renderOpts
+        const labelProp = optionProps.label || 'label'
+        const valueProp = optionProps.value || 'value'
+        const itemValue = XEUtils.get(data, field)
+        return [
+          h(resolveComponent('a-checkbox-group'), {
+            ...attrs,
+            ...getItemProps(renderOpts, params, itemValue),
+            ...getItemOns(renderOpts, params)
+          }, {
+            default: () => {
+              return options.map((option, oIndex) => {
+                return h(resolveComponent('a-checkbox'), {
+                  key: oIndex,
+                  value: option[valueProp],
+                  disabled: option.disabled
+                }, {
+                  default: () => cellText(option[labelProp])
+                })
+              })
+            }
+          })
+        ]
+      }
     },
     AButton: {
       renderFormItemContent: defaultButtonItemRender
+    },
+
+    // 已废弃
+    ARadio: {
+      renderFormItemContent: createOldFormItemRadioAndCheckboxRender()
+    },
+    ACheckbox: {
+      renderFormItemContent: createOldFormItemRadioAndCheckboxRender()
     },
     AButtons: {
       renderFormItemContent: defaultButtonsItemRender
