@@ -52,8 +52,8 @@
     "typescript": "^4.6.4",
     "vinyl-source-stream": "^2.0.0",
     "vue": "^3.4.27",
-    "vxe-pc-ui": "^4.0.35",
-    "vxe-table": "^4.7.36"
+    "vxe-pc-ui": "^4.0.93",
+    "vxe-table": "^4.7.64"
   },
   "repository": {
     "type": "git",
