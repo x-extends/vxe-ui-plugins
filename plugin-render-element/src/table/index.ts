@@ -314,9 +314,9 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   }
 
   /**
- * 模糊匹配
- * @param params
- */
+   * 模糊匹配
+   * @param params
+   */
   function defaultFuzzyFilterMethod (params: VxeGlobalRendererHandles.FilterMethodParams) {
     const { option, row, column } = params
     const { data } = option
@@ -325,9 +325,9 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   }
 
   /**
- * 精确匹配
- * @param params
- */
+   * 精确匹配
+   * @param params
+   */
   function defaultExactFilterMethod (params: VxeGlobalRendererHandles.FilterMethodParams) {
     const { option, row, column } = params
     const { data } = option
