@@ -463,8 +463,8 @@ export const VxeUIPluginExportXLSX = {
     VxeUI = core
 
     // 检查版本
-    if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-export-xlsx 4.x] Version 4.x is required')
+    if (!/^(3)\./.test(VxeUI.uiVersion)) {
+      console.error('[plugin-export-xlsx 3.x] Version 3.x is required')
     }
 
     globalExcelJS = options ? options.ExcelJS : null

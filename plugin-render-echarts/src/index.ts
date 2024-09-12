@@ -369,8 +369,8 @@ export const VxeUIPluginRenderEcharts = {
     globalEcharts = options ? options.echarts : null
 
     // 检查版本
-    if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-antd 4.x] Version 4.x is required')
+    if (!/^(3)\./.test(VxeUI.uiVersion)) {
+      console.error('[plugin-render-antd 3.x] Version 3.x is required')
     }
 
     VxeUI.interceptor.add('unmounted', handleBeforeDestroyEvent)

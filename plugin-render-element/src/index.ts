@@ -55,8 +55,8 @@ export const VxeUIPluginRenderElement: VxeUIPluginObject = {
     ElementPlus = options ? options.ElementPlus : {}
 
     // 检查版本
-    if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-element 4.x] Version 4.x is required')
+    if (!/^(3)\./.test(VxeUI.uiVersion)) {
+      console.error('[plugin-render-element 3.x] Version 3.x is required')
     }
 
     defineTableRender(VxeUI)

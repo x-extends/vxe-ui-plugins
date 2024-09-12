@@ -1,4 +1,4 @@
-import { h, VNode } from 'vue'
+import { CreateElement, VNode } from 'vue'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
@@ -28,20 +28,20 @@ function getStyleUnit (val?: number | string) {
   return XEUtils.isNumber(val) ? `${val}px` : val
 }
 
-function showTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderDefaultParams, formatter: string, value: any) {
+function showTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams, formatter: string, value: any) {
   const { row, column, $table } = params
   const content = XEUtils.isString(formatter) ? XEUtils.template(formatter, { value, row, column }, tmplOpts) : null
   $table.openTooltip(elem, content || '')
 }
 
-function hideTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderDefaultParams) {
+function hideTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams) {
   const { $table } = params
   if ($table) {
     $table.closeTooltip()
   }
 }
 
-function createBarVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, renderOpts: VxeGlobalRendererHandles.RenderDefaultOptions) {
+function createBarVNs (h: CreateElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams, renderOpts: VxeGlobalRendererHandles.RenderTableDefaultOptions) {
   const { row, column } = params
   const { props = {} } = renderOpts
   const { margin, colors = [], bar = {}, label: barLabel = {}, tooltip = {} } = props
@@ -83,21 +83,23 @@ function createBarVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, ren
           width: `${barValue}%`,
           backgroundColor: colors[index] || getDefaultColor(index)
         },
-        onMouseenter (evnt: MouseEvent) {
-          const elem = evnt.currentTarget as HTMLSpanElement
-          const hoverColor = toRGBLight(elem.style.backgroundColor, 10)
-          if (hoverColor) {
-            elem.style.backgroundColor = hoverColor
+        on: {
+          mouseenter (evnt: MouseEvent) {
+            const elem = evnt.currentTarget as HTMLSpanElement
+            const hoverColor = toRGBLight(elem.style.backgroundColor, 10)
+            if (hoverColor) {
+              elem.style.backgroundColor = hoverColor
+            }
+            if (tooltip.formatter) {
+              showTooltip(elem, params, tooltip.formatter, numList[index])
+            }
+          },
+          mouseleave (evnt: MouseEvent) {
+            const elem = evnt.currentTarget as HTMLSpanElement
+            const reColor = colors[index] || getDefaultColor(index)
+            elem.style.backgroundColor = reColor
+            hideTooltip(elem, params)
           }
-          if (tooltip.formatter) {
-            showTooltip(elem, params, tooltip.formatter, numList[index])
-          }
-        },
-        onMouseleave (evnt: MouseEvent) {
-          const elem = evnt.currentTarget as HTMLSpanElement
-          const reColor = colors[index] || getDefaultColor(index)
-          elem.style.backgroundColor = reColor
-          hideTooltip(elem, params)
         }
       }),
       h('span', {
@@ -138,7 +140,7 @@ function parsePieAreas (blockList: PieBlockItem[], total: number) {
   return { prves, nexts }
 }
 
-function createPieVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, renderOptList: VxeGlobalRendererHandles.RenderDefaultOptions[], cellValue: any[]) {
+function createPieVNs (h: CreateElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams, renderOptList: VxeGlobalRendererHandles.RenderTableDefaultOptions[], cellValue: any[]) {
   if (!XEUtils.isArray(cellValue)) {
     cellValue = [cellValue]
   }
@@ -161,7 +163,7 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, ren
     })
     const { prves: prveList, nexts: nextList } = parsePieAreas(blockList, countVal)
     const blockOns = {
-      onMouseenter (evnt: MouseEvent) {
+      mouseenter (evnt: MouseEvent) {
         const elem = evnt.currentTarget as HTMLSpanElement & { parentNode: HTMLSpanElement & { parentNode: HTMLSpanElement } }
         const index = XEUtils.toNumber(elem.getAttribute('block'))
         const hoverColor = toRGBLight(elem.style.backgroundColor, 10)
@@ -174,7 +176,7 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, ren
           showTooltip(elem, params, tooltip.formatter, blockList[index].val)
         }
       },
-      onMouseleave (evnt: MouseEvent) {
+      mouseleave (evnt: MouseEvent) {
         const elem = evnt.currentTarget as HTMLSpanElement & { parentNode: HTMLSpanElement & { parentNode: HTMLSpanElement } }
         const index = XEUtils.toNumber(elem.getAttribute('block'))
         const reColor = colors[index] || getDefaultColor(index)
@@ -195,8 +197,10 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, ren
             backgroundColor: colors[item.index] || getDefaultColor(item.index),
             transform: `rotate(${item.deg - 180}deg)`
           },
-          block: item.index,
-          ...blockOns
+          attrs: {
+            block: item.index
+          },
+          on: blockOns
         })
       })),
       h('span', {
@@ -208,8 +212,10 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, ren
             backgroundColor: colors[item.index] || getDefaultColor(item.index),
             transform: `rotate(${item.deg}deg)`
           },
-          block: item.index,
-          ...blockOns
+          attrs: {
+            block: item.index
+          },
+          on: blockOns
         })
       }))
     ]
@@ -249,32 +255,32 @@ export const VxeUIPluginRenderChart = {
     VxeUI = core
 
     // 检查版本
-    if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-chart 4.x] Version 4.x is required')
+    if (!/^(3)\./.test(VxeUI.uiVersion)) {
+      console.error('[plugin-render-chart 3.x] Version 3.x is required')
     }
 
     VxeUI.renderer.mixin({
       bar: {
-        renderDefault (renderOpts, params) {
-          return createBarVNs(params, renderOpts)
+        renderTableDefault (h, renderOpts, params) {
+          return createBarVNs(h, params, renderOpts)
         }
       },
       pie: {
-        renderDefault (renderOpts, params) {
+        renderTableDefault (h, renderOpts, params) {
           const { row, column } = params
           const cellValue = row[column.field]
-          return createPieVNs(params, [renderOpts], cellValue ? [cellValue] : [])
+          return createPieVNs(h, params, [renderOpts], cellValue ? [cellValue] : [])
         }
       },
       pies: {
-        renderDefault (renderOpts, params) {
+        renderTableDefault (h, renderOpts, params) {
           const { row, column } = params
           const cellValue = row[column.field]
-          return createPieVNs(params, renderOpts.children || [], cellValue)
+          return createPieVNs(h, params, renderOpts.children || [], cellValue)
         }
       },
       rate: {
-        renderDefault (renderOpts, params) {
+        renderTableDefault (h, renderOpts, params) {
           const { row, column } = params
           const { props = {} } = renderOpts
           const { colors = [] } = props

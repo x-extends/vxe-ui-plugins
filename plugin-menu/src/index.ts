@@ -328,8 +328,8 @@ export const VxeUIPluginMenu = {
     VxeUI = core
 
     // 检查版本
-    if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-export-pdf 4.x] Version 4.x is required')
+    if (!/^(3)\./.test(VxeUI.uiVersion)) {
+      console.error('[plugin-export-pdf 3.x] Version 3.x is required')
     }
 
     pluginSetup(options)
