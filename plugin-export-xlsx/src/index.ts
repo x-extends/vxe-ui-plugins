@@ -117,12 +117,12 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const msgKey = 'xlsx'
   const { modal, getI18n } = VxeUI
   const { $table, options, columns, colgroups, datas } = params
-  const { props, reactData } = $table
-  const { computeColumnOpts } = $table.getComputeMaps()
-  const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = props
-  const { rowHeight } = reactData
+  const { columnOpts } = $table
+  const tableProps = $table
+  const tableReactData = $table.reactData
+  const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = tableProps
+  const { rowHeight } = tableReactData
   const { message, sheetName, isHeader, isFooter, isMerge, isColgroup, original, useStyle, sheetMethod } = options
-  const columnOpts = computeColumnOpts.value
   const showMsg = message !== false
   const mergeCells = $table.getMergeCells()
   const colList: any[] = []

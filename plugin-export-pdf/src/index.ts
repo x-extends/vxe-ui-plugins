@@ -48,11 +48,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   const { modal, getI18n } = VxeUI
   const { fonts, beforeMethod } = globalOptions
   const { $table, options, columns, datas } = params
-  const { props } = $table
-  const { treeConfig } = props
-  const { computeColumnOpts, computeTreeOpts } = $table.getComputeMaps()
-  const treeOpts = computeTreeOpts.value
-  const columnOpts = computeColumnOpts.value
+  const { treeConfig, columnOpts, treeOpts } = $table
   const dX = 7
   const dY = 15.8
   const ratio = 3.78

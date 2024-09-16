@@ -22,7 +22,7 @@ gulp.task('build_style', function () {
   return gulp.src('style.scss')
     .pipe(sass())
     .pipe(prefixer({
-      borwsers: ['last 1 version', '> 1%', 'not ie <= 8'],
+      borwsers: ['last 1 version', '> 1%', 'ie 11'],
       cascade: true,
       remove: true
     }))
