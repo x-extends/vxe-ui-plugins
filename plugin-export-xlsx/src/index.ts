@@ -119,7 +119,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const { $table, options, columns, colgroups, datas } = params
   const { columnOpts } = $table
   const tableProps = $table
-  const tableReactData = $table.reactData
+  const tableReactData = $table.reactData || $table
   const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = tableProps
   const { rowHeight } = tableReactData
   const { message, sheetName, isHeader, isFooter, isMerge, isColgroup, original, useStyle, sheetMethod } = options
