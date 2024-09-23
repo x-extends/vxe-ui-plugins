@@ -28,20 +28,20 @@ function getStyleUnit (val?: number | string) {
   return XEUtils.isNumber(val) ? `${val}px` : val
 }
 
-function showTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderDefaultParams, formatter: string, value: any) {
+function showTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams, formatter: string, value: any) {
   const { row, column, $table } = params
   const content = XEUtils.isString(formatter) ? XEUtils.template(formatter, { value, row, column }, tmplOpts) : null
   $table.openTooltip(elem, content || '')
 }
 
-function hideTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderDefaultParams) {
+function hideTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams) {
   const { $table } = params
   if ($table) {
     $table.closeTooltip()
   }
 }
 
-function createBarVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, renderOpts: VxeGlobalRendererHandles.RenderDefaultOptions) {
+function createBarVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams, renderOpts: VxeGlobalRendererHandles.RenderTableDefaultOptions) {
   const { row, column } = params
   const { props = {} } = renderOpts
   const { margin, colors = [], bar = {}, label: barLabel = {}, tooltip = {} } = props
@@ -138,7 +138,7 @@ function parsePieAreas (blockList: PieBlockItem[], total: number) {
   return { prves, nexts }
 }
 
-function createPieVNs (params: VxeGlobalRendererHandles.RenderDefaultParams, renderOptList: VxeGlobalRendererHandles.RenderDefaultOptions[], cellValue: any[]) {
+function createPieVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams, renderOptList: VxeGlobalRendererHandles.RenderTableDefaultOptions[], cellValue: any[]) {
   if (!XEUtils.isArray(cellValue)) {
     cellValue = [cellValue]
   }

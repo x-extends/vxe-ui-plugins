@@ -1,5 +1,9 @@
 # Vxe UI Plugins
 
+## Compatibility
+
+It depends on vxe-table v4.x
+
 ## Online document
 
 * Vxe UI [https://vxeui.com](https://vxeui.com)
