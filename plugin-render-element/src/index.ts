@@ -1,6 +1,5 @@
 import { defineTableRender } from './table'
 import { defineFormRender } from './form'
-import { defineFormDesignRender } from './form-design'
 
 import type { VxeUIPluginObject, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 
@@ -61,7 +60,6 @@ export const VxeUIPluginRenderElement: VxeUIPluginObject = {
 
     defineTableRender(VxeUI)
     defineFormRender(VxeUI)
-    defineFormDesignRender(VxeUI)
 
     VxeUI.interceptor.add('event.clearFilter', handleClearEvent)
     VxeUI.interceptor.add('event.clearEdit', handleClearEvent)

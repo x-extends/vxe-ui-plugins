@@ -57,8 +57,7 @@ gulp.task('browserify_common', function () {
     entries: 'dist/index.js'
   }).external([
     'vue',
-    'xe-utils',
-    'dayjs'
+    'xe-utils'
   ])
     .bundle()
     .pipe(source('all.common.js'))
@@ -77,8 +76,7 @@ gulp.task('build_umd', gulp.series('browserify_common', function () {
           globals: {
             [pack.name]: exportModuleName,
             vue: 'Vue',
-            'xe-utils': 'XEUtils',
-            dayjs: 'dayjs'
+            'xe-utils': 'XEUtils'
           },
           exactGlobals: true
         }]

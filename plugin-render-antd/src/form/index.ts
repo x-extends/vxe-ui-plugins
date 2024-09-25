@@ -1,4 +1,4 @@
-import { h, resolveComponent, ComponentOptions } from 'vue'
+import { CreateElement } from 'vue'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles, FormItemContentRenderParams } from 'vxe-pc-ui'
@@ -12,7 +12,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
   }
 
   function getOnName (type: string) {
-    return 'on' + type.substring(0, 1).toLocaleUpperCase() + type.substring(1)
+    return type
   }
 
   function getModelProp (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
@@ -26,10 +26,14 @@ export function defineFormRender (VxeUI: VxeUIExport) {
   }
 
   function getModelEvent (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
-    let type = 'update:value'
+    let type = 'change'
     switch (renderOpts.name) {
-      case 'ASwitch':
-        type = 'update:checked'
+      case 'AInput':
+        type = 'change.value'
+        break
+      case 'ARadio':
+      case 'ACheckbox':
+        type = 'input'
         break
     }
     return type
@@ -96,39 +100,40 @@ export function defineFormRender (VxeUI: VxeUIExport) {
   }
 
   function createFormItemRender (defaultProps?: { [key: string]: any }) {
-    return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: FormItemContentRenderParams) {
+    return function (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: FormItemContentRenderParams) {
       const { data, field } = params
       const { name } = renderOpts
       const { attrs } = renderOpts
       const itemValue = XEUtils.get(data, field)
       return [
-        h(resolveComponent(name), {
-          ...attrs,
-          ...getItemProps(renderOpts, params, itemValue, defaultProps),
-          ...getItemOns(renderOpts, params)
+        h(name, {
+          attrs,
+          props: getItemProps(renderOpts, params, itemValue, defaultProps),
+          on: getItemOns(renderOpts, params)
         })
       ]
     }
   }
 
-  function defaultButtonItemRender (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: FormItemContentRenderParams) {
+  function defaultButtonItemRender (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: FormItemContentRenderParams) {
     const { attrs } = renderOpts
     const props = getItemProps(renderOpts, params, null)
     return [
-      h(resolveComponent('a-button') as ComponentOptions, {
-        ...attrs,
-        ...props,
-        ...getItemOns(renderOpts, params)
-      }, {
-        default: () => cellText(renderOpts.content || props.content)
+      h('a-button', {
+        attrs,
+        props,
+        on: getItemOns(renderOpts, params),
+        scopedSlots: {
+          default: () => cellText(renderOpts.content || props.content)
+        }
       })
     ]
   }
 
-  function defaultButtonsItemRender (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: FormItemContentRenderParams) {
+  function defaultButtonsItemRender (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: FormItemContentRenderParams) {
     const { children } = renderOpts
     if (children) {
-      return children.map((childRenderOpts: VxeGlobalRendererHandles.RenderItemContentOptions) => defaultButtonItemRender(childRenderOpts, params)[0])
+      return children.map((childRenderOpts: VxeGlobalRendererHandles.RenderItemContentOptions) => defaultButtonItemRender(h, childRenderOpts, params)[0])
     }
     return []
   }
@@ -139,7 +144,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
    * @deprecated
    */
   function createOldFormItemRadioAndCheckboxRender () {
-    return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: FormItemContentRenderParams) {
+    return function (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: FormItemContentRenderParams) {
       const { name, options = [], optionProps = {} } = renderOpts
       const { data, field } = params
       const { attrs } = renderOpts
@@ -147,21 +152,25 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       const valueProp = optionProps.value || 'value'
       const itemValue = XEUtils.get(data, field)
       return [
-        h(resolveComponent(`${name}Group`) as ComponentOptions, {
-          ...attrs,
-          ...getItemProps(renderOpts, params, itemValue),
-          ...getItemOns(renderOpts, params)
-        }, {
-          default: () => {
-            return options.map((option, oIndex) => {
-              return h(resolveComponent(name) as ComponentOptions, {
-                key: oIndex,
-                value: option[valueProp],
-                disabled: option.disabled
-              }, {
-                default: () => cellText(option[labelProp])
+        h(`${name}Group`, {
+          attrs,
+          props: getItemProps(renderOpts, params, itemValue),
+          on: getItemOns(renderOpts, params),
+          scopedSlots: {
+            default: () => {
+              return options.map((option, oIndex) => {
+                return h(name, {
+                  key: oIndex,
+                  props: {
+                    value: option[valueProp],
+                    disabled: option.disabled
+                  },
+                  scopedSlots: {
+                    default: () => cellText(option[labelProp])
+                  }
+                })
               })
-            })
+            }
           }
         })
       ]
@@ -179,7 +188,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       renderFormItemContent: createFormItemRender()
     },
     ASelect: {
-      renderFormItemContent (renderOpts, params) {
+      renderFormItemContent (h, renderOpts, params) {
         const { options = [], optionGroups } = renderOpts
         const { data, field } = params
         const { attrs } = renderOpts
@@ -188,20 +197,24 @@ export function defineFormRender (VxeUI: VxeUIExport) {
         const ons = getItemOns(renderOpts, params)
         if (optionGroups) {
           return [
-            h(resolveComponent('a-select') as ComponentOptions, {
-              ...attrs,
-              ...props,
-              options: optionGroups,
+            h('a-select', {
+              attrs,
+              props: {
+                ...props,
+                options: optionGroups
+              },
               ...ons
             })
           ]
         }
         return [
-          h(resolveComponent('a-select') as ComponentOptions, {
-            ...attrs,
-            ...props,
-            options: props.options || options,
-            ...ons
+          h('a-select', {
+            attrs,
+            props: {
+              ...props,
+              options: props.options || options
+            },
+            on: ons
           })
         ]
       }
@@ -234,7 +247,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       renderFormItemContent: createFormItemRender()
     },
     ARadioGroup: {
-      renderFormItemContent (renderOpts, params) {
+      renderFormItemContent (h, renderOpts, params) {
         const { options = [], optionProps = {} } = renderOpts
         const { data, field } = params
         const { attrs } = renderOpts
@@ -242,28 +255,32 @@ export function defineFormRender (VxeUI: VxeUIExport) {
         const valueProp = optionProps.value || 'value'
         const itemValue = XEUtils.get(data, field)
         return [
-          h(resolveComponent('a-radio-group'), {
-            ...attrs,
-            ...getItemProps(renderOpts, params, itemValue),
-            ...getItemOns(renderOpts, params)
-          }, {
-            default: () => {
-              return options.map((option, oIndex) => {
-                return h(resolveComponent('a-radio'), {
-                  key: oIndex,
-                  value: option[valueProp],
-                  disabled: option.disabled
-                }, {
-                  default: () => cellText(option[labelProp])
+          h('a-radio-group', {
+            attrs,
+            props: getItemProps(renderOpts, params, itemValue),
+            on: getItemOns(renderOpts, params),
+            scopedSlots: {
+              default: () => {
+                return options.map((option, oIndex) => {
+                  return h('a-radio', {
+                    key: oIndex,
+                    props: {
+                      value: option[valueProp],
+                      disabled: option.disabled
+                    },
+                    scopedSlots: {
+                      default: () => cellText(option[labelProp])
+                    }
+                  })
                 })
-              })
+              }
             }
           })
         ]
       }
     },
     ACheckboxGroup: {
-      renderFormItemContent (renderOpts, params) {
+      renderFormItemContent (h, renderOpts, params) {
         const { options = [], optionProps = {} } = renderOpts
         const { data, field } = params
         const { attrs } = renderOpts
@@ -271,21 +288,25 @@ export function defineFormRender (VxeUI: VxeUIExport) {
         const valueProp = optionProps.value || 'value'
         const itemValue = XEUtils.get(data, field)
         return [
-          h(resolveComponent('a-checkbox-group'), {
-            ...attrs,
-            ...getItemProps(renderOpts, params, itemValue),
-            ...getItemOns(renderOpts, params)
-          }, {
-            default: () => {
-              return options.map((option, oIndex) => {
-                return h(resolveComponent('a-checkbox'), {
-                  key: oIndex,
-                  value: option[valueProp],
-                  disabled: option.disabled
-                }, {
-                  default: () => cellText(option[labelProp])
+          h('a-checkbox-group', {
+            attrs,
+            props: getItemProps(renderOpts, params, itemValue),
+            on: getItemOns(renderOpts, params),
+            scopedSlots: {
+              default: () => {
+                return options.map((option, oIndex) => {
+                  return h('a-checkbox', {
+                    key: oIndex,
+                    props: {
+                      value: option[valueProp],
+                      disabled: option.disabled
+                    },
+                    scopedSlots: {
+                      default: () => cellText(option[labelProp])
+                    }
+                  })
                 })
-              })
+              }
             }
           })
         ]

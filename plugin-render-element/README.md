@@ -1,10 +1,10 @@
 # @vxe-ui/plugin-render-element
 
-[Vxe UI](https://vxeui.com/) plug-in for compatibility with the [element-plus](https://www.npmjs.com/package/element-plus) component.
+[Vxe UI](https://vxeui.com/) plug-in for compatibility with the [element-ui](https://www.npmjs.com/package/element-ui) component.
 
 ## Compatibility
 
-It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) or [vxe-pc-ui v4](https://www.npmjs.com/package/vxe-pc-ui)  
+It corresponds to [vxe-table v3](https://www.npmjs.com/package/vxe-table) or [vxe-pc-ui v3](https://www.npmjs.com/package/vxe-pc-ui)  
 
 ## Installing
 

@@ -1,4 +1,4 @@
-import { h, resolveComponent, ComponentOptions } from 'vue'
+import { CreateElement } from 'vue'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
@@ -12,15 +12,15 @@ export function defineFormRender (VxeUI: VxeUIExport) {
   }
 
   function getOnName (type: string) {
-    return 'on' + type.substring(0, 1).toLocaleUpperCase() + type.substring(1)
+    return type
   }
 
   function getModelProp (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
-    return 'modelValue'
+    return 'value'
   }
 
   function getModelEvent (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
-    return 'update:modelValue'
+    return 'input'
   }
 
   function getChangeEvent (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
@@ -89,15 +89,17 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     })
   }
 
-  function renderOptions (options: any[], optionProps: VxeGlobalRendererHandles.RenderOptionProps) {
+  function renderOptions (h: CreateElement, options: any[], optionProps: VxeGlobalRendererHandles.RenderOptionProps) {
     const labelProp = optionProps.label || 'label'
     const valueProp = optionProps.value || 'value'
     return XEUtils.map(options, (item, oIndex) => {
-      return h(resolveComponent('el-option'), {
+      return h('el-option', {
         key: oIndex,
-        value: item[valueProp],
-        label: item[labelProp],
-        disabled: item.disabled
+        props: {
+          value: item[valueProp],
+          label: item[labelProp],
+          disabled: item.disabled
+        }
       })
     })
   }
@@ -107,39 +109,44 @@ export function defineFormRender (VxeUI: VxeUIExport) {
   }
 
   function createFormItemRender (defaultProps?: { [key: string]: any }) {
-    return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: any) {
+    return function (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: any) {
       const { data, field } = params
       const { name } = renderOpts
       const { attrs } = renderOpts
       const itemValue = XEUtils.get(data, field)
       return [
-        h(resolveComponent(name), {
-          ...attrs,
-          ...getItemProps(renderOpts, params, itemValue, defaultProps),
-          ...getItemOns(renderOpts, params)
+        h(name, {
+          attrs,
+          props: {
+            ...getItemProps(renderOpts, params, itemValue, defaultProps)
+          },
+          on: getItemOns(renderOpts, params)
         })
       ]
     }
   }
 
-  function defaultButtonItemRender (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: any) {
+  function defaultButtonItemRender (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: any) {
     const { attrs } = renderOpts
     const props = getItemProps(renderOpts, params, null)
     return [
-      h(resolveComponent('el-button') as ComponentOptions, {
-        ...attrs,
-        ...props,
-        ...getOns(renderOpts, params)
-      }, {
-        default: () => cellText(renderOpts.content || props.content)
+      h('el-button', {
+        attrs,
+        props: {
+          ...props
+        },
+        on: getOns(renderOpts, params),
+        scopedSlots: {
+          default: () => cellText(renderOpts.content || props.content)
+        }
       })
     ]
   }
 
-  function defaultButtonsItemRender (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: any) {
+  function defaultButtonsItemRender (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: any) {
     const { children } = renderOpts
     if (children) {
-      return children.map((childRenderOpts: VxeGlobalRendererHandles.RenderItemContentOptions) => defaultButtonItemRender(childRenderOpts, params)[0])
+      return children.map((childRenderOpts: VxeGlobalRendererHandles.RenderItemContentOptions) => defaultButtonItemRender(h, childRenderOpts, params)[0])
     }
     return []
   }
@@ -149,28 +156,34 @@ export function defineFormRender (VxeUI: VxeUIExport) {
    * @deprecated
    */
   function createOldFormItemRadioAndCheckboxRender () {
-    return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: any) {
+    return function (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: any) {
       const { name, options = [], optionProps = {}, attrs } = renderOpts
       const { data, field } = params
       const labelProp = optionProps.label || 'label'
       const valueProp = optionProps.value || 'value'
       const itemValue = XEUtils.get(data, field)
       return [
-        h(resolveComponent(`${name}Group`) as ComponentOptions, {
-          ...attrs,
-          ...getItemProps(renderOpts, params, itemValue),
-          ...getItemOns(renderOpts, params)
-        }, {
-          default: () => {
-            return options.map((option, oIndex) => {
-              return h(resolveComponent(name) as ComponentOptions, {
-                key: oIndex,
-                label: option[valueProp],
-                disabled: option.disabled
-              }, {
-                default: () => cellText(option[labelProp])
+        h(`${name}Group`, {
+          attrs,
+          props: {
+            ...getItemProps(renderOpts, params, itemValue)
+          },
+          on: getItemOns(renderOpts, params),
+          scopedSlots: {
+            default: () => {
+              return options.map((option, oIndex) => {
+                return h(name, {
+                  key: oIndex,
+                  props: {
+                    label: option[valueProp],
+                    disabled: option.disabled
+                  },
+                  scopedSlots: {
+                    default: () => cellText(option[labelProp])
+                  }
+                })
               })
-            })
+            }
           }
         })
       ]
@@ -229,7 +242,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       renderFormItemContent: createFormItemRender()
     },
     ElSelect: {
-      renderFormItemContent (renderOpts, params) {
+      renderFormItemContent (h, renderOpts, params) {
         const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
         const { data, field } = params
         const { attrs } = renderOpts
@@ -240,31 +253,40 @@ export function defineFormRender (VxeUI: VxeUIExport) {
           const groupOptions = optionGroupProps.options || 'options'
           const groupLabel = optionGroupProps.label || 'label'
           return [
-            h(resolveComponent('el-select') as ComponentOptions, {
-              ...attrs,
-              ...props,
-              ...ons
-            }, {
-              default: () => {
-                return XEUtils.map(optionGroups, (group, gIndex) => {
-                  return h(resolveComponent('el-option-group') as ComponentOptions, {
-                    label: group[groupLabel],
-                    key: gIndex
-                  }, {
-                    default: () => renderOptions(group[groupOptions], optionProps)
+            h('el-select', {
+              attrs,
+              props: {
+                ...props
+              },
+              on: ons,
+              scopedSlots: {
+                default: () => {
+                  return XEUtils.map(optionGroups, (group, gIndex) => {
+                    return h('el-option-group', {
+                      key: gIndex,
+                      props: {
+                        label: group[groupLabel]
+                      },
+                      scopedSlots: {
+                        default: () => renderOptions(h, group[groupOptions], optionProps)
+                      }
+                    })
                   })
-                })
+                }
               }
             })
           ]
         }
         return [
-          h(resolveComponent('el-select') as ComponentOptions, {
-            ...attrs,
-            ...props,
-            ...ons
-          }, {
-            default: () => renderOptions(options, optionProps)
+          h('el-select', {
+            attrs,
+            props: {
+              ...props
+            },
+            on: ons,
+            scopedSlots: {
+              default: () => renderOptions(h, options, optionProps)
+            }
           })
         ]
       }
@@ -291,55 +313,70 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       renderFormItemContent: createFormItemRender()
     },
     ElRadioGroup: {
-      renderFormItemContent (renderOpts, params) {
+      renderFormItemContent (h, renderOpts, params) {
         const { options = [], optionProps = {}, attrs } = renderOpts
         const { data, field } = params
         const labelProp = optionProps.label || 'label'
         const valueProp = optionProps.value || 'value'
         const itemValue = XEUtils.get(data, field)
         return [
-          h(resolveComponent('el-radio-group'), {
-            ...attrs,
-            ...getItemProps(renderOpts, params, itemValue),
-            ...getItemOns(renderOpts, params)
-          }, {
-            default: () => {
-              return options.map((option, oIndex) => {
-                return h(resolveComponent('el-radio'), {
-                  key: oIndex,
-                  value: option[valueProp],
-                  disabled: option.disabled
-                }, {
-                  default: () => cellText(option[labelProp])
+          h('el-radio-group', {
+            attrs,
+            props: {
+              ...getItemProps(renderOpts, params, itemValue)
+            },
+            on: {
+              ...getItemOns(renderOpts, params)
+            },
+            scopedSlots: {
+              default: () => {
+                return options.map((option, oIndex) => {
+                  return h('el-radio', {
+                    key: oIndex,
+                    props: {
+                      value: option[valueProp],
+                      disabled: option.disabled
+                    },
+                    scopedSlots: {
+                      default: () => cellText(option[labelProp])
+                    }
+                  })
                 })
-              })
+              }
             }
           })
         ]
       }
     },
     ElCheckboxGroup: {
-      renderFormItemContent (renderOpts, params) {
+      renderFormItemContent (h, renderOpts, params) {
         const { options = [], optionProps = {}, attrs } = renderOpts
         const { data, field } = params
         const labelProp = optionProps.label || 'label'
         const valueProp = optionProps.value || 'value'
         const itemValue = XEUtils.get(data, field)
         return [
-          h(resolveComponent('el-checkbox-group'), {
-            ...attrs,
-            ...getItemProps(renderOpts, params, itemValue),
-            ...getItemOns(renderOpts, params)
-          }, {
-            default: () => {
-              return options.map((option, oIndex) => {
-                return h(resolveComponent('el-checkbox'), {
-                  key: oIndex,
-                  value: option[valueProp],
-                  label: option[labelProp],
-                  disabled: option.disabled
+          h('el-checkbox-group', {
+            attrs,
+            props: {
+              ...getItemProps(renderOpts, params, itemValue)
+            },
+            on: {
+              ...getItemOns(renderOpts, params)
+            },
+            scopedSlots: {
+              default: () => {
+                return options.map((option, oIndex) => {
+                  return h('el-checkbox', {
+                    key: oIndex,
+                    props: {
+                      value: option[valueProp],
+                      label: option[labelProp],
+                      disabled: option.disabled
+                    }
+                  })
                 })
-              })
+              }
             }
           })
         ]
