@@ -95,6 +95,20 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     })
   }
 
+  function renderOptions (h: CreateElement, options: any[], optionProps: VxeGlobalRendererHandles.RenderOptionProps) {
+    const labelProp = optionProps.label || 'label'
+    const valueProp = optionProps.value || 'value'
+    return XEUtils.map(options, (item, oIndex) => {
+      return h('a-select-option', {
+        key: oIndex,
+        props: {
+          value: item[valueProp],
+          disabled: item.disabled
+        }
+      }, item[labelProp])
+    })
+  }
+
   function cellText (cellValue: any): string[] {
     return [formatText(cellValue)]
   }
@@ -189,22 +203,34 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     },
     ASelect: {
       renderFormItemContent (h, renderOpts, params) {
-        const { options = [], optionGroups } = renderOpts
+        const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
         const { data, field } = params
         const { attrs } = renderOpts
         const itemValue = XEUtils.get(data, field)
         const props = getItemProps(renderOpts, params, itemValue)
         const ons = getItemOns(renderOpts, params)
         if (optionGroups) {
+          const groupOptions = optionGroupProps.options || 'options'
+          const groupLabel = optionGroupProps.label || 'label'
           return [
             h('a-select', {
               attrs,
               props: {
                 ...props,
-                options: optionGroups
+                options: undefined
               },
-              ...ons
-            })
+              on: ons
+            }, XEUtils.map(optionGroups, (group: any, gIndex: any) => {
+              return h('a-select-opt-group', {
+                key: gIndex
+              }, [
+                h('span', {
+                  slot: 'label'
+                }, group[groupLabel])
+              ].concat(
+                renderOptions(h, group[groupOptions], optionProps)
+              ))
+            }))
           ]
         }
         return [

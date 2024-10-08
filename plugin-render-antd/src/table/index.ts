@@ -338,6 +338,20 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return cellValue === data
   }
 
+  function renderOptions (h: CreateElement, options: any[], optionProps: VxeGlobalRendererHandles.RenderOptionProps) {
+    const labelProp = optionProps.label || 'label'
+    const valueProp = optionProps.value || 'value'
+    return XEUtils.map(options, (item, oIndex) => {
+      return h('a-select-option', {
+        key: oIndex,
+        props: {
+          value: item[valueProp],
+          disabled: item.disabled
+        }
+      }, item[labelProp])
+    })
+  }
+
   function cellText (cellValue: any): string[] {
     return [formatText(cellValue)]
   }
@@ -380,22 +394,34 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     },
     ASelect: {
       renderTableEdit (h, renderOpts, params) {
-        const { options, optionGroups } = renderOpts
+        const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
         const { row, column } = params
         const { attrs } = renderOpts
         const cellValue = XEUtils.get(row, column.field)
         const props = getCellEditFilterProps(renderOpts, params, cellValue)
         const ons = getEditOns(renderOpts, params)
         if (optionGroups) {
+          const groupOptions = optionGroupProps.options || 'options'
+          const groupLabel = optionGroupProps.label || 'label'
           return [
             h('a-select', {
               attrs,
               props: {
                 ...props,
-                options: optionGroups
+                options: undefined
               },
               on: ons
-            })
+            }, XEUtils.map(optionGroups, (group: any, gIndex: any) => {
+              return h('a-select-opt-group', {
+                key: gIndex
+              }, [
+                h('span', {
+                  slot: 'label'
+                }, group[groupLabel])
+              ].concat(
+                renderOptions(h, group[groupOptions], optionProps)
+              ))
+            }))
           ]
         }
         return [
