@@ -46,7 +46,7 @@ function getCellLabel (column: VxeTableDefines.ColumnInfo, cellValue: any) {
         break
     }
   }
-  return cellValue
+  return XEUtils.toValueString(cellValue)
 }
 
 function getFooterData (opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
