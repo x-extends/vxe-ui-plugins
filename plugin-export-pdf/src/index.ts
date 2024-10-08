@@ -31,7 +31,7 @@ const globalOptions: VxeUIPluginExportPDFOptions = {}
 const globalFonts: { [key: string]: any } = {}
 
 function getCellText (cellValue: any) {
-  return XEUtils.toValueString(cellValue)
+  return XEUtils.toValueString(cellValue || ' ')
 }
 
 function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, row: any, column: VxeTableDefines.ColumnInfo) {
