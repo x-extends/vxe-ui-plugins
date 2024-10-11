@@ -9,15 +9,15 @@ It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) or [vx
 ## Installing
 
 ```shell
-npm install @@vxe-ui/plugin-render-echarts echarts
+npm install @vxe-ui/plugin-render-echarts echarts
 ```
 
 ```javascript
 // ...
 import VXETable from 'vxe-table'
 import echarts from 'echarts'
-import VxeUIPluginRenderEcharts from 'vxe-table-plugin-charts'
-import 'vxe-table-plugin-charts/dist/style.css'
+import VxeUIPluginRenderEcharts from '@vxe-ui/plugin-render-echarts'
+import '@vxe-ui/plugin-render-echarts/dist/style.css'
 // ...
 
 // 方式1：NPM 安装，注入 echarts 对象
