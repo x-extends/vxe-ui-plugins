@@ -209,10 +209,10 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         })
       })
     }
-    footers.forEach((rows) => {
+    footers.forEach((row) => {
       const item: any = {}
       columns.forEach((column) => {
-        item[column.id] = getFooterCellValue($table, options, rows, column)
+        item[column.id] = getFooterCellValue($table, options, row, column)
       })
       footList.push(item)
     })
