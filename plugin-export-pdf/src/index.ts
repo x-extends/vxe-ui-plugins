@@ -34,9 +34,13 @@ function getCellText (cellValue: any) {
   return XEUtils.toValueString(cellValue || ' ')
 }
 
-function getFooterCellValue ($table: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, rows: any[], column: VxeTableDefines.ColumnInfo) {
-  const cellValue = XEUtils.toValueString(rows[$table.getVTColumnIndex(column)])
-  return getCellText(cellValue)
+function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, row: any, column: VxeTableDefines.ColumnInfo) {
+  const _columnIndex = $xeTable.getVTColumnIndex(column)
+  // 兼容老模式
+  if (XEUtils.isArray(row)) {
+    return getCellText(row[_columnIndex])
+  }
+  return getCellText(XEUtils.get(row, column.field))
 }
 
 function getFooterData (opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
@@ -84,10 +88,10 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   if (isFooter) {
     const { footerData } = $table.getTableData()
     const footers = getFooterData(options, footerData)
-    footers.forEach(rows => {
+    footers.forEach(row => {
       const item: any = {}
       columns.forEach((column) => {
-        item[column.id] = getFooterCellValue($table, options, rows, column)
+        item[column.id] = getFooterCellValue($table, options, row, column)
       })
       footList.push(item)
     })
