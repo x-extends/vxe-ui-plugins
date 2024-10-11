@@ -1,5 +1,5 @@
 {
-  "name": "@vxe-ui/plugin-menu",
+  "name": "@vxe-ui/plugin-validator",
   "version": "4.0.0",
   "description": "Vxe UI plug-in supports common validator configurations.",
   "scripts": {
