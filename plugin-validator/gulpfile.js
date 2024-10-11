@@ -16,22 +16,6 @@ const tsconfig = require('./tsconfig.json')
 
 const exportModuleName = 'VxeUIPluginMenu'
 
-gulp.task('build_style', function () {
-  return gulp.src('style.scss')
-    .pipe(sass())
-    .pipe(prefixer({
-      borwsers: ['last 1 version', '> 1%', 'ie 11'],
-      cascade: true,
-      remove: true
-    }))
-    .pipe(gulp.dest('dist'))
-    .pipe(cleanCSS())
-    .pipe(rename({
-      extname: '.min.css'
-    }))
-    .pipe(gulp.dest('dist'))
-})
-
 gulp.task('build_commonjs', function () {
   return gulp.src(['src/index.ts'])
     // .pipe(sourcemaps.init())
@@ -88,4 +72,4 @@ gulp.task('clear', () => {
   ])
 })
 
-gulp.task('build', gulp.series(gulp.parallel('build_commonjs', 'build_umd', 'build_style'), 'clear'))
+gulp.task('build', gulp.series(gulp.parallel('build_commonjs', 'build_umd'), 'clear'))
