@@ -323,6 +323,9 @@ function pluginSetup (options?: VxeUIPluginMenuOptions) {
   }
 }
 
+/**
+ * 基于 Vxe UI 的扩展插件，支持右键菜单
+ */
 export const VxeUIPluginMenu = {
   setConfig: pluginSetup,
   install (core: VxeUIExport, options?: VxeUIPluginMenuOptions) {
