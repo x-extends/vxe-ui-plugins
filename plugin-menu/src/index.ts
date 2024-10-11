@@ -86,10 +86,9 @@ function copyText (content: string | number): boolean {
 function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams, isCut?: boolean) {
   const { $event, $table, row, column } = params
   if (row && column) {
-    const { props } = $table
+    const props = $table
     const { mouseConfig } = props
-    const { computeMouseOpts } = $table.getComputeMaps()
-    const mouseOpts = computeMouseOpts.value
+    const mouseOpts = $table.computeMouseOpts
     let text = ''
     if (mouseConfig && mouseOpts.area) {
       if (isCut) {
@@ -140,10 +139,9 @@ function checkCellOverlay (params: VxeGlobalInterceptorHandles.InterceptorShowMe
 
 function getBeenMerges (params: VxeGlobalMenusHandles.TableMenuMethodParams | VxeGlobalInterceptorHandles.InterceptorShowMenuParams) {
   const { $table } = params
-  const { props } = $table
-  const { mouseConfig } = props
-  const { computeMouseOpts } = $table.getComputeMaps()
-  const mouseOpts = computeMouseOpts.value
+  const tableProps = $table
+  const { mouseConfig } = tableProps
+  const mouseOpts = $table.computeMouseOpts
   const { visibleData } = $table.getTableData()
   const { visibleColumn } = $table.getTableColumn()
   const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
@@ -172,8 +170,8 @@ function handleClearMergeCells (params: VxeGlobalMenusHandles.TableMenuMethodPar
 function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines.MenuChildOption, params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams) {
   const { code } = item
   const { $table, row, column } = params
-  const { props } = $table
-  const { editConfig, mouseConfig } = props
+  const tableProps = $table
+  const { editConfig, mouseConfig } = tableProps
   switch (code) {
     case 'CLEAR_ALL_SORT': {
       const sortList = $table.getSortColumns()
@@ -208,6 +206,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     case 'REVERT_ROW':
     case 'INSERT_AT_ROW':
     case 'INSERT_AT_ACTIVED_ROW':
+    case 'INSERT_AT_EDIT_ROW':
     case 'DELETE_ROW':
     case 'DELETE_AREA_ROW':
     case 'CLEAR_SORT':
@@ -224,8 +223,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     case 'CLEAR_FIXED_COLUMN': {
       item.disabled = !column
       if (column) {
-        const { computeMouseOpts } = $table.getComputeMaps()
-        const mouseOpts = computeMouseOpts.value
+        const mouseOpts = $table.computeMouseOpts
         const isChildCol = !!column.parentId
         switch (code) {
           case 'CLEAR_SORT': {
@@ -329,7 +327,7 @@ export const VxeUIPluginMenu = {
 
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-export-pdf 3.x] Version 3.x is required')
+      console.error('[plugin-menu 3.x] Version 3.x is required')
     }
 
     pluginSetup(options)
@@ -342,10 +340,9 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, row, column } = params
           if (row && column) {
-            const { props } = $table
-            const { mouseConfig } = props
-            const { computeMouseOpts } = $table.getComputeMaps()
-            const mouseOpts = computeMouseOpts.value
+            const tableProps = $table
+            const { mouseConfig } = tableProps
+            const mouseOpts = $table.computeMouseOpts
             if (mouseConfig && mouseOpts.area) {
               const cellAreas = $table.getCellAreas()
               if (cellAreas && cellAreas.length) {
@@ -400,10 +397,9 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, row, column } = params
           if (row && column) {
-            const { props } = $table
-            const { mouseConfig } = props
-            const { computeMouseOpts } = $table.getComputeMaps()
-            const mouseOpts = computeMouseOpts.value
+            const tableProps = $table
+            const { mouseConfig } = tableProps
+            const mouseOpts = $table.computeMouseOpts
             if (mouseConfig && mouseOpts.area) {
               const cellAreas = $table.getCellAreas()
               if (cellAreas && cellAreas.length) {
@@ -473,10 +469,9 @@ export const VxeUIPluginMenu = {
       PASTE_CELL: {
         menuMethod (params) {
           const { $event, $table, row, column } = params
-          const { props } = $table
-          const { mouseConfig } = props
-          const { computeMouseOpts } = $table.getComputeMaps()
-          const mouseOpts = computeMouseOpts.value
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
           if (mouseConfig && mouseOpts.area) {
             $table.triggerPasteCellAreaEvent($event)
           } else {
@@ -610,8 +605,28 @@ export const VxeUIPluginMenu = {
       },
       /**
        * 插入数据并激活编辑状态
+       * @deprecated
        */
       INSERT_ACTIVED_ROW: {
+        menuMethod (params) {
+          const { $table, menu, column } = params
+          const args: any[] = menu.params || [] // [{}, 'field']
+          $table.insert(args[0])
+            .then(({ row }) => {
+              if ($table.setEditCell) {
+                $table.setEditCell(row, args[1] || column)
+              } else {
+              // 兼容老版本
+                $table.setActiveCell(row, args[1] || column.field)
+              }
+            })
+        }
+      },
+      /**
+       * 插入数据并激活编辑状态
+       * @deprecated
+       */
+      INSERT_EDIT_ROW: {
         menuMethod (params) {
           const { $table, menu, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
@@ -658,6 +673,26 @@ export const VxeUIPluginMenu = {
         }
       },
       /**
+       * 插入数据到指定位置并激活编辑状态
+       */
+      INSERT_AT_EDIT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          if (row) {
+            const args: any[] = menu.params || [] // [{}, 'field']
+            $table.insertAt(args[0], row)
+              .then(({ row }) => {
+                if ($table.setEditCell) {
+                  $table.setEditCell(row, args[1] || column)
+                } else {
+                // 兼容老版本
+                  $table.setActiveCell(row, args[1] || column.field)
+                }
+              })
+          }
+        }
+      },
+      /**
        * 移除行数据
        */
       DELETE_ROW: {
@@ -674,10 +709,9 @@ export const VxeUIPluginMenu = {
       DELETE_AREA_ROW: {
         menuMethod (params) {
           const { $table } = params
-          const { props } = $table
-          const { mouseConfig } = props
-          const { computeMouseOpts } = $table.getComputeMaps()
-          const mouseOpts = computeMouseOpts.value
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
           const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
           return cellAreas.forEach(areaItem => {
             const { rows } = areaItem
@@ -799,7 +833,7 @@ export const VxeUIPluginMenu = {
           const { $table, menu, row } = params
           if (row) {
             const opts = { data: [row] }
-            $table.exportData(XEUtils.assign(opts, menu.params[0]))
+            $table.exportData(XEUtils.assign({}, menu.params ? menu.params[0] : {}, opts))
           }
         }
       },
@@ -810,7 +844,7 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, menu } = params
           const opts = { data: $table.getCheckboxRecords() }
-          $table.exportData(XEUtils.assign(opts, menu.params[0]))
+          $table.exportData(XEUtils.assign({}, menu.params ? menu.params[0] : {}, opts))
         }
       },
       /**
