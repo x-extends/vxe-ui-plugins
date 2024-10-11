@@ -11,20 +11,13 @@ interface CMItem {
   $chart: any;
 }
 
-declare module 'vxe-table' {
-  export interface TableInternalData {
-    _chartModals: CMItem[];
-  }
-}
-
 function createChartModal (getOptions: (params: VxeGlobalMenusHandles.TableMenuMethodParams) => any) {
   const menuOpts: VxeGlobalMenusHandles.MenusOption = {
     menuMethod (params) {
       const { $table, menu } = params
-      const { internalData } = $table
-      let { _chartModals } = internalData
+      let { _chartModals } = $table as any
       if (!_chartModals) {
-        _chartModals = internalData._chartModals = []
+        _chartModals = ($table as any)._chartModals = []
       }
       const cmItem: CMItem = {
         id: XEUtils.uniqueId(),
@@ -58,28 +51,29 @@ function createChartModal (getOptions: (params: VxeGlobalMenusHandles.TableMenuM
               ]
             }
           },
-          onShow (evntParams) {
-            const { $modal } = evntParams
-            const { refElem } = $modal.getRefMaps()
-            const elem = refElem.value
-            const chartElem: HTMLDivElement | null = elem ? elem.querySelector('.vxe-ui-plugin-render-echarts') : null
-            if (chartElem) {
-              const $chart = (globalEcharts || (window as any).echarts).init(chartElem)
-              $chart.setOption(getOptions(params))
-              cmItem.$chart = $chart
-            }
-          },
-          onHide (evntParams) {
-            const { $modal } = evntParams
-            XEUtils.remove(_chartModals, item => item.id === $modal.props.id)
-            if (cmItem.$chart) {
-              cmItem.$chart.dispose()
-              cmItem.$chart = null
-            }
-          },
-          onZoom () {
-            if (cmItem.$chart) {
-              cmItem.$chart.resize()
+          events: {
+            show (evntParams) {
+              const { $modal } = evntParams
+              const elem = $modal.$refs.refElem as HTMLDivElement
+              const chartElem: HTMLDivElement | null = elem ? elem.querySelector('.vxe-ui-plugin-render-echarts') : null
+              if (chartElem) {
+                const $chart = (globalEcharts || (window as any).echarts).init(chartElem)
+                $chart.setOption(getOptions(params))
+                cmItem.$chart = $chart
+              }
+            },
+            hide (evntParams) {
+              const { $modal } = evntParams
+              XEUtils.remove(_chartModals, item => item.id === $modal.id)
+              if (cmItem.$chart) {
+                cmItem.$chart.dispose()
+                cmItem.$chart = null
+              }
+            },
+            zoom () {
+              if (cmItem.$chart) {
+                cmItem.$chart.resize()
+              }
             }
           }
         })
@@ -339,10 +333,9 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
 
 function handleBeforeDestroyEvent (params: VxeGlobalInterceptorHandles.InterceptorParams) {
   const { $table } = params
-  const { internalData } = $table
-  const { _chartModals } = internalData
+  const { _chartModals } = ($table as any)
   if (_chartModals && VxeUI.modal) {
-    _chartModals.slice(0).reverse().forEach((item) => {
+    _chartModals.slice(0).reverse().forEach((item: any) => {
       VxeUI.modal.close(item.id)
     })
   }
@@ -370,7 +363,7 @@ export const VxeUIPluginRenderEcharts = {
 
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-antd 3.x] Version 3.x is required')
+      console.error('[plugin-render-echarts 3.x] Version 3.x is required')
     }
 
     VxeUI.interceptor.add('unmounted', handleBeforeDestroyEvent)
