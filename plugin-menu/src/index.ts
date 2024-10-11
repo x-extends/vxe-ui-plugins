@@ -329,7 +329,7 @@ export const VxeUIPluginMenu = {
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-export-pdf 4.x] Version 4.x is required')
+      console.error('[plugin-menu 4.x] Version 4.x is required')
     }
 
     pluginSetup(options)
@@ -610,8 +610,28 @@ export const VxeUIPluginMenu = {
       },
       /**
        * 插入数据并激活编辑状态
+       * @deprecated
        */
       INSERT_ACTIVED_ROW: {
+        menuMethod (params) {
+          const { $table, menu, column } = params
+          const args: any[] = menu.params || [] // [{}, 'field']
+          $table.insert(args[0])
+            .then(({ row }) => {
+              if ($table.setEditCell) {
+                $table.setEditCell(row, args[1] || column)
+              } else {
+              // 兼容老版本
+                $table.setActiveCell(row, args[1] || column.field)
+              }
+            })
+        }
+      },
+      /**
+       * 插入数据并激活编辑状态
+       * @deprecated
+       */
+      INSERT_EDIT_ROW: {
         menuMethod (params) {
           const { $table, menu, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
@@ -641,6 +661,26 @@ export const VxeUIPluginMenu = {
        * 插入数据到指定位置并激活编辑状态
        */
       INSERT_AT_ACTIVED_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          if (row) {
+            const args: any[] = menu.params || [] // [{}, 'field']
+            $table.insertAt(args[0], row)
+              .then(({ row }) => {
+                if ($table.setEditCell) {
+                  $table.setEditCell(row, args[1] || column)
+                } else {
+                // 兼容老版本
+                  $table.setActiveCell(row, args[1] || column.field)
+                }
+              })
+          }
+        }
+      },
+      /**
+       * 插入数据到指定位置并激活编辑状态
+       */
+      INSERT_AT_EDIT_ROW: {
         menuMethod (params) {
           const { $table, menu, row, column } = params
           if (row) {
@@ -799,7 +839,7 @@ export const VxeUIPluginMenu = {
           const { $table, menu, row } = params
           if (row) {
             const opts = { data: [row] }
-            $table.exportData(XEUtils.assign(opts, menu.params[0]))
+            $table.exportData(XEUtils.assign({}, menu.params ? menu.params[0] : {}, opts))
           }
         }
       },
@@ -810,7 +850,7 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, menu } = params
           const opts = { data: $table.getCheckboxRecords() }
-          $table.exportData(XEUtils.assign(opts, menu.params[0]))
+          $table.exportData(XEUtils.assign({}, menu.params ? menu.params[0] : {}, opts))
         }
       },
       /**
