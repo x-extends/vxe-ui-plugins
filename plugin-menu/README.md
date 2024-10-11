@@ -82,7 +82,7 @@ VxeUI.use(VxeUIPluginMenu)
 ```html
 <vxe-table
   :data="tableData"
-  :context-menu="contextMenu"
+  :menu-config="menuConfig"
   :edit-config="{trigger: 'click', mode: 'cell'}">
   <vxe-column type="seq" width="60"></vxe-column>
   <vxe-column field="name" title="Name" :edit-render="{name: 'input'}"></vxe-column>
@@ -100,7 +100,7 @@ export default {
         { id: 101,  name: 'test2', age: 32, sex: '0' },
         { id: 102,  name: 'test3', age: 36, sex: '1' }
       ],
-      contextMenu: {
+      menuConfig: {
         body: {
           options: [
             [

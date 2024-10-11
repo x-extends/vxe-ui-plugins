@@ -86,8 +86,8 @@ function copyText (content: string | number): boolean {
 function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams, isCut?: boolean) {
   const { $event, $table, row, column } = params
   if (row && column) {
-    const { props } = $table
-    const { mouseConfig } = props
+    const tableProps = $table.props
+    const { mouseConfig } = tableProps
     const { computeMouseOpts } = $table.getComputeMaps()
     const mouseOpts = computeMouseOpts.value
     let text = ''
@@ -140,8 +140,8 @@ function checkCellOverlay (params: VxeGlobalInterceptorHandles.InterceptorShowMe
 
 function getBeenMerges (params: VxeGlobalMenusHandles.TableMenuMethodParams | VxeGlobalInterceptorHandles.InterceptorShowMenuParams) {
   const { $table } = params
-  const { props } = $table
-  const { mouseConfig } = props
+  const tableProps = $table.props
+  const { mouseConfig } = tableProps
   const { computeMouseOpts } = $table.getComputeMaps()
   const mouseOpts = computeMouseOpts.value
   const { visibleData } = $table.getTableData()
@@ -172,8 +172,8 @@ function handleClearMergeCells (params: VxeGlobalMenusHandles.TableMenuMethodPar
 function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines.MenuChildOption, params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams) {
   const { code } = item
   const { $table, row, column } = params
-  const { props } = $table
-  const { editConfig, mouseConfig } = props
+  const tableProps = $table.props
+  const { editConfig, mouseConfig } = tableProps
   switch (code) {
     case 'CLEAR_ALL_SORT': {
       const sortList = $table.getSortColumns()
@@ -208,6 +208,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     case 'REVERT_ROW':
     case 'INSERT_AT_ROW':
     case 'INSERT_AT_ACTIVED_ROW':
+    case 'INSERT_AT_EDIT_ROW':
     case 'DELETE_ROW':
     case 'DELETE_AREA_ROW':
     case 'CLEAR_SORT':
@@ -342,8 +343,8 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, row, column } = params
           if (row && column) {
-            const { props } = $table
-            const { mouseConfig } = props
+            const tableProps = $table.props
+            const { mouseConfig } = tableProps
             const { computeMouseOpts } = $table.getComputeMaps()
             const mouseOpts = computeMouseOpts.value
             if (mouseConfig && mouseOpts.area) {
@@ -400,8 +401,8 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, row, column } = params
           if (row && column) {
-            const { props } = $table
-            const { mouseConfig } = props
+            const tableProps = $table.props
+            const { mouseConfig } = tableProps
             const { computeMouseOpts } = $table.getComputeMaps()
             const mouseOpts = computeMouseOpts.value
             if (mouseConfig && mouseOpts.area) {
@@ -473,8 +474,8 @@ export const VxeUIPluginMenu = {
       PASTE_CELL: {
         menuMethod (params) {
           const { $event, $table, row, column } = params
-          const { props } = $table
-          const { mouseConfig } = props
+          const tableProps = $table.props
+          const { mouseConfig } = tableProps
           const { computeMouseOpts } = $table.getComputeMaps()
           const mouseOpts = computeMouseOpts.value
           if (mouseConfig && mouseOpts.area) {
@@ -714,8 +715,8 @@ export const VxeUIPluginMenu = {
       DELETE_AREA_ROW: {
         menuMethod (params) {
           const { $table } = params
-          const { props } = $table
-          const { mouseConfig } = props
+          const tableProps = $table.props
+          const { mouseConfig } = tableProps
           const { computeMouseOpts } = $table.getComputeMaps()
           const mouseOpts = computeMouseOpts.value
           const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
