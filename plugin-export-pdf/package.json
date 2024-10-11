@@ -7,6 +7,8 @@
   },
   "files": [
     "types",
+    "fonts/source-han-sans-bold.js",
+    "fonts/source-han-sans-normal.js",
     "dist",
     "*.ts",
     "*.d.ts"
