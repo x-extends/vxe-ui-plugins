@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-export-xlsx",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Vxe UI plug-in supports xlsx file export.",
   "scripts": {
     "lib": "gulp build"
