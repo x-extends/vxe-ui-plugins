@@ -1,9 +1,12 @@
 import { App, h, defineComponent, ref, watch, inject, computed, onMounted, onBeforeUnmount } from 'vue'
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeFormConstructor, VxeGlobalRendererHandles, FormItemContentRenderParams, VxeFormPrivateMethods, VxeFormDefines, VxeComponentStyleType } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeFormConstructor, VxeFormPrivateMethods, VxeFormDefines, VxeComponentStyleType } from 'vxe-pc-ui'
 import type { IDomEditor, IEditorConfig, Toolbar } from '@wangeditor/editor'
 import type { VxeUIPluginRenderWangEditorOptions, WangEditorExport } from '../types'
+
+import { defineFormRender } from './form'
+import { defineFormDesignRender } from './form-design'
 
 let VxeUI: VxeUIExport
 let globalWangEditor: WangEditorExport | undefined
@@ -262,85 +265,6 @@ const WangEditorComponent = defineComponent({
   }
 })
 
-function getOnName (type: string) {
-  return 'on' + type.substring(0, 1).toLocaleUpperCase() + type.substring(1)
-}
-
-function getModelProp (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
-  return 'modelValue'
-}
-
-function getModelEvent (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
-  return 'update:modelValue'
-}
-
-function getChangeEvent (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
-  return 'change'
-}
-
-function getItemProps (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: FormItemContentRenderParams, value: any, defaultProps?: { [prop: string]: any }) {
-  return XEUtils.assign({}, defaultProps, renderOpts.props, { [getModelProp(renderOpts)]: value })
-}
-
-function getOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderParams, inputFunc?: Function, changeFunc?: Function) {
-  const { events } = renderOpts
-  const modelEvent = getModelEvent(renderOpts)
-  const changeEvent = getChangeEvent(renderOpts)
-  const isSameEvent = changeEvent === modelEvent
-  const ons: { [type: string]: Function } = {}
-  XEUtils.objectEach(events, (func: Function, key: string) => {
-    ons[getOnName(key)] = function (...args: any[]) {
-      func(params, ...args)
-    }
-  })
-  if (inputFunc) {
-    ons[getOnName(modelEvent)] = function (targetEvnt: any) {
-      inputFunc(targetEvnt)
-      if (events && events[modelEvent]) {
-        events[modelEvent](params, targetEvnt)
-      }
-      if (isSameEvent && changeFunc) {
-        changeFunc(targetEvnt)
-      }
-    }
-  }
-  if (!isSameEvent && changeFunc) {
-    ons[getOnName(changeEvent)] = function (...args: any[]) {
-      changeFunc(...args)
-      if (events && events[changeEvent]) {
-        events[changeEvent](params, ...args)
-      }
-    }
-  }
-  return ons
-}
-
-function getItemOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: FormItemContentRenderParams) {
-  const { $form, data, field } = params
-  return getOns(renderOpts, params, (value: any) => {
-  // 处理 model 值双向绑定
-    XEUtils.set(data, field, value)
-  }, () => {
-  // 处理 change 事件相关逻辑
-    $form.updateStatus(params)
-  })
-}
-
-function createFormItemRender (defaultProps?: { [key: string]: any }) {
-  return function (renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: FormItemContentRenderParams) {
-    const { data, field } = params
-    const { attrs } = renderOpts
-    const itemValue = XEUtils.get(data, field)
-    return [
-      h(WangEditorComponent, {
-        ...attrs,
-        ...getItemProps(renderOpts, params, itemValue, defaultProps),
-        ...getItemOns(renderOpts, params)
-      })
-    ]
-  }
-}
-
 function pluginSetup (options?: VxeUIPluginRenderWangEditorOptions) {
   globalOptions = options
 }
@@ -368,11 +292,8 @@ export const VxeUIPluginRenderWangEditor = {
 
     pluginSetup(options)
 
-    VxeUI.renderer.mixin({
-      WangEditor: {
-        renderFormItemContent: createFormItemRender()
-      }
-    })
+    defineFormRender(VxeUI, WangEditorComponent)
+    defineFormDesignRender(VxeUI, WangEditorComponent)
   }
 }
 

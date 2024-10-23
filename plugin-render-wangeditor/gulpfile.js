@@ -11,6 +11,8 @@ const cleanCSS = require('gulp-clean-css')
 const prefixer = require('gulp-autoprefixer')
 const sourcemaps = require('gulp-sourcemaps')
 const ts = require('gulp-typescript')
+const browserify = require('browserify')
+const source = require('vinyl-source-stream')
 const pack = require('./package.json')
 const tsconfig = require('./tsconfig.json')
 
@@ -32,24 +34,39 @@ gulp.task('build_style', function () {
     .pipe(gulp.dest('dist'))
 })
 
-gulp.task('build_commonjs', function () {
-  return gulp.src(['src/index.ts'])
-    // .pipe(sourcemaps.init())
+gulp.task('build_ts', function () {
+  return gulp.src(['src/**/*.ts'])
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
       presets: ['@babel/env']
     }))
+    .pipe(gulp.dest('dist'))
+})
+
+gulp.task('build_commonjs', function () {
+  return gulp.src(['dist/index.js'])
     .pipe(rename({
       basename: 'index',
       extname: '.common.js'
     }))
-    // .pipe(sourcemaps.write())
     .pipe(gulp.dest('dist'))
 })
 
-gulp.task('build_umd', function () {
-  return gulp.src(['src/index.ts'])
-    .pipe(ts(tsconfig.compilerOptions))
+gulp.task('browserify_common', function () {
+  return browserify({
+    entries: 'dist/index.js'
+  }).external([
+    'vue',
+    'xe-utils',
+    'dayjs'
+  ])
+    .bundle()
+    .pipe(source('all.common.js'))
+    .pipe(gulp.dest('dist'))
+})
+
+gulp.task('build_umd', gulp.series('browserify_common', function () {
+  return gulp.src(['dist/all.common.js'])
     .pipe(babel({
       moduleId: pack.name,
       presets: [
@@ -60,8 +77,8 @@ gulp.task('build_umd', function () {
           globals: {
             [pack.name]: exportModuleName,
             vue: 'Vue',
-            'vxe-table': 'VXETable',
-            'xe-utils': 'XEUtils'
+            'xe-utils': 'XEUtils',
+            dayjs: 'dayjs'
           },
           exactGlobals: true
         }]
@@ -80,12 +97,12 @@ gulp.task('build_umd', function () {
       extname: '.js'
     }))
     .pipe(gulp.dest('dist'))
-})
+}))
 
 gulp.task('clear', () => {
   return del([
-    'dist/depend.*'
+    'dist'
   ])
 })
 
-gulp.task('build', gulp.series(gulp.parallel('build_commonjs', 'build_umd', 'build_style'), 'clear'))
+gulp.task('build', gulp.series('clear', 'build_ts', gulp.parallel('build_commonjs', 'build_umd', 'build_style')))

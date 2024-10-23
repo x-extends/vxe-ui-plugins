@@ -105,7 +105,7 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
         const { widget, $formView } = renderParams
         if ($formView) {
           const itemValue = $formView ? $formView.getItemValue(widget) : null
-          $formView.updateItemStatus(widget, itemValue)
+          $formView.updateWidgetStatus(widget, itemValue)
         }
       }
 

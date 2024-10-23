@@ -1,28 +1,33 @@
-import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
+import { PropType, h, defineComponent, ComputedOptions } from 'vue'
 
-import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeFormComponent, VxeFormItemComponent, VxeInputComponent, VxeSwitchComponent, VxeGlobalRendererHandles } from 'vxe-pc-ui'
 
-interface WidgetElSwitchFormObjVO {
+interface WidgetWangEditorFormObjVO {
+  placeholder: string
 }
 
-export function createWidgetElSwitch (VxeUI: VxeUIExport) {
-  const getWidgetElSwitchConfig = (params: VxeGlobalRendererHandles.CreateFormDesignWidgetConfigParams): VxeGlobalRendererHandles.CreateFormDesignWidgetConfigObj<WidgetElSwitchFormObjVO> => {
+/**
+ * 表单设计器 - 渲染器
+ */
+export function defineFormDesignRender (VxeUI: VxeUIExport, WangEditorComponent: ComputedOptions) {
+  const getWidgetWangEditorConfig = (params: VxeGlobalRendererHandles.CreateFormDesignWidgetConfigParams): VxeGlobalRendererHandles.CreateFormDesignWidgetConfigObj<WidgetWangEditorFormObjVO> => {
     return {
-      title: '是/否',
-      icon: 'vxe-icon-switch',
+      title: '富文本',
+      icon: 'vxe-icon-rich-text',
       options: {
+        placeholder: '请输入'
       }
     }
   }
 
-  const WidgetElSwitchFormComponent = defineComponent({
+  const WidgetWangEditorFormComponent = defineComponent({
     props: {
       renderOpts: {
         type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewOptions>,
         default: () => ({})
       },
       renderParams: {
-        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewParams<WidgetElSwitchFormObjVO>>,
+        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetFormViewParams<WidgetWangEditorFormObjVO>>,
         default: () => ({})
       }
     },
@@ -31,10 +36,12 @@ export function createWidgetElSwitch (VxeUI: VxeUIExport) {
       const VxeUIFormComponent = VxeUI.getComponent<VxeFormComponent>('VxeForm')
       const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
       const VxeUISwitchComponent = VxeUI.getComponent<VxeSwitchComponent>('VxeSwitch')
+      const VxeUIInputComponent = VxeUI.getComponent<VxeInputComponent>('VxeInput')
 
       return () => {
         const { renderParams } = props
         const { widget } = renderParams
+        const { options } = widget
 
         return h(VxeUIFormComponent, {
           class: 'vxe-form-design--widget-render-form-wrapper',
@@ -42,7 +49,7 @@ export function createWidgetElSwitch (VxeUI: VxeUIExport) {
           span: 24,
           titleBold: true,
           titleOverflow: true,
-          data: widget.options
+          data: options
         }, {
           default () {
             return [
@@ -50,7 +57,7 @@ export function createWidgetElSwitch (VxeUI: VxeUIExport) {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.name')
               }, {
                 default () {
-                  return h(resolveComponent('el-input') as ComponentOptions, {
+                  return h(VxeUIInputComponent, {
                     modelValue: widget.title,
                     'onUpdate:modelValue' (val: any) {
                       widget.title = val
@@ -61,7 +68,7 @@ export function createWidgetElSwitch (VxeUI: VxeUIExport) {
               h(VxeUIFormItemComponent, {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.placeholder'),
                 field: 'placeholder',
-                itemRender: { name: 'ElInput' }
+                itemRender: { name: 'VxeInput' }
               }),
               h(VxeUIFormItemComponent, {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.required')
@@ -82,14 +89,14 @@ export function createWidgetElSwitch (VxeUI: VxeUIExport) {
     }
   })
 
-  const WidgetElSwitchViewComponent = defineComponent({
+  const WidgetWangEditorViewComponent = defineComponent({
     props: {
       renderOpts: {
         type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewOptions>,
         default: () => ({})
       },
       renderParams: {
-        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewParams<WidgetElSwitchFormObjVO>>,
+        type: Object as PropType<VxeGlobalRendererHandles.RenderFormDesignWidgetViewParams<WidgetWangEditorFormObjVO>>,
         default: () => ({})
       }
     },
@@ -109,6 +116,7 @@ export function createWidgetElSwitch (VxeUI: VxeUIExport) {
       return () => {
         const { renderParams } = props
         const { widget, $formView } = renderParams
+        const { options } = widget
 
         return h(VxeUIFormItemComponent, {
           class: ['vxe-form-design--widget-render-form-item'],
@@ -116,8 +124,9 @@ export function createWidgetElSwitch (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('el-switch') as ComponentOptions, {
+            return h(WangEditorComponent, {
               modelValue: $formView ? $formView.getItemValue(widget) : null,
+              placeholder: options.placeholder,
               onChange: changeEvent,
               'onUpdate:modelValue' (val: any) {
                 if ($formView) {
@@ -131,9 +140,15 @@ export function createWidgetElSwitch (VxeUI: VxeUIExport) {
     }
   })
 
-  return {
-    getWidgetElSwitchConfig,
-    WidgetElSwitchFormComponent,
-    WidgetElSwitchViewComponent
-  }
+  VxeUI.renderer.mixin({
+    WangEditorWidget: {
+      createFormDesignWidgetConfig: getWidgetWangEditorConfig,
+      renderFormDesignWidgetView (renderOpts, renderParams) {
+        return h(WidgetWangEditorViewComponent, { renderOpts, renderParams })
+      },
+      renderFormDesignWidgetFormView (renderOpts, renderParams) {
+        return h(WidgetWangEditorFormComponent, { renderOpts, renderParams })
+      }
+    }
+  })
 }

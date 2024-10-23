@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-wangeditor",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Vxe UI plug-in for compatibility with the wangeditor component.",
   "scripts": {
     "lib": "gulp build"
@@ -23,6 +23,7 @@
     "@babel/runtime": "^7.12.5",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
+    "browserify": "^17.0.0",
     "@wangeditor/editor": "5.1.23",
     "del": "^6.0.0",
     "eslint": "^7.13.0",
@@ -50,6 +51,7 @@
     "prettier": "^2.1.2",
     "sass": "^1.55.0",
     "typescript": "^4.6.4",
+    "vinyl-source-stream": "^2.0.0",
     "vue": "^3.4.27",
     "vxe-pc-ui": "^4.2.26",
     "vxe-table": "^4.7.94"
