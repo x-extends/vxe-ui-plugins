@@ -85,20 +85,21 @@ VxeUI.use(VxeUIPluginRenderElement)
 |------|
 | 'ElInputWidget', 'ElTextareaWidget', 'ElNumberInputWidget', 'ElDatePickerWidget', 'ElSelectWidget',  'ElRadioWidget', 'ElCheckboxWidget', 'ElSwitchWidget' |
 
-## Cell demo
+## Table Cell demo
 
 ```html
-<vxe-table
-  height="600"
-  :data="tableData"
-  :edit-config="{trigger: 'click', mode: 'cell'}">
-  <vxe-column field="name" title="Name" :edit-render="{name: 'ElInput'}"></vxe-column>
-  <vxe-column field="age" title="Age" :edit-render="{name: 'ElInputNumber'}"></vxe-column>
-  <vxe-column field="date" title="Date" width="200" :edit-render="{name: 'ElDatePicker'}"></vxe-column>
-</vxe-table>
-```
+<template>
+  <vxe-table
+    height="600"
+    :data="tableData"
+    :edit-config="{trigger: 'click', mode: 'cell'}">
+    <vxe-column field="name" title="Name" :edit-render="{name: 'ElInput'}"></vxe-column>
+    <vxe-column field="age" title="Age" :edit-render="{name: 'ElInputNumber'}"></vxe-column>
+    <vxe-column field="date" title="Date" width="200" :edit-render="{name: 'ElDatePicker'}"></vxe-column>
+  </vxe-table>
+</template>
 
-```javascript
+<script>
 export default {
   data () {
     return {
@@ -110,25 +111,25 @@ export default {
     }
   }
 }
+</script>
 ```
 
-## Filter demo
+## Table Filter demo
 
 ```html
-<vxe-table
-  height="600"
-  :data="tableData">
-  <vxe-column field="name" title="Name":filters="nameOptions" :filter-render="{name: 'ElInput'}"></vxe-column>
-  <vxe-column field="age" title="Age"></vxe-column>
-  <vxe-column field="date" title="Date" ></vxe-column>
-</vxe-table>
-```
+<template>
+  <vxe-table
+    height="600"
+    :data="tableData">
+    <vxe-column field="name" title="Name":filters="nameOptions" :filter-render="{name: 'ElInput'}"></vxe-column>
+    <vxe-column field="age" title="Age"></vxe-column>
+    <vxe-column field="date" title="Date" ></vxe-column>
+  </vxe-table>
+</template>
 
-```javascript
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup () {
+<script>
+export default {
+  data () {
     return {
       nameOptions: [
         { data: '' }
@@ -140,7 +141,8 @@ export default defineComponent({
       ]
     }
   }
-})
+}
+</script>
 ```
 
 ## Contributors

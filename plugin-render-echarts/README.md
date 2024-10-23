@@ -40,24 +40,25 @@ VXETable.use(VxeUIPluginRenderEcharts, {
 | CHART_LINE  | 折线图（如果设置了类别 category 则 series 至少一列，否则 series 至少两列） | {category?: field} |
 | CHART_PIE  | 饼图（如果设置了类别 category 则 series 只需一列，否则 series 需要两列） | {category?: field} |
 
-## Demo
+## Table Demo
 
 ```html
-<vxe-table
-  height="500"
-  :data="tableData"
-  :mouse-config="{ area: true }"
-  :menu-config="menuConfig"
-  :edit-config="{trigger: 'dblclick', mode: 'cell'}">
-  <vxe-column type="seq" width="60"></vxe-column>
-  <vxe-column field="nickname" title="Nickname" :edit-render="{name: 'input'}"></vxe-column>
-  <vxe-column field="sex" title="sex" :edit-render="{name: 'input'}"></vxe-column>
-  <vxe-column field="age" title="Age" :edit-render="{name: 'input'}"></vxe-column>
-  <vxe-column field="rate" title="Rate" :edit-render="{name: 'input'}"></vxe-column>
-</vxe-table>
-```
+<template>
+  <vxe-table
+    height="500"
+    :data="tableData"
+    :mouse-config="{ area: true }"
+    :menu-config="menuConfig"
+    :edit-config="{trigger: 'dblclick', mode: 'cell'}">
+    <vxe-column type="seq" width="60"></vxe-column>
+    <vxe-column field="nickname" title="Nickname" :edit-render="{name: 'input'}"></vxe-column>
+    <vxe-column field="sex" title="sex" :edit-render="{name: 'input'}"></vxe-column>
+    <vxe-column field="age" title="Age" :edit-render="{name: 'input'}"></vxe-column>
+    <vxe-column field="rate" title="Rate" :edit-render="{name: 'input'}"></vxe-column>
+  </vxe-table>
+</template>
 
-```javascript
+<script>
 export default {
   data () {
     return {
@@ -75,6 +76,7 @@ export default {
     }
   }
 }
+</script>
 ```
 
 ## Contributors

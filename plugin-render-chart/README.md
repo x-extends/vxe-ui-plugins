@@ -55,23 +55,24 @@ VxeUI.use(VxeUIPluginRenderChart)
 | label.color | 显示值的颜色 | string | — | — |
 | label.formatter | 显示值的格式（{row, value}） | string | — | — |
 
-## Demo
+## Table Demo
 
 ```html
-<vxe-table
-  border
-  show-overflow
-  height="400"
-  :data="tableData">
-  <vxe-column type="checkbox" width="60"></vxe-column>
-  <vxe-column field="name" width="200"></vxe-column>
-  <vxe-column field="num1" title="Bar" :cell-render="{name: 'bar'}"></vxe-column>
-  <vxe-column field="num2" title="Ring" :cell-render="{name: 'pie'}"></vxe-column>
-  <vxe-column field="num3" title="Rate" :cell-render="{name: 'rate'}"></vxe-column>
-</vxe-table>
-```
+<template>
+  <vxe-table
+    border
+    show-overflow
+    height="400"
+    :data="tableData">
+    <vxe-column type="checkbox" width="60"></vxe-column>
+    <vxe-column field="name" width="200"></vxe-column>
+    <vxe-column field="num1" title="Bar" :cell-render="{name: 'bar'}"></vxe-column>
+    <vxe-column field="num2" title="Ring" :cell-render="{name: 'pie'}"></vxe-column>
+    <vxe-column field="num3" title="Rate" :cell-render="{name: 'rate'}"></vxe-column>
+  </vxe-table>
+</template>
 
-```javascript
+<script>
 export default {
   data () {
     return {
@@ -83,6 +84,7 @@ export default {
     }
   }
 }
+</script>
 ```
 
 ## Contributors

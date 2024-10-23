@@ -39,23 +39,24 @@ VxeUI.use(VxeUIPluginExportPDF, {
 // VxeUI.use(VxeUIPluginExportPDF)
 ```
 
-## Demo
+## Table Demo
 
 ```html
-<vxe-button @click="exportEvent">Export.pdf</vxe-button>
+<template>
+  <vxe-button @click="exportEvent">Export.pdf</vxe-button>
 
-<vxe-table
-  ref="tableRef"
-  :height="600"
-  :data="tableData">
-  <vxe-column type="seq" width="60"></vxe-column>
-  <vxe-column field="name" title="Name"></vxe-column>
-  <vxe-column field="age" title="Age"></vxe-column>
-  <vxe-column field="date" title="Date"></vxe-column>
-</vxe-table>
-```
+  <vxe-table
+    ref="tableRef"
+    :height="600"
+    :data="tableData">
+    <vxe-column type="seq" width="60"></vxe-column>
+    <vxe-column field="name" title="Name"></vxe-column>
+    <vxe-column field="age" title="Age"></vxe-column>
+    <vxe-column field="date" title="Date"></vxe-column>
+  </vxe-table>
+</template>
 
-```javascript
+<script>
 export default {
   data () {
     return {
@@ -76,6 +77,7 @@ export default {
     }
   }
 }
+</script>
 ```
 
 ## Contributors

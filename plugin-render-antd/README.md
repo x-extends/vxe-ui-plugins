@@ -82,7 +82,7 @@ VxeUI.use(VxeUIPluginRenderAntd)
 |------|
 | 'AInputWidget', 'ATextareaWidget', 'ANumberInputWidget', 'ADatePickerWidget', 'ASelectWidget',  'ARadioWidget', 'ACheckboxWidget', 'ASwitchWidget' |
 
-## Cell demo
+## Table Cell demo
 
 ```html
 <vxe-table
@@ -109,16 +109,18 @@ export default {
 }
 ```
 
-## Filter demo
+## Table Filter demo
 
 ```html
-<vxe-table
-  height="600"
-  :data="tableData">
-  <vxe-column field="name" title="Name":filters="nameOptions" :filter-render="{name: 'AInput'}"></vxe-column>
-  <vxe-column field="age" title="Age"></vxe-column>
-  <vxe-column field="date" title="Date" ></vxe-column>
-</vxe-table>
+<template>
+  <vxe-table
+    height="600"
+    :data="tableData">
+    <vxe-column field="name" title="Name":filters="nameOptions" :filter-render="{name: 'AInput'}"></vxe-column>
+    <vxe-column field="age" title="Age"></vxe-column>
+    <vxe-column field="date" title="Date" ></vxe-column>
+  </vxe-table>
+</template>
 ```
 
 ```javascript
