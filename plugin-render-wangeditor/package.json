@@ -1,5 +1,5 @@
 {
-  "name": "@vxe-ui/plugin-wangeditor",
+  "name": "@vxe-ui/plugin-render-wangeditor",
   "version": "4.0.0",
   "description": "Vxe UI plug-in for compatibility with the wangeditor component.",
   "scripts": {
