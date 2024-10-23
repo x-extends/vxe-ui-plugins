@@ -1,8 +1,7 @@
 {
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-, "../plugin-render-wangeditor/src/comp.ts"  ],
+  "files": [
+    "src/index.ts"
+  ],
   "compilerOptions": {
     "strict": true,
     "moduleResolution": "node",

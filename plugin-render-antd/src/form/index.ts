@@ -12,7 +12,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
   }
 
   function getOnName (type: string) {
-    return type
+    return XEUtils.kebabCase(type)
   }
 
   function getModelProp (renderOpts: VxeGlobalRendererHandles.RenderOptions) {

@@ -39,21 +39,22 @@ Support for table and form.
 | URL  | URL地址 | — |
 | PLATE_NUMBER  | 车牌号 | — |
 
-## Demo
+## Table Demo
 
 ```html
-<vxe-table
-  :data="tableData"
-  :edit-config="{trigger: 'click', mode: 'cell'}"
-  :edit-rules="editRules">
-  <vxe-column type="seq" width="60"></vxe-column>
-  <vxe-column field="name" title="Name" :edit-render="{name: 'input'}"></vxe-column>
-  <vxe-column field="mobile" title="Mobile" :edit-render="{name: 'input'}"></vxe-column>
-  <vxe-column field="email" title="Email" :edit-render="{name: 'input'}"></vxe-column>
-</vxe-table>
-```
+<template>
+  <vxe-table
+    :data="tableData"
+    :edit-config="{trigger: 'click', mode: 'cell'}"
+    :edit-rules="editRules">
+    <vxe-column type="seq" width="60"></vxe-column>
+    <vxe-column field="name" title="Name" :edit-render="{name: 'input'}"></vxe-column>
+    <vxe-column field="mobile" title="Mobile" :edit-render="{name: 'input'}"></vxe-column>
+    <vxe-column field="email" title="Email" :edit-render="{name: 'input'}"></vxe-column>
+  </vxe-table>
+</template>
 
-```javascript
+<script>
 export default {
   data () {
     return {
@@ -73,6 +74,7 @@ export default {
     }
   }
 }
+</script>
 ```
 
 ## Contributors
