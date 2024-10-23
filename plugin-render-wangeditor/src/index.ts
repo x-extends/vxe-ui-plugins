@@ -1,4 +1,4 @@
-import { App, h, defineComponent, ref, watch, inject, computed, onMounted, onBeforeUnmount } from 'vue'
+import { App, h, defineComponent, ref, watch, inject, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeFormConstructor, VxeFormPrivateMethods, VxeFormDefines, VxeComponentStyleType } from 'vxe-pc-ui'
@@ -11,6 +11,12 @@ import { defineFormDesignRender } from './form-design'
 let VxeUI: VxeUIExport
 let globalWangEditor: WangEditorExport | undefined
 let globalOptions: VxeUIPluginRenderWangEditorOptions | undefined
+
+interface WangEditorInternalData {
+  weEditor?: IDomEditor
+  weToolbar?: Toolbar
+  isSetModel?: boolean
+}
 
 const WangEditorComponent = defineComponent({
   name: 'WangEditor',
@@ -48,14 +54,10 @@ const WangEditorComponent = defineComponent({
     const refEditorElem = ref<HTMLDivElement>()
     const refToolbarElem = ref<HTMLDivElement>()
 
-    const reactData = {
-      weEditor: null as IDomEditor | null,
-      weToolbar: null as Toolbar | null
-    }
+    const reactData = reactive({
+    })
 
-    const internalData = {
-      isSetModel: false
-    }
+    const internalData: WangEditorInternalData = {}
 
     const computeFormReadonly = computed(() => {
       const { readonly } = props
@@ -92,7 +94,7 @@ const WangEditorComponent = defineComponent({
     })
 
     const getHtml = () => {
-      const { weEditor } = reactData
+      const { weEditor } = internalData
       if (weEditor) {
         if (weEditor.isEmpty()) {
           return ''
@@ -103,7 +105,7 @@ const WangEditorComponent = defineComponent({
     }
 
     const setHtml = (html: string) => {
-      const { weEditor } = reactData
+      const { weEditor } = internalData
       if (weEditor) {
         internalData.isSetModel = true
         weEditor.setHtml(html || '')
@@ -130,7 +132,7 @@ const WangEditorComponent = defineComponent({
         console.error('[plugin-wangeditor 4.x] wangEditor needs to be installed')
         return
       }
-      if (reactData.weEditor || reactData.weToolbar) {
+      if (internalData.weEditor || internalData.weToolbar) {
         return
       }
       if (!editorEl || !toolbarEl) {
@@ -140,7 +142,7 @@ const WangEditorComponent = defineComponent({
       const formReadonly = computeFormReadonly.value
       const isDisabled = computeIsDisabled.value
 
-      const editorConfig: IEditorConfig = {
+      const editorConfig: Partial<IEditorConfig> = {
         placeholder: formReadonly || isDisabled ? '' : props.placeholder,
         readOnly: !!(formReadonly || isDisabled),
         autoFocus: false,
@@ -184,8 +186,7 @@ const WangEditorComponent = defineComponent({
             handleChangeEvent(new Event('keyboard'))
           }
           internalData.isSetModel = false
-        },
-        ...({} as any)
+        }
       }
 
       const weEditor = createEditor({
@@ -194,7 +195,7 @@ const WangEditorComponent = defineComponent({
         config: editorConfig,
         mode: 'default'
       })
-      reactData.weEditor = weEditor
+      internalData.weEditor = weEditor
 
       const toolbarConfig = {
         excludeKeys: [
@@ -203,7 +204,7 @@ const WangEditorComponent = defineComponent({
         ]
       }
 
-      reactData.weToolbar = createToolbar({
+      internalData.weToolbar = createToolbar({
         editor: weEditor,
         selector: toolbarEl,
         config: toolbarConfig,
@@ -213,6 +214,9 @@ const WangEditorComponent = defineComponent({
 
     const $xeWangEditor = {
       xID,
+      reactData,
+      internalData,
+
       getHtml,
       setHtml,
       renderVN () {
@@ -234,7 +238,7 @@ const WangEditorComponent = defineComponent({
     }
 
     watch(() => props.modelValue, (val) => {
-      const { weEditor } = reactData
+      const { weEditor } = internalData
       if (weEditor) {
         setHtml(val || '')
       } else {
@@ -247,14 +251,14 @@ const WangEditorComponent = defineComponent({
     })
 
     onBeforeUnmount(() => {
-      const { weEditor, weToolbar } = reactData
+      const { weEditor, weToolbar } = internalData
       if (weEditor) {
         weEditor.destroy()
-        reactData.weEditor = null
+        internalData.weEditor = undefined
       }
       if (weToolbar) {
         weToolbar.destroy()
-        reactData.weToolbar = null
+        internalData.weToolbar = undefined
       }
     })
 
@@ -276,7 +280,7 @@ export const WangEditor = Object.assign({
 }, WangEditorComponent)
 
 /**
- * 基于 Vxe UI 的扩展插件，支持右键菜单
+ * 基于 Vxe UI 的扩展插件，支持渲染 wangEditor 富文本
  */
 export const VxeUIPluginRenderWangEditor = {
   setConfig: pluginSetup,

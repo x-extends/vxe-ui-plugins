@@ -189,7 +189,9 @@ function handleCurrentRowMove (isDown: boolean) {
     const { $table } = params
     const { props: tableProps } = $table
     const { highlightCurrentRow } = tableProps
-    if (highlightCurrentRow) {
+    const { computeRowOpts } = $table.getComputeMaps()
+    const rowOpts = computeRowOpts.value
+    if (rowOpts.isCurrent || highlightCurrentRow) {
       const currentRow = $table.getCurrentRecord()
       if (currentRow) {
         $table.moveCurrentRow(!isDown, isDown, evnt)
@@ -214,8 +216,8 @@ export const handleFuncs = {
   },
   [FUNC_NANE.TABLE_EDIT_CLOSED] (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: Event) {
     const { $table } = params
-    const { props } = $table
-    const { mouseConfig, editConfig } = props
+    const { props: tableProps } = $table
+    const { mouseConfig, editConfig } = tableProps
     const { computeMouseOpts } = $table.getComputeMaps()
     const mouseOpts = computeMouseOpts.value
     if (editConfig) {

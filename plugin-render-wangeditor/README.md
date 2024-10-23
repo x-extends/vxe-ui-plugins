@@ -18,7 +18,7 @@ npm install @vxe-ui/plugin-render-wangeditor
 import { VxeUI } from 'vxe-pc-ui'
 // Use vxe-table
 // import { VxeUI } from 'vxe-table'
-import VxeUIPluginRenderWangEditor from '@vxe-ui/plugin-render-wangeditor'
+import VxeUIPluginRenderWangEditor, { WangEditor } from '@vxe-ui/plugin-render-wangeditor'
 import '@vxe-ui/plugin-render-wangeditor/dist/style.css'
 import * as wangEditor from '@wangeditor/editor'
 // ...
@@ -47,6 +47,9 @@ VXETable.use(VxeUIPluginRenderWangEditor, {
 //     return { url: '' }
 //   }
 // })
+
+// 可选组件
+app.use(WangEditor)
 ```
 
 ## Form Demo
