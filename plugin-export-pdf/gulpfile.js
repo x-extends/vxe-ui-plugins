@@ -94,4 +94,4 @@ gulp.task('clear_temp', () => {
   ])
 })
 
-gulp.task('build', gulp.series('init', gulp.parallel('build_commonjs', 'build_umd', 'build_style'), 'clear'))
+gulp.task('build', gulp.series('init', gulp.parallel('build_commonjs', 'build_umd', 'build_style'), 'clear_temp'))
