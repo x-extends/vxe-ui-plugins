@@ -53,7 +53,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   const { fonts, beforeMethod } = globalOptions
   const { $table, options, columns, datas } = params
   const { treeConfig, columnOpts, treeOpts } = $table
-  const dX = 7.5
+  const dX = 7
   const dY = 15.8
   const ratio = 3.78
   const pdfWidth = 210
@@ -74,9 +74,9 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
       width
     }
   })
+  const offsetWidth = (colWidth - Math.floor(pdfWidth + dX * 2 * ratio)) / headers.length
   headers.forEach((column) => {
-    const percent = column.width / (colWidth / 100)
-    column.width = pdfWidth * percent / 100
+    column.width = column.width - offsetWidth
   })
   const rowList: any[] = datas.map((row) => {
     const item: any = {}
