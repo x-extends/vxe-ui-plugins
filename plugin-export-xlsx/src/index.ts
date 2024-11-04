@@ -3,15 +3,14 @@ import XEUtils from 'xe-utils'
 import type { VxeUIExport, VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 import type ExcelJS from 'exceljs'
 
-let VxeUI: VxeUIExport
-let globalExcelJS: any
-
 declare module 'vxe-pc-ui' {
   export namespace VxeTableDefines {
     export interface ExtortSheetMethodParams {
       workbook: ExcelJS.Workbook;
       worksheet: ExcelJS.Worksheet;
     }
+  }
+  export namespace VxeTableDefines {
     export interface ColumnInfo {
       _row: any;
       _colSpan: number;
@@ -20,6 +19,9 @@ declare module 'vxe-pc-ui' {
     }
   }
 }
+
+let VxeUI: VxeUIExport
+let globalExcelJS: any
 
 const defaultHeaderBackgroundColor = 'f8f8f9'
 const defaultCellFontColor = '606266'
@@ -303,7 +305,15 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
     }
     // 自定义处理
     if (sheetMethod) {
-      sheetMethod({ options: options, workbook, worksheet: sheet, columns, colgroups, datas, $table })
+      sheetMethod({
+        options: options,
+        workbook,
+        worksheet: sheet,
+        columns,
+        colgroups,
+        datas,
+        $table
+      })
     }
     sheetMerges.forEach(({ s, e }) => {
       sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1)
