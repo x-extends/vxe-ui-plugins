@@ -53,7 +53,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   const { fonts, beforeMethod } = globalOptions
   const { $table, options, columns, datas } = params
   const { treeConfig, columnOpts, treeOpts } = $table
-  const dX = 7
+  const dX = 7.5
   const dY = 15.8
   const ratio = 3.78
   const pdfWidth = 210
