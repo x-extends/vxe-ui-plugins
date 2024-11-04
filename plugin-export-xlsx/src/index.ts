@@ -303,30 +303,41 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         })
       })
     }
-    // 自定义处理
-    if (sheetMethod) {
-      sheetMethod({
-        options: options,
-        workbook,
-        worksheet: sheet,
-        columns,
-        colgroups,
-        datas,
-        $table
+    Promise.resolve(
+      // 自定义处理
+      sheetMethod
+        ? sheetMethod({
+          options: options,
+          workbook,
+          worksheet: sheet,
+          columns,
+          colgroups,
+          datas,
+          $table
+        })
+        : null
+    ).then(() => {
+      sheetMerges.forEach(({ s, e }) => {
+        sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1)
       })
-    }
-    sheetMerges.forEach(({ s, e }) => {
-      sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1)
-    })
-    workbook.xlsx.writeBuffer().then(buffer => {
-      const blob = new Blob([buffer], { type: 'application/octet-stream' })
-      // 导出 xlsx
-      downloadFile(params, blob, options)
+      workbook.xlsx.writeBuffer().then(buffer => {
+        const blob = new Blob([buffer], { type: 'application/octet-stream' })
+        // 导出 xlsx
+        downloadFile(params, blob, options)
+        if (showMsg && modal) {
+          modal.close(msgKey)
+          modal.message({
+            content: getI18n('vxe.table.expSuccess'),
+            status: 'success'
+          })
+        }
+      })
+    }).catch(() => {
       if (showMsg && modal) {
         modal.close(msgKey)
         modal.message({
-          content: getI18n('vxe.table.expSuccess'),
-          status: 'success'
+          content: getI18n('vxe.table.expError'),
+          status: 'error'
         })
       }
     })
