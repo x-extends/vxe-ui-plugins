@@ -74,9 +74,9 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
       width
     }
   })
-  const offsetWidth = (colWidth - Math.floor(pdfWidth + dX * 2 * ratio)) / headers.length
   headers.forEach((column) => {
-    column.width = column.width - offsetWidth
+    const percent = column.width / (colWidth / 100)
+    column.width = pdfWidth * percent / 100
   })
   const rowList: any[] = datas.map((row) => {
     const item: any = {}
