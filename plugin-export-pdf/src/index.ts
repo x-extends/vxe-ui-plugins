@@ -57,7 +57,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   const { computeColumnOpts, computeTreeOpts } = $table.getComputeMaps()
   const treeOpts = computeTreeOpts.value
   const columnOpts = computeColumnOpts.value
-  const dX = 7
+  const dX = 7.5
   const dY = 15.8
   const ratio = 3.78
   const pdfWidth = 210

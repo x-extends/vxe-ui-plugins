@@ -82,10 +82,16 @@ gulp.task('build_umd', function () {
     .pipe(gulp.dest('dist'))
 })
 
-gulp.task('clear', () => {
+gulp.task('init', () => {
+  return del([
+    'dist'
+  ])
+})
+
+gulp.task('clear_temp', () => {
   return del([
     'dist/depend.*'
   ])
 })
 
-gulp.task('build', gulp.series(gulp.parallel('build_commonjs', 'build_umd', 'build_style'), 'clear'))
+gulp.task('build', gulp.series('init', gulp.parallel('build_commonjs', 'build_umd', 'build_style'), 'clear_temp'))
