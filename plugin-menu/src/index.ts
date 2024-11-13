@@ -382,6 +382,32 @@ export const VxeUIPluginMenu = {
         }
       },
       /**
+       * 清除区域选择范围内数据的值
+       */
+      CLEAR_AREA_ROW: {
+        menuMethod (params) {
+          const { $table, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (mouseConfig && mouseOpts.area) {
+            const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
+            cellAreas.forEach(areaItem => {
+              const { rows, cols } = areaItem
+              rows.forEach(row => {
+                cols.forEach(column => {
+                  $table.clearData(row)
+                })
+              })
+            })
+          } else {
+            if (row && column) {
+              $table.clearData(row)
+            }
+          }
+        }
+      },
+      /**
        * 清除所有数据的值
        */
       CLEAR_ALL: {
@@ -708,15 +734,21 @@ export const VxeUIPluginMenu = {
        */
       DELETE_AREA_ROW: {
         menuMethod (params) {
-          const { $table } = params
+          const { $table, row } = params
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
-          return cellAreas.forEach(areaItem => {
-            const { rows } = areaItem
-            $table.remove(rows)
-          })
+          if (mouseConfig && mouseOpts.area) {
+            const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
+            cellAreas.forEach(areaItem => {
+              const { rows } = areaItem
+              $table.remove(rows)
+            })
+          } else {
+            if (row) {
+              $table.remove(row)
+            }
+          }
         }
       },
       /**
