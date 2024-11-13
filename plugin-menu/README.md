@@ -33,6 +33,7 @@ VxeUI.use(VxeUIPluginMenu)
 | CLEAR_CELL | 清除单元格数据的值；如果启用 mouse-config.area 功能，则清除区域范围内的单元格数据 | — |
 | CLEAR_ROW  | 清除行数据的值 | — |
 | CLEAR_CHECKBOX_ROW  | 清除复选框选中行数据的值 | — |
+| CLEAR_AREA_ROW  |  如果启用 mouse-config.area 功能，清除区域选择范围内数据的值，否则清除行数据的值 | — |
 | CLEAR_ALL  | 清除所有数据的值 | — |
 | REVERT_CELL  | 还原单元格数据的值；如果启用 mouse-config.area 功能，则还原区域范围内的单元格数据 | — |
 | REVERT_ROW  | 还原行数据的值 | — |
@@ -52,7 +53,7 @@ VxeUI.use(VxeUIPluginMenu)
 | INSERT_AT_ROW | 插入数据到指定位置 | records |
 | INSERT_AT_EDIT_ROW | 插入数据到指定位置并激活编辑状态 | Array\<records, field\> |
 | DELETE_ROW | 移除行数据 | — |
-| DELETE_AREA_ROW | 如果启用 mouse-config.area 功能，移除所选区域行数据 | — |
+| DELETE_AREA_ROW | 如果启用 mouse-config.area 功能，移除所选区域行数据；否则删除当前行 | — |
 | DELETE_CHECKBOX_ROW  | 移除复选框选中行数据 | — |
 | DELETE_ALL | 移除所有行数据 | — |
 | CLEAR_SORT | 清除所选列排序条件 | — |
