@@ -1,0 +1,82 @@
+$vxe-table-validate-error-color: #f56c6c;
+
+%ResetBorder {
+  border: 0;
+  box-shadow: none;
+}
+
+%CompWidth {
+  & > .ivu-input-wrapper,
+  & > .ivu-input-number,
+  & > .ivu-select,
+  & > .ivu-cascader,
+  & > .ivu-date-picker,
+  & > .ivu-date-picker-editor {
+    width: 100%;
+  }
+}
+.vxe-form {
+  .vxe-form--item-content {
+    @extend %CompWidth;
+  }
+}
+.vxe-table--filter-iview-wrapper {
+  padding: 0.8em 1em;
+  & > .ivu-input-wrapper,
+  & > .ivu-input-number,
+  & > .ivu-select,
+  & > .ivu-date-picker,
+  & > .ivu-rate {
+    width: 180px;
+  }
+}
+.vxe-cell,
+.vxe-tree-cell {
+  @extend %CompWidth;
+  & > .ivu-rate {
+    height: 22px;
+    line-height: 22px;
+    vertical-align: bottom;
+  }
+}
+.col--valid-error {
+  & > .vxe-cell,
+  & > .vxe-tree-cell {
+    & > .ivu-input-wrapper .ivu-input,
+    & > .ivu-auto-complete .ivu-input,
+    & > .ivu-input-number,
+    & > .ivu-select .ivu-select-selection,
+    & > .ivu-cascader .ivu-input,
+    & > .ivu-date-picker .ivu-input {
+      border-color: $vxe-table-validate-error-color;
+      box-shadow: none;
+    }
+  }
+}
+.vxe-table.cell--highlight,
+.vxe-table.c--highlight {
+  .vxe-cell,
+  .vxe-tree-cell {
+    & > .ivu-input-wrapper,
+    & > .ivu-auto-complete,
+    & > .ivu-cascader,
+    & > .ivu-date-picker {
+      .ivu-input {
+        padding: 0;
+        @extend %ResetBorder;
+      }
+    }
+    & > .ivu-input-number {
+      @extend %ResetBorder;
+      .ivu-input-number-handler-wrap,
+      .ivu-input-number-handler-down {
+        @extend %ResetBorder;
+      }
+    }
+    & > .ivu-select {
+      .ivu-select-selection {
+        @extend %ResetBorder;
+      }
+    }
+  }
+}

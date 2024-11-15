@@ -1,15 +1,14 @@
 {
-  "name": "@vxe-ui/plugin-shortcut-key",
+  "name": "@vxe-ui/plugin-render-iview",
   "version": "3.0.0",
-  "description": "Vxe UI plug-in, settings that provide shortcuts for keyboard operations.",
+  "description": "Vxe UI plug-in for compatibility with the iview, view-design component.",
   "scripts": {
     "lib": "gulp build"
   },
   "files": [
     "types",
     "dist",
-    "*.ts",
-    "*.d.ts"
+    "src"
   ],
   "main": "dist/index.common.js",
   "unpkg": "dist/index.umd.js",
@@ -23,6 +22,7 @@
     "@babel/runtime": "^7.12.5",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
+    "browserify": "^17.0.0",
     "del": "^6.0.0",
     "eslint": "^7.13.0",
     "eslint-config-prettier": "^6.15.0",
@@ -49,6 +49,7 @@
     "prettier": "^2.1.2",
     "sass": "^1.55.0",
     "typescript": "^4.6.4",
+    "vinyl-source-stream": "^2.0.0",
     "vue": "^2.6.14",
     "vxe-pc-ui": "^3.2.24",
     "vxe-table": "^3.10.16"
