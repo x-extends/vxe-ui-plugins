@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-iview",
-  "version": "4.0.7",
+  "version": "4.0.0",
   "description": "Vxe UI plug-in for compatibility with the view-ui-plus component.",
   "scripts": {
     "lib": "gulp build"
