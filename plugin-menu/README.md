@@ -43,6 +43,7 @@ VxeUI.use(VxeUIPluginMenu)
 | MERGE_CELL | 如果启用 mouse-config.area 功能，临时合并区域范围内的单元格，不管是否存在已合并 | — |
 | CLEAR_MERGE_CELL | 如果启用 mouse-config.area 功能，清除区域范围内单元格的临时合并状态 | — |
 | CLEAR_ALL_MERGE | 清除所有单元格及表尾的临时合并状态 | — |
+| COPY_TITLE | 复制列头标题 | — |
 | COPY_CELL | 复制单元格数据的值；如果启用 mouse-config.area 功能，则复制区域范围内的单元格数据，支持 Excel 和 WPS | — |
 | CUT_CELL | 剪贴单元格数据的值；如果启用 mouse-config.area 功能，则剪贴区域范围内的单元格数据，支持 Excel 和 WPS | — |
 | PASTE_CELL | （仅支持在单表区域内操作）粘贴从表格中被复制的数据；如果启用 mouse-config.area 功能，则粘贴区域范围内的单元格数据，不支持读取剪贴板 | — |

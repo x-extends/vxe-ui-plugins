@@ -169,7 +169,7 @@ function handleClearMergeCells (params: VxeGlobalMenusHandles.TableMenuMethodPar
 
 function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines.MenuChildOption, params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams) {
   const { code } = item
-  const { $table, row, column } = params
+  const { $table, row, column, type } = params
   const tableProps = $table
   const { editConfig, mouseConfig } = tableProps
   switch (code) {
@@ -192,6 +192,10 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     case 'CLEAR_MERGE_CELL': {
       const beenMerges = getBeenMerges(params)
       item.disabled = !beenMerges.length
+      break
+    }
+    case 'COPY_TITLE': {
+      item.disabled = !column || type !== 'header'
       break
     }
     case 'EDIT_CELL':
@@ -471,6 +475,23 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table } = params
           $table.revertData()
+        }
+      },
+      /**
+       * 复制列头标题
+       */
+      COPY_TITLE: {
+        menuMethod (params) {
+          const { column } = params
+          const text = column.getTitle()
+          if (text) {
+          // 开始复制操作
+            if (XEUtils.isFunction(handleCopy)) {
+              handleCopy(text)
+            } else {
+              copyText(text)
+            }
+          }
         }
       },
       /**
