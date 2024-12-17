@@ -53,7 +53,7 @@
     "sass": "^1.55.0",
     "typescript": "^4.6.4",
     "vue": "^2.6.14",
-    "vxe-pc-ui": "^3.3.38",
+    "vxe-pc-ui": "^3.3.39",
     "vxe-table": "^3.11.29"
   },
   "repository": {

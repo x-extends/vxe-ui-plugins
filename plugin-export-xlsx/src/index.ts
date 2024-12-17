@@ -21,10 +21,10 @@ declare module 'vxe-pc-ui' {
   }
 }
 
-const defaultHeaderBackgroundColor = 'f8f8f9'
-const defaultCellFontColor = '606266'
+const defaultHeaderBackgroundColor = 'f2f2f2'
+const defaultCellFontColor = '000000'
 const defaultCellBorderStyle = 'thin'
-const defaultCellBorderColor = 'e8eaec'
+const defaultCellBorderColor = 'e0e0e0'
 
 function getCellLabel (column: VxeTableDefines.ColumnInfo, cellValue: any) {
   if (cellValue) {
@@ -74,7 +74,7 @@ function getValidColumn (column: VxeTableDefines.ColumnInfo): VxeTableDefines.Co
 
 function setExcelRowHeight (excelRow: ExcelJS.Row, height: number) {
   if (height) {
-    excelRow.height = XEUtils.floor(height * 0.75, 12)
+    excelRow.height = height
   }
 }
 
@@ -85,6 +85,36 @@ function setExcelCellStyle (excelCell: ExcelJS.Cell, align?: VxeTablePropTypes.A
   excelCell.alignment = {
     vertical: 'middle',
     horizontal: align || 'left'
+  }
+}
+
+function settExcelCellFormat (excelCell: ExcelJS.Cell, column: VxeTableDefines.ColumnInfo) {
+  const { getConfig, getI18n } = VxeUI
+  const { cellType } = column
+  if (cellType !== 'string') {
+    const renderOpts = column.editRender || column.cellRender
+    if (renderOpts) {
+      const { name, props = {} } = renderOpts
+      switch (name) {
+        case 'VxeNumberInput': {
+          const { type } = props
+          const numberInputConfig = getConfig().numberInput || {}
+          if (type === 'float') {
+            const digits = props.digits || numberInputConfig.digits || 1
+            excelCell.numFmt = `'##0.${XEUtils.padEnd('0', digits, '0')}`
+          } else if (type === 'amount') {
+            const digits = props.digits || numberInputConfig.digits || 2
+            excelCell.numFmt = `'##0.${XEUtils.padEnd('0', digits, '0')}`
+            const showCurrency = props.showCurrency
+            if (XEUtils.isBoolean(showCurrency) ? showCurrency : numberInputConfig.showCurrency) {
+              const currencySymbol = props.currencySymbol || numberInputConfig.currencySymbol || getI18n('vxe.numberInput.currencySymbol') || ''
+              excelCell.numFmt = `"${currencySymbol}"#,##0.${XEUtils.padEnd('0', digits, '0')};[Red]\\-"${currencySymbol}"#,##0.${XEUtils.padEnd('0', digits, '0')}`
+            }
+          }
+          break
+        }
+      }
+    }
   }
 }
 
@@ -263,6 +293,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         if (column) {
           const { align } = column
           setExcelCellStyle(excelCell, align || allAlign)
+          settExcelCellFormat(excelCell, column)
           if (useStyle) {
             Object.assign(excelCell, {
               font: {
@@ -287,6 +318,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           if (column) {
             const { footerAlign, align } = column
             setExcelCellStyle(excelCell, footerAlign || align || allFooterAlign || allAlign)
+            settExcelCellFormat(excelCell, column)
             if (useStyle) {
               Object.assign(excelCell, {
                 font: {
