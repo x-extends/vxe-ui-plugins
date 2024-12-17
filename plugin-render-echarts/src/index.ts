@@ -32,6 +32,15 @@ function createChartModal (getOptions: (params: VxeGlobalMenusHandles.TableMenuM
       }
       _chartModals.push(cmItem)
       if (VxeUI.modal) {
+        let modalTitle = menu.name
+        const customTitle = menu.params ? menu.params.title : ''
+        if (customTitle) {
+          if (XEUtils.isFunction(customTitle)) {
+            modalTitle = customTitle(params)
+          } else {
+            modalTitle = `${customTitle}`
+          }
+        }
         VxeUI.modal.open({
           id: cmItem.id,
           resize: true,
@@ -42,7 +51,7 @@ function createChartModal (getOptions: (params: VxeGlobalMenusHandles.TableMenuM
           minWidth: 500,
           height: 400,
           minHeight: 300,
-          title: menu.name,
+          title: modalTitle,
           showZoom: true,
           className: 'vxe-table--ignore-areas-clear vxe-table--charts',
           slots: {
