@@ -65,14 +65,22 @@ function createChartModal (getOptions: (params: VxeGlobalMenusHandles.TableMenuM
             hide (evntParams) {
               const { $modal } = evntParams
               XEUtils.remove(_chartModals, item => item.id === $modal.id)
-              if (cmItem.$chart) {
-                cmItem.$chart.dispose()
+              const { $chart } = cmItem
+              if ($chart) {
+                $chart.dispose()
                 cmItem.$chart = null
               }
             },
             zoom () {
-              if (cmItem.$chart) {
-                cmItem.$chart.resize()
+              const { $chart } = cmItem
+              if ($chart) {
+                $chart.resize()
+              }
+            },
+            resize () {
+              const { $chart } = cmItem
+              if ($chart) {
+                $chart.resize()
               }
             }
           }
