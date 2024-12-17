@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-chart",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Vxe UI plug-in, support for rendering simple charts.",
   "scripts": {
     "lib": "gulp build"
