@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
-import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines } from 'vxe-table'
+import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, TableReactData } from 'vxe-table'
 import type ExcelJS from 'exceljs'
 
 let VxeUI: VxeUIExport
@@ -26,6 +26,13 @@ const defaultHeaderBackgroundColor = 'f2f2f2'
 const defaultCellFontColor = '000000'
 const defaultCellBorderStyle = 'thin'
 const defaultCellBorderColor = 'e0e0e0'
+
+const defaultFontSizeMaps: Record<string, number> = {
+  default: 14,
+  medium: 14,
+  small: 13,
+  mini: 12
+}
 
 function getCellLabel (column: VxeTableDefines.ColumnInfo, cellValue: any) {
   if (cellValue) {
@@ -75,7 +82,7 @@ function getValidColumn (column: VxeTableDefines.ColumnInfo): VxeTableDefines.Co
 
 function setExcelRowHeight (excelRow: ExcelJS.Row, height: number) {
   if (height) {
-    excelRow.height = XEUtils.floor(height * 1.3, 2)
+    excelRow.height = XEUtils.floor(height * 1.13, 2)
   }
 }
 
@@ -152,14 +159,16 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const msgKey = 'xlsx'
   const { modal, getI18n } = VxeUI
   const { $table, options, columns, colgroups, datas } = params
-  const { columnOpts } = $table
   const tableProps = $table
-  const tableReactData = $table.reactData || $table
+  const tableReactData = $table as unknown as TableReactData
   const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = tableProps
   const { rowHeight } = tableReactData
   const { message, sheetName, isHeader, isFooter, isMerge, isColgroup, original, useStyle, sheetMethod } = options
+  const vSize = $table.computeSize
+  const columnOpts = $table.computeColumnOpts
   const showMsg = message !== false
   const mergeCells = $table.getMergeCells()
+  const fontSize = defaultFontSizeMaps[vSize || ''] || 14
   const colList: any[] = []
   const footList: any[] = []
   const sheetCols: any[] = []
@@ -169,7 +178,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
     const { id, renderWidth } = column
     sheetCols.push({
       key: id,
-      width: XEUtils.ceil(renderWidth / 8, 1)
+      width: XEUtils.ceil(renderWidth / 7.4, 1)
     })
   })
   // 处理表头
@@ -267,6 +276,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
             Object.assign(excelCell, {
               font: {
                 bold: true,
+                size: fontSize,
                 color: {
                   argb: defaultCellFontColor
                 }
@@ -298,6 +308,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           if (useStyle) {
             Object.assign(excelCell, {
               font: {
+                size: fontSize,
                 color: {
                   argb: defaultCellFontColor
                 }
@@ -323,6 +334,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
             if (useStyle) {
               Object.assign(excelCell, {
                 font: {
+                  size: fontSize,
                   color: {
                     argb: defaultCellFontColor
                   }
