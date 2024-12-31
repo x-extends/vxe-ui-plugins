@@ -6,6 +6,7 @@
   "compilerOptions": {
     "strict": true,
     "moduleResolution": "node",
+    "skipLibCheck": false,
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "target": "esnext",
