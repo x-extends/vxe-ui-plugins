@@ -1,12 +1,13 @@
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
+import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines } from 'vxe-table'
 import type ExcelJS from 'exceljs'
 
 let VxeUI: VxeUIExport
 let globalExcelJS: any
 
-declare module 'vxe-pc-ui' {
+declare module 'vxe-table' {
   export namespace VxeTableDefines {
     export interface ExtortSheetMethodParams {
       workbook: ExcelJS.Workbook;
