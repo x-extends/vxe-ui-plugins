@@ -34,9 +34,16 @@ const defaultFontSizeMaps: Record<string, number> = {
   mini: 12
 }
 
-function getCellLabel (column: VxeTableDefines.ColumnInfo, cellValue: any) {
+function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.ColumnInfo, cellValue: any) {
   if (cellValue) {
     if (column.type === 'seq') {
+      const tableProps = $xeTable
+      const { treeConfig } = tableProps
+      if (!treeConfig) {
+        if (!isNaN(cellValue)) {
+          return Number(cellValue)
+        }
+      }
       return XEUtils.toValueString(cellValue)
     }
     switch (column.cellType) {
@@ -66,9 +73,9 @@ function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTy
   const _columnIndex = $xeTable.getVTColumnIndex(column)
   // 兼容老模式
   if (XEUtils.isArray(row)) {
-    return getCellLabel(column, row[_columnIndex])
+    return getCellLabel($xeTable, column, row[_columnIndex])
   }
-  return getCellLabel(column, XEUtils.get(row, column.field))
+  return getCellLabel($xeTable, column, XEUtils.get(row, column.field))
 }
 
 function getValidColumn (column: VxeTableDefines.ColumnInfo): VxeTableDefines.ColumnInfo {
@@ -229,7 +236,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const rowList = datas.map(item => {
     const rest: any = {}
     columns.forEach((column) => {
-      rest[column.id] = getCellLabel(column, item[column.id])
+      rest[column.id] = getCellLabel($table, column, item[column.id])
     })
     return rest
   })
