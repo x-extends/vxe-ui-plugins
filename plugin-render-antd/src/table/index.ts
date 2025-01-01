@@ -62,7 +62,8 @@ export function defineTableRender (VxeUI: VxeUIExport, componentProvider?: Compo
   }
 
   function getCellEditFilterProps (renderOpts: any, params: VxeGlobalRendererHandles.RenderEditParams | VxeGlobalRendererHandles.RenderFilterParams, value: any, defaultProps?: { [prop: string]: any }) {
-    return XEUtils.assign({}, defaultProps, renderOpts.props, { [getModelProp(renderOpts)]: value })
+    const props = XEUtils.isFunction(renderOpts.props) ? renderOpts.props(params) : renderOpts.props
+    return XEUtils.assign({}, defaultProps, props, { [getModelProp(renderOpts)]: value })
   }
 
   function formatText (cellValue: any) {
