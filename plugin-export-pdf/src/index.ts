@@ -1,12 +1,13 @@
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
+import type { VxeUIExport } from 'vxe-pc-ui'
+import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, VxeGlobalInterceptorHandles } from 'vxe-table'
 import type jsPDF from 'jspdf'
 
 let VxeUI: VxeUIExport
 let globalJsPDF: any
 
-declare module 'vxe-pc-ui' {
+declare module 'vxe-table' {
   export namespace VxeTablePropTypes {
     export interface ExportConfig {
       fontName?: string;
@@ -192,7 +193,7 @@ export const VxeUIPluginExportPDF = {
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-export-pdf 4.x] Version 4.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     globalJsPDF = options ? options.jsPDF : null

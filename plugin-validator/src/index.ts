@@ -1,5 +1,5 @@
-import type { VxeUIExport } from 'vxe-pc-ui'
-import type { VxeTableDefines, VxeFormDefines, VxeGlobalValidatorsHandles } from 'vxe-table'
+import type { VxeUIExport, VxeFormDefines } from 'vxe-pc-ui'
+import type { VxeTableDefines, VxeGlobalValidatorsHandles } from 'vxe-table'
 
 let VxeUI: VxeUIExport
 
@@ -31,7 +31,7 @@ export const VxeUIPluginValidator = {
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-validator 4.x] Version 4.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     VxeUI.validators.mixin({

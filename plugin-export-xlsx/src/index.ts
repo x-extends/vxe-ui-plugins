@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
-import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines } from 'vxe-table'
+import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, VxeTablePrivateMethods } from 'vxe-table'
 import type ExcelJS from 'exceljs'
 
 declare module 'vxe-table' {
@@ -164,10 +164,10 @@ function getDefaultBorderStyle () {
   }
 }
 
-function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
+function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   const msgKey = 'xlsx'
   const { modal, getI18n } = VxeUI
-  const { $table, options, columns, colgroups, datas } = params
+  const { $table, $grid, options, columns, colgroups, datas } = params
   const tableProps = $table.props
   const tableReactData = $table.reactData
   const { computeSize, computeColumnOpts } = $table.getComputeMaps()
@@ -366,6 +366,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           columns,
           colgroups,
           datas,
+          $grid,
           $table
         })
         : null
@@ -527,7 +528,7 @@ function handleImportEvent (params: VxeGlobalInterceptorHandles.InterceptorImpor
   }
 }
 
-function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
+function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   if (params.options.type === 'xlsx') {
     exportXLSX(params)
     return false
@@ -542,7 +543,7 @@ export const VxeUIPluginExportXLSX = {
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-export-xlsx 4.x] Version 4.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     globalExcelJS = options ? options.ExcelJS : null

@@ -15,6 +15,9 @@ const pack = require('./package.json')
 const tsconfig = require('./tsconfig.json')
 
 const exportModuleName = 'VxeUIPluginMenu'
+const pluginName = pack.name
+const tableVersion = '4.7.0'
+const pluginUrl = 'https://vxeui.com/other4/#/plugin-export-xlsx/install'
 
 gulp.task('build_style', function () {
   return gulp.src('style.scss')
@@ -34,6 +37,9 @@ gulp.task('build_style', function () {
 
 gulp.task('build_commonjs', function () {
   return gulp.src(['src/index.ts'])
+    .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
+    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
+    .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
     // .pipe(sourcemaps.init())
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
@@ -49,6 +55,9 @@ gulp.task('build_commonjs', function () {
 
 gulp.task('build_umd', function () {
   return gulp.src(['src/index.ts'])
+    .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
+    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
+    .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
       moduleId: pack.name,

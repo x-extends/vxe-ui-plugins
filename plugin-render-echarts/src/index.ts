@@ -1,7 +1,8 @@
 import { h } from 'vue'
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeTableDefines, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles } from 'vxe-table'
+import type { VxeUIExport, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles } from 'vxe-pc-ui'
+import type { VxeTableDefines } from 'vxe-table'
 
 let VxeUI: VxeUIExport
 let globalEcharts: any
@@ -387,7 +388,7 @@ export const VxeUIPluginRenderEcharts = {
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-antd 4.x] Version 4.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     VxeUI.interceptor.add('unmounted', handleBeforeDestroyEvent)

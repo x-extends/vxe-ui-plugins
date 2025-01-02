@@ -2,7 +2,8 @@ import { h, resolveComponent, ComponentOptions } from 'vue'
 import XEUtils from 'xe-utils'
 import dayjs from 'dayjs'
 
-import type { VxeUIExport, VxeTableDefines, VxeColumnPropTypes, VxeGlobalRendererHandles } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
+import type { VxeTableDefines, VxeColumnPropTypes } from 'vxe-table'
 
 /**
  * 表格 - 渲染器

@@ -48,7 +48,7 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
   }) {
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-antd 4.x] Version 4.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     defineTableRender(VxeUI)

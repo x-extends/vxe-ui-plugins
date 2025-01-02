@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 
 import type { VxePagerInstance, PagerPrivateMethods } from 'vxe-pc-ui'
-import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-table'
+import type { VxeUIExport, VxeGlobalInterceptorHandles, VxeTableConstructor, VxeTablePrivateMethods } from 'vxe-table'
 import type { ShortcutKeyConf, VxeUIPluginShortcutKeyOptions, ShortcutKeySettingConfig } from '../types'
 
 let VxeUI: VxeUIExport
@@ -93,7 +93,7 @@ export class SKey {
     this.kConf = kConf
   }
 
-  [SKEY_NANE.TRIGGER] (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: any) {
+  [SKEY_NANE.TRIGGER] (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: any) {
     if (!this.specialKey || evnt[`${this.specialKey}Key`]) {
       if (this.funcName && handleFuncs[this.funcName]) {
         return handleFuncs[this.funcName](params, evnt)
@@ -150,7 +150,7 @@ function handleChangePage (func: 'handlePrevPage' | 'handleNextPage' | 'handlePr
 }
 
 function handleCellTabMove (isLeft: boolean) {
-  return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: Event) {
+  return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
     const { $table } = params
     const targetParams = $table.getActiveRecord() || $table.getSelectedCell()
     if (targetParams) {
@@ -161,7 +161,7 @@ function handleCellTabMove (isLeft: boolean) {
 }
 
 function handleCellEnterMove (isTop: boolean) {
-  return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: Event) {
+  return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
     const { $table } = params
     const targetParams = $table.getActiveRecord() || $table.getSelectedCell()
     if (targetParams) {
@@ -172,7 +172,7 @@ function handleCellEnterMove (isTop: boolean) {
 }
 
 function handleCellMove (arrowIndex: number) {
-  return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: Event) {
+  return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
     const { $table } = params
     const selecteParams = $table.getSelectedCell()
     const arrows: number[] = [0, 0, 0, 0]
@@ -185,7 +185,7 @@ function handleCellMove (arrowIndex: number) {
 }
 
 function handleCurrentRowMove (isDown: boolean) {
-  return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: Event) {
+  return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
     const { $table } = params
     const { props: tableProps } = $table
     const { highlightCurrentRow } = tableProps
@@ -248,7 +248,7 @@ export const handleFuncs = {
   [FUNC_NANE.PAGER_NEXT_JUMP]: handleChangePage('handleNextJump')
 }
 
-function runEvent (key: string, maps: any, prop: SKEY_NANE, params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: Event) {
+function runEvent (key: string, maps: any, prop: SKEY_NANE, params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
   const skeyList: SKey[] = maps[key.toLowerCase()]
   if (skeyList) {
     return !skeyList.some((skey: SKey) => skey[prop](params, evnt) === false)
@@ -338,7 +338,7 @@ export const VXETablePluginShortcutKey = {
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-menu 4.x] Version 4.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     if (options) {

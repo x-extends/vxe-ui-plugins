@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-export-pdf",
-  "version": "4.0.8",
+  "version": "4.0.9",
   "description": "Vxe UI plug-in supports pdf file export.",
   "scripts": {
     "lib": "gulp build"
@@ -23,6 +23,7 @@
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/runtime": "^7.12.5",
+    "@types/node": "20.10.0",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
     "del": "^6.0.0",
@@ -52,7 +53,7 @@
     "prettier": "^2.1.2",
     "sass": "^1.55.0",
     "typescript": "~4.7.4",
-    "vue": "~3.4.27",
+    "vue": "3.4.27",
     "vxe-pc-ui": "^4.3.54",
     "vxe-table": "^4.10.0"
   },
