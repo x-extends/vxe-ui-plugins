@@ -273,7 +273,7 @@ function parseKeys (key: string): parseKeyRest {
     }
   })
   if (!realKey || keys.length > 2 || (keys.length === 2 && !specialKey)) {
-    throw new Error(`[vxe-table-plugin-shortcut-key] Invalid shortcut key configuration '${key}'.`)
+    throw new Error(`[VUE_APP_VXE_PLUGIN_VERSION] Invalid shortcut key configuration '${key}'.`)
   }
   return { realKey, specialKey }
 }
@@ -285,7 +285,7 @@ function setKeyQueue (maps: KeyStoreMaps, kConf: ShortcutKeyConf, funcName?: FUN
     skeyList = maps[realKey] = []
   }
   if (skeyList.some((skey) => skey.realKey === realKey && skey.specialKey === specialKey)) {
-    throw new Error(`[vxe-table-plugin-shortcut-key] Shortcut key conflict '${kConf.key}'.`)
+    throw new Error(`[VUE_APP_VXE_PLUGIN_VERSION] Shortcut key conflict '${kConf.key}'.`)
   }
   skeyList.push(new SKey(realKey, specialKey, funcName, kConf))
 }
@@ -301,7 +301,7 @@ function parseSettingKey (options: VxeUIPluginShortcutKeyOptions) {
   XEUtils.each(options.setting, (opts: string | ShortcutKeySettingConfig, funcName: any) => {
     const kConf: any = XEUtils.isString(opts) ? { key: opts } : opts
     if (!handleFuncs[funcName as FUNC_NANE]) {
-      console.error(`[vxe-table-plugin-shortcut-key] '${funcName}' not exist.`)
+      console.error(`[VUE_APP_VXE_PLUGIN_VERSION] '${funcName}' not exist.`)
     }
     setKeyQueue(settingMaps, kConf, funcName)
   })
@@ -310,7 +310,7 @@ function parseSettingKey (options: VxeUIPluginShortcutKeyOptions) {
 function parseListenerKey (options: VxeUIPluginShortcutKeyOptions) {
   XEUtils.each(options.tableListener, (callback: Function, key: string) => {
     if (!XEUtils.isFunction(callback)) {
-      console.error(`[vxe-table-plugin-shortcut-key] '${key}' requires the callback function to be set.`)
+      console.error(`[VUE_APP_VXE_PLUGIN_VERSION] '${key}' requires the callback function to be set.`)
     }
     setKeyQueue(listenerMaps, { key, callback })
   })

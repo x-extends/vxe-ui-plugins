@@ -129,7 +129,7 @@ const WangEditorComponent = defineComponent({
       const editorEl = refEditorElem.value
       const toolbarEl = refToolbarElem.value
       if (!createEditor || !createToolbar) {
-        console.error('[plugin-wangeditor 4.x] wangEditor needs to be installed')
+        console.error('[VUE_APP_VXE_PLUGIN_VERSION] wangEditor needs to be installed')
         return
       }
       if (internalData.weEditor || internalData.weToolbar) {
