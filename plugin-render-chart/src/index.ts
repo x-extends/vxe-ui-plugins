@@ -256,7 +256,7 @@ export const VxeUIPluginRenderChart = {
 
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-chart 3.x] Version 3.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     VxeUI.renderer.mixin({

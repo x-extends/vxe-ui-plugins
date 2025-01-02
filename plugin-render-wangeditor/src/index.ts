@@ -168,7 +168,7 @@ const WangEditorComponent = defineVxeComponent({
       const editorEl = $xeWangEditor.$refs.refEditorElem as HTMLDivElement
       const toolbarEl = $xeWangEditor.$refs.refToolbarElem as HTMLDivElement
       if (!createEditor || !createToolbar) {
-        console.error('[plugin-wangeditor 3.x] wangEditor needs to be installed')
+        console.error('[VUE_APP_VXE_PLUGIN_VERSION] wangEditor needs to be installed')
         return
       }
       if (internalData.weEditor || internalData.weToolbar) {
@@ -335,7 +335,7 @@ export const VxeUIPluginRenderWangEditor = {
 
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-wangeditor 3.x] Version 3.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     pluginSetup(options)

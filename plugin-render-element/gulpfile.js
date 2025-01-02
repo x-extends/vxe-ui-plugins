@@ -17,6 +17,9 @@ const pack = require('./package.json')
 const tsconfig = require('./tsconfig.json')
 
 const exportModuleName = 'VxeUIPluginRenderElement'
+const pluginName = pack.name
+const tableVersion = '3.9.0'
+const pluginUrl = 'https://vxeui.com/other3/#/plugin-export-xlsx/install'
 
 gulp.task('build_style', function () {
   return gulp.src('style.scss')
@@ -36,6 +39,9 @@ gulp.task('build_style', function () {
 
 gulp.task('build_ts', function () {
   return gulp.src(['src/**/*.ts'])
+    .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
+    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
+    .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
       presets: ['@babel/env']
@@ -66,6 +72,9 @@ gulp.task('browserify_common', function () {
 
 gulp.task('build_umd', gulp.series('browserify_common', function () {
   return gulp.src(['dist/all.common.js'])
+    .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
+    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
+    .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
     .pipe(babel({
       moduleId: pack.name,
       presets: [

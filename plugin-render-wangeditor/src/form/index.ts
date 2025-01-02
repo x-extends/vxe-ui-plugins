@@ -1,4 +1,4 @@
-import { CreateElement, ComponentOptionsBase } from 'vue'
+import { CreateElement } from 'vue'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
@@ -6,7 +6,7 @@ import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
 /**
  * 表单 - 渲染器
  */
-export function defineFormRender (VxeUI: VxeUIExport, WangEditorComponent: ComponentOptionsBase<any, any, any, any, any, any, any, any, any, any>) {
+export function defineFormRender (VxeUI: VxeUIExport, WangEditorComponent: any) {
   function getOnName (type: string) {
     return XEUtils.kebabCase(type)
   }

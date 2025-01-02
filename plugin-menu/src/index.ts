@@ -83,7 +83,7 @@ function copyText (content: string | number): boolean {
   return result
 }
 
-function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams, isCut?: boolean) {
+function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, isCut?: boolean) {
   const { $event, $table, row, column } = params
   if (row && column) {
     const props = $table
@@ -112,7 +112,7 @@ function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams, i
   }
 }
 
-function checkCellOverlay (params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams, cellAreas: VxeTableProDefines.MouseCellArea[]) {
+function checkCellOverlay (params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, cellAreas: VxeTableProDefines.MouseCellArea[]) {
   const { $table } = params
   const { visibleData } = $table.getTableData()
   const { visibleColumn } = $table.getTableColumn()
@@ -137,7 +137,7 @@ function checkCellOverlay (params: VxeGlobalInterceptorHandles.InterceptorShowMe
   return true
 }
 
-function getBeenMerges (params: VxeGlobalMenusHandles.TableMenuMethodParams | VxeGlobalInterceptorHandles.InterceptorShowMenuParams) {
+function getBeenMerges (params: (VxeGlobalMenusHandles.TableMenuMethodParams | VxeGlobalInterceptorHandles.InterceptorShowMenuParams) & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   const { $table } = params
   const tableProps = $table
   const { mouseConfig } = tableProps
@@ -158,7 +158,7 @@ function getBeenMerges (params: VxeGlobalMenusHandles.TableMenuMethodParams | Vx
   })
 }
 
-function handleClearMergeCells (params: VxeGlobalMenusHandles.TableMenuMethodParams) {
+function handleClearMergeCells (params: VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   const { $table } = params
   const beenMerges = getBeenMerges(params)
   if (beenMerges.length) {
@@ -167,7 +167,7 @@ function handleClearMergeCells (params: VxeGlobalMenusHandles.TableMenuMethodPar
   return beenMerges
 }
 
-function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines.MenuChildOption, params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams) {
+function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines.MenuChildOption, params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   const { code } = item
   const { $table, row, column, type } = params
   const tableProps = $table
@@ -304,7 +304,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
   }
 }
 
-function handlePrivilegeEvent (params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams) {
+function handlePrivilegeEvent (params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   params.options.forEach((list) => {
     list.forEach((item) => {
       checkPrivilege(item, params)
@@ -331,7 +331,7 @@ export const VxeUIPluginMenu = {
 
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-menu 3.x] Version 3.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     pluginSetup(options)
@@ -499,7 +499,7 @@ export const VxeUIPluginMenu = {
        */
       COPY_CELL: {
         menuMethod (params) {
-          handleCopyOrCut(params)
+          handleCopyOrCut(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods })
         }
       },
       /**
@@ -507,7 +507,7 @@ export const VxeUIPluginMenu = {
        */
       CUT_CELL: {
         menuMethod (params) {
-          handleCopyOrCut(params, true)
+          handleCopyOrCut(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, true)
         }
       },
       /**
@@ -515,7 +515,7 @@ export const VxeUIPluginMenu = {
        */
       PASTE_CELL: {
         menuMethod (params) {
-          const { $event, $table, row, column } = params
+          const { $event, $table, row, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
@@ -537,7 +537,7 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $event, $table } = params
           const cellAreas = $table.getCellAreas()
-          const beenMerges = getBeenMerges(params)
+          const beenMerges = getBeenMerges(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods })
           let status = false
           if (beenMerges.length) {
             $table.removeMergeCells(beenMerges)
@@ -567,7 +567,7 @@ export const VxeUIPluginMenu = {
           const { visibleData } = $table.getTableData()
           const { visibleColumn } = $table.getTableColumn()
           const cellAreas = $table.getCellAreas()
-          handleClearMergeCells(params)
+          handleClearMergeCells(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods })
           if (cellAreas.some(({ rows, cols }) => rows.length === visibleData.length || cols.length === visibleColumn.length)) {
             if (VxeUI.modal) {
               VxeUI.modal.message({ content: VxeUI.getI18n('vxe.pro.area.mergeErr'), status: 'error', id: 'operErr' })
@@ -594,7 +594,7 @@ export const VxeUIPluginMenu = {
       CLEAR_MERGE_CELL: {
         menuMethod (params) {
           const { $event, $table } = params
-          const beenMerges = handleClearMergeCells(params)
+          const beenMerges = handleClearMergeCells(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods })
           if (beenMerges.length) {
             $table.dispatchEvent('clear-cell-area-merge', { mergeCells: beenMerges }, $event)
           }
@@ -795,7 +795,7 @@ export const VxeUIPluginMenu = {
        */
       CLEAR_SORT: {
         menuMethod (params) {
-          const { $event, $table, column } = params
+          const { $event, $table, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           if (column) {
             $table.triggerSortEvent($event, column, null)
           }
@@ -819,7 +819,7 @@ export const VxeUIPluginMenu = {
        */
       SORT_ASC: {
         menuMethod (params) {
-          const { $event, $table, column } = params
+          const { $event, $table, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           if (column) {
             $table.triggerSortEvent($event, column, 'asc')
           }
@@ -830,7 +830,7 @@ export const VxeUIPluginMenu = {
        */
       SORT_DESC: {
         menuMethod (params) {
-          const { $event, $table, column } = params
+          const { $event, $table, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           if (column) {
             $table.triggerSortEvent($event, column, 'desc')
           }
@@ -841,7 +841,7 @@ export const VxeUIPluginMenu = {
        */
       CLEAR_FILTER: {
         menuMethod (params) {
-          const { $event, $table, column } = params
+          const { $event, $table, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           if (column) {
             $table.handleClearFilter(column)
             $table.confirmFilterEvent($event)
@@ -933,7 +933,7 @@ export const VxeUIPluginMenu = {
        */
       OPEN_FIND: {
         menuMethod (params) {
-          const { $event, $table } = params
+          const { $event, $table } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           $table.triggerFNROpenEvent($event, 'find')
         }
       },
@@ -942,7 +942,7 @@ export const VxeUIPluginMenu = {
        */
       OPEN_REPLACE: {
         menuMethod (params) {
-          const { $event, $table } = params
+          const { $event, $table } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           $table.triggerFNROpenEvent($event, 'replace')
         }
       },

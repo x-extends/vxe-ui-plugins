@@ -1,4 +1,3 @@
-import { h } from 'vue'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeTableDefines, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles } from 'vxe-table'
@@ -48,7 +47,7 @@ function createChartModal (getOptions: (params: VxeGlobalMenusHandles.TableMenuM
           showZoom: true,
           className: 'vxe-table--ignore-areas-clear vxe-table--charts',
           slots: {
-            default () {
+            default (params, h) {
               return [
                 h('div', {
                   class: 'vxe-ui-plugin-render-echarts'
@@ -380,7 +379,7 @@ export const VxeUIPluginRenderEcharts = {
 
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-render-echarts 3.x] Version 3.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     VxeUI.interceptor.add('unmounted', handleBeforeDestroyEvent)

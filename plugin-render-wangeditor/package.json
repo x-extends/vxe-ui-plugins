@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-wangeditor",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Vxe UI plug-in for compatibility with the wangeditor component.",
   "scripts": {
     "lib": "gulp build"
@@ -52,7 +52,7 @@
     "sass": "^1.55.0",
     "typescript": "^4.6.4",
     "vinyl-source-stream": "^2.0.0",
-    "vue": "~2.6.14",
+    "vue": "2.6.14",
     "vxe-pc-ui": "^3.3.58",
     "vxe-table": "^3.12.0"
   },

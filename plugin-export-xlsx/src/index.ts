@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
-import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, TableReactData } from 'vxe-table'
+import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, TableReactData, VxeTablePrivateMethods } from 'vxe-table'
 import type ExcelJS from 'exceljs'
 
 let VxeUI: VxeUIExport
@@ -162,10 +162,10 @@ function getDefaultBorderStyle () {
   }
 }
 
-function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
+function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   const msgKey = 'xlsx'
   const { modal, getI18n } = VxeUI
-  const { $table, options, columns, colgroups, datas } = params
+  const { $table, $grid, options, columns, colgroups, datas } = params
   const tableProps = $table
   const tableReactData = $table as unknown as TableReactData
   const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = tableProps
@@ -363,6 +363,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           columns,
           colgroups,
           datas,
+          $grid,
           $table
         })
         : null
@@ -524,7 +525,7 @@ function handleImportEvent (params: VxeGlobalInterceptorHandles.InterceptorImpor
   }
 }
 
-function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
+function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   if (params.options.type === 'xlsx') {
     exportXLSX(params)
     return false
@@ -539,7 +540,7 @@ export const VxeUIPluginExportXLSX = {
 
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
-      console.error('[plugin-export-xlsx 3.x] Version 3.x is required')
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
     globalExcelJS = options ? options.ExcelJS : null
