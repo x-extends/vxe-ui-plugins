@@ -657,15 +657,6 @@ export const VxeUIPluginMenu = {
         }
       },
       /**
-       * 插入数据到下一行
-       */
-      INSERT_NEXT_ROW: {
-        menuMethod (params) {
-          const { $table, menu } = params
-          $table.insert(menu.params)
-        }
-      },
-      /**
        * 插入数据并激活编辑状态
        * @deprecated
        */

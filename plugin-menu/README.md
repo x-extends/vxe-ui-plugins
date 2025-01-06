@@ -50,7 +50,6 @@ VxeUI.use(VxeUIPluginMenu)
 | EDIT_CELL | 编辑选中单元格 | — |
 | EDIT_ROW | 编辑选中行并激活选中单元格 | — |
 | INSERT_ROW | 插入数据 | records |
-| INSERT_NEXT_ROW | 插入数据 | records |
 | INSERT_EDIT_ROW | 插入数据并激活编辑状态 | Array\<records, field\> |
 | INSERT_AT_ROW | 插入数据到指定位置 | records |
 | INSERT_NEXT_AT_ROW | 插入数据到指定位置 | records |
