@@ -657,6 +657,15 @@ export const VxeUIPluginMenu = {
         }
       },
       /**
+       * 插入数据到下一行
+       */
+      INSERT_NEXT_ROW: {
+        menuMethod (params) {
+          const { $table, menu } = params
+          $table.insert(menu.params)
+        }
+      },
+      /**
        * 插入数据并激活编辑状态
        * @deprecated
        */
@@ -706,6 +715,17 @@ export const VxeUIPluginMenu = {
         }
       },
       /**
+       * 插入数据到指定位置
+       */
+      INSERT_NEXT_AT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row } = params
+          if (row) {
+            $table.insertNextAt(menu.params, row)
+          }
+        }
+      },
+      /**
        * 插入数据到指定位置并激活编辑状态
        */
       INSERT_AT_ACTIVED_ROW: {
@@ -734,6 +754,26 @@ export const VxeUIPluginMenu = {
           if (row) {
             const args: any[] = menu.params || [] // [{}, 'field']
             $table.insertAt(args[0], row)
+              .then(({ row }) => {
+                if ($table.setEditCell) {
+                  $table.setEditCell(row, args[1] || column)
+                } else {
+                // 兼容老版本
+                  $table.setActiveCell(row, args[1] || column.field)
+                }
+              })
+          }
+        }
+      },
+      /**
+       * 插入数据到指定位置并激活编辑状态
+       */
+      INSERT_NEXT_AT_EDIT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          if (row) {
+            const args: any[] = menu.params || [] // [{}, 'field']
+            $table.insertNextAt(args[0], row)
               .then(({ row }) => {
                 if ($table.setEditCell) {
                   $table.setEditCell(row, args[1] || column)
