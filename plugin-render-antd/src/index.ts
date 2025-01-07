@@ -1,3 +1,5 @@
+import type { ComponentProvider } from '../types'
+
 import { defineTableRender } from './table'
 import { defineFormRender } from './form'
 import { defineFormDesignRender } from './form-design'
@@ -44,14 +46,15 @@ function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearF
 
 export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
   install (VxeUI, options?: {
-    Antd?: any
+    Antd?: any,
+    componentProvider?: ComponentProvider
   }) {
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
       console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
-    defineTableRender(VxeUI)
+    defineTableRender(VxeUI, options?.componentProvider)
     defineFormRender(VxeUI)
     defineFormDesignRender(VxeUI)
 
