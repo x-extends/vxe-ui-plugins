@@ -2,6 +2,7 @@ import { defineTableRender } from './table'
 import { defineFormRender } from './form'
 
 import type { VxeUIPluginObject, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
+import type { VxeUIPluginRenderAntdOptions } from '../types'
 
 /**
  * 检查触发源是否属于目标节点
@@ -20,34 +21,35 @@ function getEventTargetNode (evnt: any, container: HTMLElement, className: strin
   return { flag: false }
 }
 
-/**
- * 事件兼容性处理
- */
-function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearFilterParams | VxeGlobalInterceptorHandles.InterceptorClearEditParams | VxeGlobalInterceptorHandles.InterceptorClearAreasParams) {
-  const { $event } = params
-  const bodyElem = document.body
-  if (
-    // 下拉框
-    getEventTargetNode($event, bodyElem, 'ant-select-dropdown').flag ||
-    // 级联
-    getEventTargetNode($event, bodyElem, 'ant-cascader-menus').flag ||
-    // 日期
-    getEventTargetNode($event, bodyElem, 'ant-picker-dropdown').flag ||
-    getEventTargetNode($event, bodyElem, 'ant-calendar-picker-container').flag ||
-    // 时间选择
-    getEventTargetNode($event, bodyElem, 'ant-time-picker-panel').flag
-  ) {
-    return false
-  }
-}
-
 export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
-  install (VxeUI, options?: {
-    Antd?: any
-  }) {
+  install (VxeUI, options?: VxeUIPluginRenderAntdOptions) {
+    const pluginOpts = Object.assign({ prefixCls: 'ant-' }, options)
+
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
       console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
+    }
+
+    /**
+      * 事件兼容性处理
+      */
+    const handleClearEvent = (params: VxeGlobalInterceptorHandles.InterceptorClearFilterParams | VxeGlobalInterceptorHandles.InterceptorClearEditParams | VxeGlobalInterceptorHandles.InterceptorClearAreasParams) => {
+      const { $event } = params
+      const bodyElem = document.body
+      const { prefixCls } = pluginOpts
+      if (
+        // 下拉框
+        getEventTargetNode($event, bodyElem, `${prefixCls}select-dropdown`).flag ||
+        // 级联
+        getEventTargetNode($event, bodyElem, `${prefixCls}cascader-menus`).flag ||
+        // 日期
+        getEventTargetNode($event, bodyElem, `${prefixCls}picker-dropdown`).flag ||
+        getEventTargetNode($event, bodyElem, `${prefixCls}calendar-picker-container`).flag ||
+        // 时间选择
+        getEventTargetNode($event, bodyElem, `${prefixCls}time-picker-panel`).flag
+      ) {
+        return false
+      }
     }
 
     defineTableRender(VxeUI)
