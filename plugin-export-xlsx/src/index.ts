@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
-import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, TableReactData, VxeTablePrivateMethods } from 'vxe-table'
+import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, TableReactData, TableInternalData, VxeTablePrivateMethods } from 'vxe-table'
 import type ExcelJS from 'exceljs'
 
 let VxeUI: VxeUIExport
@@ -436,8 +436,9 @@ function checkImportData (tableFields: string[], fields: string[]) {
 function importError (params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
   const { modal, t } = VxeUI
   const { $table, options } = params
-  const { internalData } = $table
-  const { _importReject } = internalData
+  const tableInternalData = $table as unknown as TableInternalData
+
+  const { _importReject } = tableInternalData
   const showMsg = options.message !== false
   if (showMsg && modal) {
     modal.message({ content: t('vxe.error.impFields'), status: 'error' })
@@ -450,8 +451,9 @@ function importError (params: VxeGlobalInterceptorHandles.InterceptorImportParam
 function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
   const { modal, getI18n } = VxeUI
   const { $table, columns, options, file } = params
-  const { internalData } = $table
-  const { _importResolve } = internalData
+  const tableInternalData = $table as unknown as TableInternalData
+
+  const { _importResolve } = tableInternalData
   const showMsg = options.message !== false
   const fileReader = new FileReader()
   fileReader.onerror = () => {
