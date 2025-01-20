@@ -23,7 +23,7 @@ function getEventTargetNode (evnt: any, container: HTMLElement, className: strin
 
 export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
   install (VxeUI, options?: VxeUIPluginRenderAntdOptions) {
-    const pluginOpts = Object.assign({ prefixCls: 'ant-' }, options)
+    const pluginOpts = Object.assign({ prefixCls: 'ant' }, options)
 
     // 检查版本
     if (!/^(3)\./.test(VxeUI.uiVersion)) {
@@ -36,17 +36,17 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
     const handleClearEvent = (params: VxeGlobalInterceptorHandles.InterceptorClearFilterParams | VxeGlobalInterceptorHandles.InterceptorClearEditParams | VxeGlobalInterceptorHandles.InterceptorClearAreasParams) => {
       const { $event } = params
       const bodyElem = document.body
-      const { prefixCls } = pluginOpts
+      const prefixCls = `${pluginOpts.prefixCls || ''}`.replace(/-$/, '')
       if (
         // 下拉框
-        getEventTargetNode($event, bodyElem, `${prefixCls}select-dropdown`).flag ||
+        getEventTargetNode($event, bodyElem, `${prefixCls}-select-dropdown`).flag ||
         // 级联
-        getEventTargetNode($event, bodyElem, `${prefixCls}cascader-menus`).flag ||
+        getEventTargetNode($event, bodyElem, `${prefixCls}-cascader-menus`).flag ||
         // 日期
-        getEventTargetNode($event, bodyElem, `${prefixCls}picker-dropdown`).flag ||
-        getEventTargetNode($event, bodyElem, `${prefixCls}calendar-picker-container`).flag ||
+        getEventTargetNode($event, bodyElem, `${prefixCls}-picker-dropdown`).flag ||
+        getEventTargetNode($event, bodyElem, `${prefixCls}-calendar-picker-container`).flag ||
         // 时间选择
-        getEventTargetNode($event, bodyElem, `${prefixCls}time-picker-panel`).flag
+        getEventTargetNode($event, bodyElem, `${prefixCls}-time-picker-panel`).flag
       ) {
         return false
       }
