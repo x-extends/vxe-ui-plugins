@@ -439,8 +439,9 @@ function checkImportData (tableFields: string[], fields: string[]) {
 function importError (params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
   const { modal, t } = VxeUI
   const { $table, options } = params
-  const { internalData } = $table
-  const { _importReject } = internalData
+  const tableInternalData = $table.internalData
+
+  const { _importReject } = tableInternalData
   const showMsg = options.message !== false
   if (showMsg && modal) {
     modal.message({ content: t('vxe.error.impFields'), status: 'error' })
@@ -453,8 +454,9 @@ function importError (params: VxeGlobalInterceptorHandles.InterceptorImportParam
 function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
   const { modal, getI18n } = VxeUI
   const { $table, columns, options, file } = params
-  const { internalData } = $table
-  const { _importResolve } = internalData
+  const tableInternalData = $table.internalData
+
+  const { _importResolve } = tableInternalData
   const showMsg = options.message !== false
   const fileReader = new FileReader()
   fileReader.onerror = () => {
