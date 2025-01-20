@@ -182,7 +182,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
  */
   function getEventTargetNode (evnt: any, container: HTMLElement, className: string) {
     let targetElem
-    let target = evnt.target
+    let target = evnt.composedPath?.()?.[0] || evnt.target
     while (target && target.nodeType && target !== document) {
       if (className && target.className && target.className.split && target.className.split(' ').indexOf(className) > -1) {
         targetElem = target
