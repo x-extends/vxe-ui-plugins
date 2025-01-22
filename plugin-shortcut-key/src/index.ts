@@ -120,6 +120,14 @@ const settingMaps: KeyStoreMaps = {}
 const listenerMaps: KeyStoreMaps = {}
 const disabledMaps: KeyStoreMaps = {}
 
+function getEventTarget (evnt: Event) {
+  const target = evnt.target as HTMLElement | null
+  if (target && (target as any).shadowRoot && evnt.composed) {
+    return evnt.composedPath()[0] as HTMLElement || target
+  }
+  return target
+}
+
 function getEventKey (key: string): string {
   if (arrowKeys.indexOf(key.toLowerCase()) > -1) {
     return `Arrow${key}`
@@ -138,7 +146,8 @@ function handleChangePage (func: 'handlePrevPage' | 'handleNextPage' | 'handlePr
     const { mouseConfig } = tableProps
     const { computeMouseOpts } = $table.getComputeMaps()
     const mouseOpts = computeMouseOpts.value
-    if ($grid && mouseConfig && mouseOpts.selected !== true && ['input', 'textarea'].indexOf(evnt.target.tagName.toLowerCase()) === -1 && isTriggerPage(params)) {
+    const targetEl = getEventTarget(evnt)
+    if ($grid && mouseConfig && mouseOpts.selected !== true && targetEl && targetEl.tagName && ['input', 'textarea'].indexOf(targetEl.tagName.toLowerCase()) === -1 && isTriggerPage(params)) {
       const { refPager } = $grid.getRefMaps()
       const $pager = refPager.value as VxePagerInstance & PagerPrivateMethods
       if ($pager) {

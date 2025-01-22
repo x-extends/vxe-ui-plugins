@@ -175,8 +175,8 @@ export function useWidgetPropDataSource (VxeUI: VxeUIExport, props: {
       h('input', {
         class: 'vxe-default-input',
         value: item.value,
-        onInput (evnt: InputEvent & { target: HTMLInputElement }) {
-          item.value = evnt.target.value
+        onInput (evnt: InputEvent & { currentTarget: HTMLInputElement }) {
+          item.value = evnt.currentTarget.value
         }
       }),
       h(VxeUIButtonComponent, {

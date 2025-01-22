@@ -7,19 +7,28 @@ import type { VxeUIPluginObject, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 // eslint-disable-next-line no-unused-vars
 let ElementPlus: any
 
+function getEventTarget (evnt: Event) {
+  const target = evnt.target as HTMLElement | null
+  if (target && (target as any).shadowRoot && evnt.composed) {
+    return evnt.composedPath()[0] as HTMLElement || target
+  }
+  return target
+}
+
 /**
  * 检查触发源是否属于目标节点
  */
 function getEventTargetNode (evnt: any, container: HTMLElement, className: string) {
   let targetElem
-  let target = evnt.composedPath?.()?.[0] || evnt.target
-  while (target && target.nodeType && target !== document) {
+  let target = getEventTarget(evnt)
+  const rootEl = document.documentElement || document.querySelector('html')
+  while (target && target.nodeType && target !== rootEl) {
     if (className && target.className && target.className.split && target.className.split(' ').indexOf(className) > -1) {
       targetElem = target
     } else if (target === container) {
       return { flag: className ? !!targetElem : true, container, targetElem: targetElem }
     }
-    target = target.parentNode
+    target = target.parentElement
   }
   return { flag: false }
 }

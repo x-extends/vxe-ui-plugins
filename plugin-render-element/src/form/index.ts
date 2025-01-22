@@ -1,7 +1,7 @@
 import { h, resolveComponent, ComponentOptions } from 'vue'
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeGlobalRendererHandles, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
 
 /**
  * 表单 - 渲染器
@@ -177,47 +177,6 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     }
   }
 
-  /**
- * 检查触发源是否属于目标节点
- */
-  function getEventTargetNode (evnt: any, container: HTMLElement, className: string) {
-    let targetElem
-    let target = evnt.composedPath?.()?.[0] || evnt.target
-    while (target && target.nodeType && target !== document) {
-      if (className && target.className && target.className.split && target.className.split(' ').indexOf(className) > -1) {
-        targetElem = target
-      } else if (target === container) {
-        return { flag: className ? !!targetElem : true, container, targetElem: targetElem }
-      }
-      target = target.parentNode
-    }
-    return { flag: false }
-  }
-
-  /**
- * 事件兼容性处理
- */
-  function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearFilterParams | VxeGlobalInterceptorHandles.InterceptorClearEditParams | VxeGlobalInterceptorHandles.InterceptorClearAreasParams) {
-    const { $event } = params
-    const bodyElem = document.body
-    if (
-    // 远程搜索
-      getEventTargetNode($event, bodyElem, 'el-autocomplete-suggestion').flag ||
-    // 下拉框
-    getEventTargetNode($event, bodyElem, 'el-select-dropdown').flag ||
-    // 级联
-    getEventTargetNode($event, bodyElem, 'el-cascader__dropdown').flag ||
-    getEventTargetNode($event, bodyElem, 'el-cascader-menus').flag ||
-    // 日期
-    getEventTargetNode($event, bodyElem, 'el-time-panel').flag ||
-    getEventTargetNode($event, bodyElem, 'el-picker-panel').flag ||
-    // 颜色
-    getEventTargetNode($event, bodyElem, 'el-color-dropdown').flag
-    ) {
-      return false
-    }
-  }
-
   VxeUI.renderer.mixin({
     ElAutocomplete: {
       renderFormItemContent: createFormItemRender()
@@ -360,10 +319,4 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       renderFormItemContent: defaultButtonsItemRender
     }
   })
-
-  VxeUI.interceptor.add('event.clearFilter', handleClearEvent)
-  VxeUI.interceptor.add('event.clearEdit', handleClearEvent)
-  VxeUI.interceptor.add('event.clearAreas', handleClearEvent)
-  // 兼容老版本
-  VxeUI.interceptor.add('event.clearActived', handleClearEvent)
 }
