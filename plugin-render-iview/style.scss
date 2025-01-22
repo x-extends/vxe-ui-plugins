@@ -30,15 +30,27 @@ $vxe-table-validate-error-color: #f56c6c;
     width: 180px;
   }
 }
-.vxe-cell,
-.vxe-tree-cell {
-  @extend %CompWidth;
-  & > .ivu-rate {
-    height: 22px;
-    line-height: 22px;
-    vertical-align: bottom;
+
+.vxe-table {
+  .vxe-cell,
+  .vxe-tree-cell {
+    @extend %CompWidth;
+    & > .ivu-rate {
+      height: 22px;
+      line-height: 22px;
+      vertical-align: bottom;
+    }
+  }
+  .vxe-cell--wrapper {
+    @extend %CompWidth;
+    & > .ivu-rate {
+      height: 22px;
+      line-height: 22px;
+      vertical-align: bottom;
+    }
   }
 }
+
 .col--valid-error {
   & > .vxe-cell,
   & > .vxe-tree-cell {
@@ -56,7 +68,8 @@ $vxe-table-validate-error-color: #f56c6c;
 .vxe-table.cell--highlight,
 .vxe-table.c--highlight {
   .vxe-cell,
-  .vxe-tree-cell {
+  .vxe-tree-cell,
+  .vxe-cell--wrapper  {
     & > .ivu-input-wrapper,
     & > .ivu-auto-complete,
     & > .ivu-cascader,

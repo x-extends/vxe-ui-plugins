@@ -33,13 +33,24 @@ $vxe-table-validate-error-color: #f56c6c;
     width: 180px;
   }
 }
-.vxe-cell,
-.vxe-tree-cell {
-  @extend %CompWidth;
-  & > .ant-rate {
-    vertical-align: bottom;
-    .anticon-star {
-      display: block;
+.vxe-table {
+  .vxe-cell,
+  .vxe-tree-cell {
+    @extend %CompWidth;
+    & > .ant-rate {
+      vertical-align: bottom;
+      .anticon-star {
+        display: block;
+      }
+    }
+  }
+  .vxe-cell--wrapper {
+    @extend %CompWidth;
+    & > .ant-rate {
+      vertical-align: bottom;
+      .anticon-star {
+        display: block;
+      }
     }
   }
 }
@@ -59,7 +70,8 @@ $vxe-table-validate-error-color: #f56c6c;
 }
 .vxe-table.cell--highlight {
   .vxe-cell,
-  .vxe-tree-cell {
+  .vxe-tree-cell,
+  .vxe-cell--wrapper  {
     & > .ant-input,
     & > .ant-input-number {
       padding: 0;
