@@ -34,6 +34,9 @@ const defaultFontSizeMaps: Record<string, number> = {
   mini: 12
 }
 
+const httpPromiseMaps: Record<string, Promise<any>> = {}
+const httpBufferMaps: Record<string, ArrayBuffer> = {}
+
 function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.ColumnInfo, cellValue: any) {
   if (cellValue) {
     if (column.type === 'seq') {
@@ -103,30 +106,120 @@ function setExcelCellStyle (excelCell: ExcelJS.Cell, align?: VxeTablePropTypes.A
   }
 }
 
-function settExcelCellFormat (excelCell: ExcelJS.Cell, column: VxeTableDefines.ColumnInfo) {
+function getImgType (name: string) {
+  const index = name.lastIndexOf('.')
+  let ext = ''
+  if (index > 0) {
+    ext = name.substring(index + 1).toLowerCase()
+  }
+  return (ext as 'png' | 'jpeg' | 'gif') || 'png'
+}
+
+function getExcelCellCurrencySymbol (currencySymbol: string) {
+  if (currencySymbol === '$') {
+    return '$'
+  }
+  if (currencySymbol === '¥' || currencySymbol === '￥') {
+    return '¥'
+  }
+  return currencySymbol
+}
+
+function getExcelCellNumberValSymbol (digits: number) {
+  return `0.${XEUtils.padEnd('0', digits, '0')}`
+}
+
+function getExcelCellNumberColorSymbol (showNegativeStatus: boolean | undefined) {
+  if (showNegativeStatus) {
+    return '[Red]'
+  }
+  return ''
+}
+
+function settExcelCellFormat (workbook: ExcelJS.Workbook, worksheet: ExcelJS.Worksheet, excelCell: ExcelJS.Cell, column: VxeTableDefines.ColumnInfo, excelRow: ExcelJS.Row, row: any) {
   const { getConfig, getI18n } = VxeUI
-  const { cellType } = column
+  const { cellType, cellRender, editRender } = column
   if (cellType !== 'string') {
-    const renderOpts = column.editRender || column.cellRender
+    const renderOpts = editRender || cellRender
     if (renderOpts) {
-      const { name, props = {} } = renderOpts
-      switch (name) {
-        case 'VxeNumberInput': {
-          const { type } = props
-          const numberInputConfig = getConfig().numberInput || {}
-          if (type === 'float') {
-            const digits = props.digits || numberInputConfig.digits || 1
-            excelCell.numFmt = `'##0.${XEUtils.padEnd('0', digits, '0')}`
-          } else if (type === 'amount') {
-            const digits = props.digits || numberInputConfig.digits || 2
-            excelCell.numFmt = `'##0.${XEUtils.padEnd('0', digits, '0')}`
-            const showCurrency = props.showCurrency
-            if (XEUtils.isBoolean(showCurrency) ? showCurrency : numberInputConfig.showCurrency) {
-              const currencySymbol = props.currencySymbol || numberInputConfig.currencySymbol || getI18n('vxe.numberInput.currencySymbol') || ''
-              excelCell.numFmt = `"${currencySymbol}"#,##0.${XEUtils.padEnd('0', digits, '0')};[Red]\\-"${currencySymbol}"#,##0.${XEUtils.padEnd('0', digits, '0')}`
-            }
+      const { name, props = {}, showNegativeStatus } = renderOpts
+      if (name === 'VxeNumberInput' || name === 'FormatNumberInput') {
+        const { type, digits } = props
+        const numberInputConfig = getConfig().numberInput || {}
+        if (type === 'amount') {
+          const numDigits = digits || numberInputConfig.digits || 2
+          const numSymbol = getExcelCellNumberValSymbol(numDigits)
+          excelCell.numFmt = `##${numSymbol};${getExcelCellNumberColorSymbol(showNegativeStatus)}\\-##${numSymbol}`
+          const showCurrency = props.showCurrency
+          if (XEUtils.isBoolean(showCurrency) ? showCurrency : numberInputConfig.showCurrency) {
+            const currencySymbol = getExcelCellCurrencySymbol(props.currencySymbol || numberInputConfig.currencySymbol || getI18n('vxe.numberInput.currencySymbol') || '')
+            excelCell.numFmt = `"${currencySymbol}"#,##${numSymbol};${getExcelCellNumberColorSymbol(showNegativeStatus)}-"${currencySymbol}"#,##${numSymbol}`
           }
-          break
+        } else {
+          const numDigits = digits || (type === 'float' ? numberInputConfig.digits : 2) || 1
+          const numSymbol = getExcelCellNumberValSymbol(numDigits)
+          excelCell.numFmt = `##${numSymbol};${getExcelCellNumberColorSymbol(showNegativeStatus)}\\-##${numSymbol}`
+        }
+      } else if (renderOpts.name === 'VxeImage' || renderOpts.name === 'VxeImageGroup') {
+        const { width, height } = (renderOpts.name === 'VxeImage' ? props : props.imageStyle) || {}
+        const cellValue = XEUtils.get(row, column.field)
+        if (cellValue) {
+          // 支持一张图片
+          (XEUtils.isArray(cellValue) ? cellValue.slice(0, 1) : [cellValue]).forEach(item => {
+            if (item) {
+              const imgUrl = XEUtils.isString(item) ? item : item.url
+              if (imgUrl) {
+                const imgBuffer = httpBufferMaps[imgUrl]
+                if (imgBuffer) {
+                  const cellImage = workbook.addImage({
+                    buffer: imgBuffer,
+                    extension: getImgType(imgUrl)
+                  })
+                  worksheet.addImage(cellImage, {
+                    tl: {
+                      col: Math.max(0, XEUtils.toNumber(excelCell.col) - 1),
+                      row: Math.max(0, XEUtils.toNumber(excelCell.row) - 1)
+                    },
+                    ext: {
+                      width: XEUtils.toNumber(width || height) || 24,
+                      height: XEUtils.toNumber(height || width) || 24
+                    }
+                  })
+                }
+              }
+            }
+          })
+        }
+      } else if (renderOpts.name === 'VxeUpload' && props.mode === 'image') {
+        const { urlField, typeField, imageConfig } = props
+        const { width, height } = imageConfig || {}
+        const cellValue = XEUtils.get(row, column.field)
+        if (cellValue) {
+          // 支持一张图片
+          (XEUtils.isArray(cellValue) ? cellValue.slice(0, 1) : [cellValue]).forEach(item => {
+            if (item) {
+              const imgUrl = XEUtils.isString(item) ? item : item[urlField || 'url']
+              if (imgUrl) {
+                const imgBuffer = httpBufferMaps[imgUrl]
+                if (imgBuffer) {
+                  const cellImage = workbook.addImage({
+                    buffer: imgBuffer,
+                    extension: (XEUtils.isString(item) ? '' : item[typeField]) || getImgType(imgUrl)
+                  })
+                  worksheet.addImage(cellImage, {
+                    tl: {
+                      col: Math.max(0, XEUtils.toNumber(excelCell.col) - 1),
+                      row: Math.max(0, XEUtils.toNumber(excelCell.row) - 1)
+                    },
+                    ext: {
+                      width: XEUtils.toNumber(width || height) || 24,
+                      height: XEUtils.toNumber(height || width) || 24
+                    }
+                  })
+                }
+              }
+            }
+          })
         }
       }
     }
@@ -162,6 +255,86 @@ function getDefaultBorderStyle () {
   }
 }
 
+function handleParseColumnImageUrl (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
+  const { columns, datas } = params
+  const urlList: string[] = []
+  columns.forEach(column => {
+    const { cellRender, editRender } = column
+    const renderOpts = editRender || cellRender || {}
+    const { name, props = {} } = renderOpts
+    if (name === 'VxeImage' || name === 'VxeImageGroup') {
+      datas.forEach(rowRest => {
+        const row = rowRest._row
+        const cellValue = XEUtils.get(row, column.field)
+        if (cellValue) {
+          (XEUtils.isArray(cellValue) ? cellValue : [cellValue]).forEach(item => {
+            if (item) {
+              const imgUrl = item.url ? item.url : `${item || ''}`
+              if (imgUrl) {
+                urlList.push(imgUrl)
+              }
+            }
+          })
+        }
+      })
+    } else if (name === 'VxeUpload' && props.mode === 'image') {
+      const { urlField } = props
+      datas.forEach(rowRest => {
+        const row = rowRest._row
+        const cellValue = XEUtils.get(row, column.field)
+        if (cellValue) {
+          (XEUtils.isArray(cellValue) ? cellValue : [cellValue]).forEach(item => {
+            if (item) {
+              const imgUrl = XEUtils.isString(item) ? item : item[urlField || 'url']
+              if (imgUrl) {
+                urlList.push(imgUrl)
+              }
+            }
+          })
+        }
+      })
+    }
+  })
+  if (urlList.length) {
+    return handleFetchImage(urlList)
+  }
+}
+
+function handleFetchImage (urlList: string[]) {
+  let fIndex = 0
+  const handleStartFetch = (): Promise<void> => {
+    if (fIndex < urlList.length) {
+      const restList: Promise<any>[] = []
+      let count = 1
+      for (; fIndex < urlList.length; fIndex++) {
+        const url = urlList[fIndex]
+        if (!httpBufferMaps[url]) {
+          if (!httpPromiseMaps[url]) {
+            count++
+            httpPromiseMaps[url] = fetch(url).then(res => res.arrayBuffer()).then(arrayBuffer => {
+              httpBufferMaps[url] = arrayBuffer
+              delete httpPromiseMaps[url]
+            }).catch(() => {
+              delete httpPromiseMaps[url]
+            })
+          }
+          restList.push(httpPromiseMaps[url])
+        }
+        if (count >= 4) {
+          break
+        }
+      }
+      return Promise.all(restList).then(() => {
+        if (fIndex < urlList.length) {
+          return handleStartFetch()
+        }
+      })
+    }
+    return Promise.resolve()
+  }
+  return handleStartFetch()
+}
+
 function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   const msgKey = 'xlsx'
   const { modal, getI18n } = VxeUI
@@ -177,7 +350,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const mergeCells = $table.getMergeCells()
   const fontSize = defaultFontSizeMaps[vSize || ''] || 14
   const colList: any[] = []
-  const footList: any[] = []
+  let footList: any[] = []
+  const footArr: any[] = []
   const sheetCols: any[] = []
   const sheetMerges: { s: { r: number, c: number }, e: { r: number, c: number } }[] = []
   let beforeRowCount = 0
@@ -185,7 +359,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
     const { id, renderWidth } = column
     sheetCols.push({
       key: id,
-      width: XEUtils.ceil(renderWidth / 7.4, 1)
+      width: XEUtils.ceil(renderWidth / 7.2, 1)
     })
   })
   // 处理表头
@@ -233,7 +407,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
       })
     })
   }
-  const rowList = datas.map(item => {
+  const rowList = datas
+  const rowArr = rowList.map(item => {
     const rest: any = {}
     columns.forEach((column) => {
       rest[column.id] = getCellLabel($table, column, item[column.id])
@@ -244,7 +419,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   // 处理表尾
   if (isFooter) {
     const { footerData } = $table.getTableData()
-    const footers = getFooterData(options, footerData)
+    footList = getFooterData(options, footerData)
     const mergeFooterItems = $table.getMergeFooterItems()
     // 处理合并
     if (isMerge) {
@@ -256,12 +431,12 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         })
       })
     }
-    footers.forEach((row) => {
+    footList.forEach((row) => {
       const item: any = {}
       columns.forEach((column) => {
         item[column.id] = getFooterCellValue($table, options, row, column)
       })
-      footList.push(item)
+      footArr.push(item)
     })
   }
   const exportMethod = () => {
@@ -301,7 +476,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         })
       })
     }
-    sheet.addRows(rowList).forEach(excelRow => {
+    sheet.addRows(rowArr).forEach((excelRow, rIndex) => {
+      const row = rowList[rIndex]._row
       if (useStyle) {
         setExcelRowHeight(excelRow, rowHeight)
       }
@@ -311,7 +487,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         if (column) {
           const { align } = column
           setExcelCellStyle(excelCell, align || allAlign)
-          settExcelCellFormat(excelCell, column)
+          settExcelCellFormat(workbook, sheet, excelCell, column, excelRow, row)
           if (useStyle) {
             Object.assign(excelCell, {
               font: {
@@ -327,7 +503,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
       })
     })
     if (isFooter) {
-      sheet.addRows(footList).forEach(excelRow => {
+      sheet.addRows(footArr).forEach((excelRow, rIndex) => {
+        const row = footList[rIndex]
         if (useStyle) {
           setExcelRowHeight(excelRow, rowHeight)
         }
@@ -337,7 +514,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           if (column) {
             const { footerAlign, align } = column
             setExcelCellStyle(excelCell, footerAlign || align || allFooterAlign || allAlign)
-            settExcelCellFormat(excelCell, column)
+            settExcelCellFormat(workbook, sheet, excelCell, column, excelRow, row)
             if (useStyle) {
               Object.assign(excelCell, {
                 font: {
@@ -353,6 +530,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         })
       })
     }
+
     Promise.resolve(
       // 自定义处理
       sheetMethod
@@ -393,17 +571,21 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
       }
     })
   }
-  if (showMsg && modal) {
-    modal.message({
-      id: msgKey,
-      content: getI18n('vxe.table.expLoading'),
-      status: 'loading',
-      duration: -1
-    })
-    setTimeout(exportMethod, 1500)
-  } else {
-    exportMethod()
-  }
+  Promise.all([
+    handleParseColumnImageUrl(params)
+  ]).then(() => {
+    if (showMsg && modal) {
+      modal.message({
+        id: msgKey,
+        content: getI18n('vxe.table.expLoading'),
+        status: 'loading',
+        duration: -1
+      })
+      setTimeout(exportMethod, 1500)
+    } else {
+      exportMethod()
+    }
+  })
 }
 
 function downloadFile (params: VxeGlobalInterceptorHandles.InterceptorExportParams, blob: Blob, options: VxeTablePropTypes.ExportConfig) {
