@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-export-xlsx",
-  "version": "4.0.13",
+  "version": "4.0.14",
   "description": "Vxe UI plug-in supports xlsx file export.",
   "scripts": {
     "lib": "gulp build"
@@ -52,8 +52,8 @@
     "sass": "^1.55.0",
     "typescript": "~4.7.4",
     "vue": "3.4.27",
-    "vxe-pc-ui": "^4.3.90",
-    "vxe-table": "^4.11.0"
+    "vxe-pc-ui": "^4.4.1",
+    "vxe-table": "^4.11.17"
   },
   "repository": {
     "type": "git",
