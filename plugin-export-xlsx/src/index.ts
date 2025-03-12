@@ -38,7 +38,14 @@ const httpPromiseMaps: Record<string, Promise<any>> = {}
 const httpBufferMaps: Record<string, ArrayBuffer> = {}
 
 function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.ColumnInfo, cellValue: any) {
+  const { cellType, cellRender, editRender } = column
+  const renderOpts = editRender || cellRender
   if (cellValue) {
+    if (renderOpts) {
+      if (['VxeImage', 'VxeImageGroup', 'VxeUpload'].includes(renderOpts.name || '')) {
+        return ''
+      }
+    }
     if (column.type === 'seq') {
       const tableProps = $xeTable
       const { treeConfig } = tableProps
@@ -49,7 +56,7 @@ function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.Co
       }
       return XEUtils.toValueString(cellValue)
     }
-    switch (column.cellType) {
+    switch (cellType) {
       case 'string':
         return XEUtils.toValueString(cellValue)
       case 'number':
@@ -57,11 +64,9 @@ function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.Co
           return Number(cellValue)
         }
         break
-      default:
-        if (cellValue.length < 12 && !isNaN(cellValue)) {
-          return Number(cellValue)
-        }
-        break
+    }
+    if (cellValue.length < 12 && !isNaN(cellValue)) {
+      return Number(cellValue)
     }
   }
   return XEUtils.toValueString(cellValue)
