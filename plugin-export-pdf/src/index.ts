@@ -65,7 +65,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   let colWidth = 0
   const msgKey = 'pdf'
   const showMsg = options.message !== false
-  const { type, filename, isHeader, isFooter, original } = options
+  const { download, type, filename, isHeader, isFooter, original } = options
   const footList: { [key: string]: any }[] = []
   const headers: any[] = columns.map((column) => {
     const { id, field, renderWidth } = column
@@ -125,7 +125,8 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
       }
     }
     if (beforeMethod && beforeMethod({ $pdf: doc, $table, options, columns, datas }) === false) {
-      return
+      const e = { status: false }
+      return Promise.reject(e)
     }
     if (options.sheetName) {
       const title = XEUtils.toValueString(options.sheetName)
@@ -138,6 +139,9 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
       autoSize: false,
       fontSize: 6
     })
+    if (!download) {
+      return { type: '', content: '', blob: doc.output('blob') }
+    }
     // 导出 pdf
     doc.save(`${filename}.${type}`)
     if (showMsg && modal) {
@@ -148,12 +152,16 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   if (showMsg && modal) {
     modal.message({ id: msgKey, content: getI18n('vxe.table.expLoading'), status: 'loading', duration: -1 })
   }
-  checkFont(fontConf).then(() => {
-    if (showMsg) {
-      setTimeout(exportMethod, 1500)
-    } else {
-      exportMethod()
-    }
+  return new Promise(resolve => {
+    checkFont(fontConf).then(() => {
+      if (showMsg) {
+        setTimeout(() => {
+          resolve(exportMethod())
+        }, 1500)
+      } else {
+        resolve(exportMethod())
+      }
+    })
   })
 }
 
@@ -177,8 +185,10 @@ function checkFont (fontConf?: VxeUIPluginExportPDFFonts | null | undefined) {
 
 function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
   if (params.options.type === 'pdf') {
-    exportPDF(params)
-    return false
+    return {
+      result: exportPDF(params),
+      status: false
+    }
   }
 }
 
