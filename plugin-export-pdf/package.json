@@ -19,7 +19,7 @@
   "style": "dist/style.css",
   "typings": "types/index.d.ts",
   "peerDependencies": {
-    "vxe-table": "^4.11.27"
+    "vxe-table": "^4.12"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
