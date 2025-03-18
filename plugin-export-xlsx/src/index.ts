@@ -348,7 +348,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const tableReactData = $table as unknown as TableReactData
   const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = tableProps
   const { rowHeight } = tableReactData
-  const { message, sheetName, isHeader, isFooter, isMerge, isColgroup, original, useStyle, sheetMethod } = options
+  const { message, download, sheetName, isHeader, isFooter, isMerge, isColgroup, original, useStyle, sheetMethod } = options
   const vSize = $table.computeSize
   const columnOpts = $table.computeColumnOpts
   const showMsg = message !== false
@@ -536,7 +536,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
       })
     }
 
-    Promise.resolve(
+    return Promise.resolve(
       // 自定义处理
       sheetMethod
         ? sheetMethod({
@@ -554,8 +554,12 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
       sheetMerges.forEach(({ s, e }) => {
         sheet.mergeCells(s.r + 1, s.c + 1, e.r + 1, e.c + 1)
       })
-      workbook.xlsx.writeBuffer().then(buffer => {
-        const blob = new Blob([buffer], { type: 'application/octet-stream' })
+      return workbook.xlsx.writeBuffer().then(buffer => {
+        const type = 'application/octet-stream'
+        const blob = new Blob([buffer], { type })
+        if (!download) {
+          return { type, content: '', blob }
+        }
         // 导出 xlsx
         downloadFile(params, blob, options)
         if (showMsg && modal) {
@@ -574,9 +578,13 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           status: 'error'
         })
       }
+      return {
+        status: false
+      }
     })
   }
-  Promise.all([
+
+  return Promise.all([
     handleParseColumnImageUrl(params)
   ]).then(() => {
     if (showMsg && modal) {
@@ -586,10 +594,13 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         status: 'loading',
         duration: -1
       })
-      setTimeout(exportMethod, 1500)
-    } else {
-      exportMethod()
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(exportMethod())
+        }, 1500)
+      })
     }
+    return exportMethod()
   })
 }
 
@@ -709,15 +720,19 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
 
 function handleImportEvent (params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
   if (params.options.type === 'xlsx') {
-    importXLSX(params)
-    return false
+    return {
+      result: importXLSX(params),
+      status: false
+    }
   }
 }
 
 function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   if (params.options.type === 'xlsx') {
-    exportXLSX(params)
-    return false
+    return {
+      result: exportXLSX(params),
+      status: false
+    }
   }
 }
 

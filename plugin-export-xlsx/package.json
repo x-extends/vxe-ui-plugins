@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-export-xlsx",
-  "version": "3.0.14",
+  "version": "3.1.0",
   "description": "Vxe UI plug-in supports xlsx file export.",
   "scripts": {
     "lib": "gulp build"
@@ -16,6 +16,9 @@
   "jsdelivr": "dist/index.umd.js",
   "style": "dist/style.css",
   "typings": "types/index.d.ts",
+  "peerDependencies": {
+    "vxe-table": "^3.13.30"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/plugin-transform-runtime": "^7.12.1",
