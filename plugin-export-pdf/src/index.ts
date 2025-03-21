@@ -63,7 +63,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   const ratio = 3.78
   const pdfWidth = 210
   let colWidth = 0
-  const msgKey = 'pdf'
+  const msgKey = XEUtils.uniqueId('pdf')
   const showMsg = options.message !== false
   const { download, type, filename, isHeader, isFooter, original } = options
   const footList: { [key: string]: any }[] = []
@@ -124,6 +124,9 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
         doc.setFont(fontName, fontStyle)
       }
     }
+    if (modal) {
+      modal.close(msgKey)
+    }
     if (beforeMethod && beforeMethod({ $pdf: doc, $table, options, columns, datas }) === false) {
       const e = { status: false }
       return Promise.reject(e)
@@ -139,15 +142,17 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
       autoSize: false,
       fontSize: 6
     })
-    if (!download) {
-      return { type: '', content: '', blob: doc.output('blob') }
-    }
-    // 导出 pdf
-    doc.save(`${filename}.${type}`)
     if (showMsg && modal) {
-      modal.close(msgKey)
       modal.message({ content: getI18n('vxe.table.expSuccess'), status: 'success' })
     }
+    if (download) {
+      // 导出 pdf
+      doc.save(`${filename}.${type}`)
+      return {
+        status: true
+      }
+    }
+    return { type: '', content: '', blob: doc.output('blob') }
   }
   if (showMsg && modal) {
     modal.message({ id: msgKey, content: getI18n('vxe.table.expLoading'), status: 'loading', duration: -1 })
