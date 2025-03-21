@@ -172,7 +172,11 @@ function handleCellEnterMove (isTop: boolean) {
     const { $table } = params
     const targetParams = $table.getActiveRecord() || $table.getSelectedCell()
     if (targetParams) {
-      $table.moveSelected(targetParams, false, !isTop, false, isTop, evnt)
+      if ($table.moveEnterSelected) {
+        $table.moveEnterSelected(targetParams, false, !isTop, false, isTop, evnt)
+      } else {
+        $table.moveSelected(targetParams, false, !isTop, false, isTop, evnt)
+      }
     }
     return false
   }
@@ -185,7 +189,11 @@ function handleCellMove (arrowIndex: number) {
     const arrows: number[] = [0, 0, 0, 0]
     arrows[arrowIndex] = 1
     if (selecteParams) {
-      $table.moveSelected(selecteParams, arrows[0], arrows[1], arrows[2], arrows[3], evnt)
+      if ($table.moveArrowSelected) {
+        $table.moveArrowSelected(selecteParams, arrows[0], arrows[1], arrows[2], arrows[3], evnt)
+      } else {
+        $table.moveSelected(selecteParams, arrows[0], arrows[1], arrows[2], arrows[3], evnt)
+      }
       return false
     }
   }
