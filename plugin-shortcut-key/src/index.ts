@@ -174,20 +174,28 @@ function handleCellEnterMove (isTop: boolean) {
     const { $table } = params
     const targetParams = $table.getActiveRecord() || $table.getSelectedCell()
     if (targetParams) {
-      $table.moveSelected(targetParams, false, !isTop, false, isTop, evnt)
+      if ($table.moveEnterSelected) {
+        $table.moveEnterSelected(targetParams, false, !isTop, false, isTop, evnt)
+      } else {
+        $table.moveSelected(targetParams, false, !isTop, false, isTop, evnt)
+      }
     }
     return false
   }
 }
 
-function handleCellMove (arrowIndex: number) {
+function handleCellArrowMove (arrowIndex: number) {
   return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
     const { $table } = params
     const selecteParams = $table.getSelectedCell()
     const arrows: number[] = [0, 0, 0, 0]
     arrows[arrowIndex] = 1
     if (selecteParams) {
-      $table.moveSelected(selecteParams, arrows[0], arrows[1], arrows[2], arrows[3], evnt)
+      if ($table.moveArrowSelected) {
+        $table.moveArrowSelected(selecteParams, arrows[0], arrows[1], arrows[2], arrows[3], evnt)
+      } else {
+        $table.moveSelected(selecteParams, arrows[0], arrows[1], arrows[2], arrows[3], evnt)
+      }
       return false
     }
   }
@@ -245,10 +253,10 @@ export const handleFuncs = {
   [FUNC_NANE.TABLE_EDIT_TAB_LEFT_MOVE]: handleCellTabMove(true),
   [FUNC_NANE.TABLE_EDIT_ENTER_UP_MOVE]: handleCellEnterMove(false),
   [FUNC_NANE.TABLE_EDIT_ENTER_DOWN_MOVE]: handleCellEnterMove(true),
-  [FUNC_NANE.TABLE_CELL_LEFT_MOVE]: handleCellMove(0),
-  [FUNC_NANE.TABLE_CELL_UP_MOVE]: handleCellMove(1),
-  [FUNC_NANE.TABLE_CELL_RIGHT_MOVE]: handleCellMove(2),
-  [FUNC_NANE.TABLE_CELL_DOWN_MOVE]: handleCellMove(3),
+  [FUNC_NANE.TABLE_CELL_LEFT_MOVE]: handleCellArrowMove(0),
+  [FUNC_NANE.TABLE_CELL_UP_MOVE]: handleCellArrowMove(1),
+  [FUNC_NANE.TABLE_CELL_RIGHT_MOVE]: handleCellArrowMove(2),
+  [FUNC_NANE.TABLE_CELL_DOWN_MOVE]: handleCellArrowMove(3),
   [FUNC_NANE.TABLE_ROW_CURRENT_TOP_MOVE]: handleCurrentRowMove(false),
   [FUNC_NANE.TABLE_ROW_CURRENT_DOWN_MOVE]: handleCurrentRowMove(true),
   [FUNC_NANE.PAGER_PREV_PAGE]: handleChangePage('handlePrevPage'),

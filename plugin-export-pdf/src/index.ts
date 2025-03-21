@@ -183,12 +183,20 @@ function checkFont (fontConf?: VxeUIPluginExportPDFFonts | null | undefined) {
   return Promise.resolve()
 }
 
+function hasAdvancedVersion (tableVersion: string) {
+  const vRest = tableVersion ? `${tableVersion}`.match(/(\d+)\.(\d+)\./) : null
+  return vRest && XEUtils.toNumber(vRest[1]) >= 4 && XEUtils.toNumber(vRest[2]) >= 12
+}
+
 function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
   if (params.options.type === 'pdf') {
-    return {
-      result: exportPDF(params),
-      status: false
+    if (VxeUI && hasAdvancedVersion(VxeUI.tableVersion || '')) {
+      return {
+        result: exportPDF(params),
+        status: false
+      }
     }
+    return false
   }
 }
 

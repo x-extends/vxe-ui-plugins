@@ -722,21 +722,32 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
   fileReader.readAsArrayBuffer(file)
 }
 
+function hasAdvancedVersion (tableVersion: string) {
+  const vRest = tableVersion ? `${tableVersion}`.match(/(\d+)\.(\d+)\./) : null
+  return vRest && XEUtils.toNumber(vRest[1]) >= 4 && XEUtils.toNumber(vRest[2]) >= 12
+}
+
 function handleImportEvent (params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
   if (params.options.type === 'xlsx') {
-    return {
-      result: importXLSX(params),
-      status: false
+    if (VxeUI && hasAdvancedVersion(VxeUI.tableVersion || '')) {
+      return {
+        result: importXLSX(params),
+        status: false
+      }
     }
+    return false
   }
 }
 
 function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   if (params.options.type === 'xlsx') {
-    return {
-      result: exportXLSX(params),
-      status: false
+    if (VxeUI && hasAdvancedVersion(VxeUI.tableVersion || '')) {
+      return {
+        result: exportXLSX(params),
+        status: false
+      }
     }
+    return false
   }
 }
 
