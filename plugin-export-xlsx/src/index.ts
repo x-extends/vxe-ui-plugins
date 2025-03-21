@@ -341,7 +341,7 @@ function handleFetchImage (urlList: string[]) {
 }
 
 function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
-  const msgKey = 'xlsx'
+  const msgKey = XEUtils.uniqueId('xlsx')
   const { modal, getI18n } = VxeUI
   const { $table, $grid, options, columns, colgroups, datas } = params
   const tableProps = $table
@@ -557,22 +557,29 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
       return workbook.xlsx.writeBuffer().then(buffer => {
         const type = 'application/octet-stream'
         const blob = new Blob([buffer], { type })
-        if (!download) {
-          return { type, content: '', blob }
-        }
-        // 导出 xlsx
-        downloadFile(params, blob, options)
-        if (showMsg && modal) {
+        if (modal) {
           modal.close(msgKey)
+        }
+        if (showMsg && modal) {
           modal.message({
             content: getI18n('vxe.table.expSuccess'),
             status: 'success'
           })
         }
+        if (download) {
+          // 导出 xlsx
+          downloadFile(params, blob, options)
+          return {
+            status: true
+          }
+        }
+        return { type, content: '', blob }
       })
     }).catch(() => {
-      if (showMsg && modal) {
+      if (modal) {
         modal.close(msgKey)
+      }
+      if (showMsg && modal) {
         modal.message({
           content: getI18n('vxe.table.expError'),
           status: 'error'
