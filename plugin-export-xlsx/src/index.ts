@@ -446,7 +446,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   }
   const exportMethod = () => {
     const workbook: ExcelJS.Workbook = new (globalExcelJS || (window as any).ExcelJS).Workbook()
-    const sheet = workbook.addWorksheet(sheetName)
+    const sheet = workbook.addWorksheet(sheetName || 'Sheet1')
     workbook.creator = 'vxe-table'
     sheet.columns = sheetCols
     if (isHeader) {
