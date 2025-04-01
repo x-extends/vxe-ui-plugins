@@ -351,7 +351,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const { computeSize, computeColumnOpts } = $table.getComputeMaps()
   const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = tableProps
   const { rowHeight } = tableReactData
-  const { message, download, sheetName, isHeader, isFooter, isMerge, isColgroup, original, useStyle, sheetMethod } = options
+  const { message, download, sheetName, isHeader, isFooter, isMerge, isColgroup, isTitle, useStyle, sheetMethod } = options
   const vSize = computeSize.value
   const columnOpts = computeColumnOpts.value
   const showMsg = message !== false
@@ -384,7 +384,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           const validColumn = getValidColumn(column)
           const columnIndex = columns.indexOf(validColumn)
           const headExportMethod = (column as any).headerExportMethod || (columnOpts as any).headerExportMethod
-          groupHead[validColumn.id] = headExportMethod ? headExportMethod({ column, options, $table }) : (original ? validColumn.field : column.getTitle())
+          groupHead[validColumn.id] = headExportMethod ? headExportMethod({ column, options, $table }) : (isTitle ? column.getTitle() : validColumn.field)
           if (_colSpan > 1 || _rowSpan > 1) {
             sheetMerges.push({
               s: { r: rIndex, c: columnIndex },
@@ -399,7 +399,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
       columns.forEach((column) => {
         const { id, field } = column as any
         const headExportMethod = (column as any).headerExportMethod || (columnOpts as any).headerExportMethod
-        colHead[id] = headExportMethod ? headExportMethod({ column, options, $table }) : (original ? field : column.getTitle())
+        colHead[id] = headExportMethod ? headExportMethod({ column, options, $table }) : (isTitle ? column.getTitle() : field)
       })
       colList.push(colHead)
     }

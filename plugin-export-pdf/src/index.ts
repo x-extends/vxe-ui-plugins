@@ -65,12 +65,12 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   let colWidth = 0
   const msgKey = XEUtils.uniqueId('pdf')
   const showMsg = options.message !== false
-  const { download, type, filename, isHeader, isFooter, original } = options
+  const { download, type, filename, isHeader, isFooter, isTitle } = options
   const footList: { [key: string]: any }[] = []
   const headers: any[] = columns.map((column) => {
     const { id, field, renderWidth } = column
     const headExportMethod = (column as any).headerExportMethod || (columnOpts as any).headerExportMethod
-    const title = headExportMethod ? headExportMethod({ column, options, $table }) : (XEUtils.toValueString(original ? field : column.getTitle()))
+    const title = headExportMethod ? headExportMethod({ column, options, $table }) : (XEUtils.toValueString(isTitle ? column.getTitle() : field))
     const width = renderWidth / ratio
     colWidth += width
     return {
