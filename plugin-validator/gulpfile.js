@@ -22,7 +22,7 @@ const pluginUrl = 'https://vxeui.com/other4/#/plugin-export-xlsx/install'
 gulp.task('build_commonjs', function () {
   return gulp.src(['src/index.ts'])
     .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
-    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
+    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}+`))
     .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
     // .pipe(sourcemaps.init())
     .pipe(ts(tsconfig.compilerOptions))
@@ -40,7 +40,7 @@ gulp.task('build_commonjs', function () {
 gulp.task('build_umd', function () {
   return gulp.src(['src/index.ts'])
     .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
-    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
+    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}+`))
     .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({

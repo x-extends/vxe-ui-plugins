@@ -40,7 +40,7 @@ gulp.task('build_style', function () {
 gulp.task('build_ts', function () {
   return gulp.src(['src/**/*.ts'])
     .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
-    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
+    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}+`))
     .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
@@ -74,7 +74,7 @@ gulp.task('browserify_common', function () {
 gulp.task('build_umd', gulp.series('browserify_common', function () {
   return gulp.src(['dist/all.common.js'])
     .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
-    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
+    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}+`))
     .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
     .pipe(babel({
       moduleId: pack.name,
