@@ -49,9 +49,8 @@ VxeUI.use(VxeUIPluginMenu)
 | PASTE_CELL | （仅支持在单表区域内操作）粘贴从表格中被复制的数据；如果启用 mouse-config.area 功能，则粘贴区域范围内的单元格数据，不支持读取剪贴板 | — |
 | EDIT_CELL | 编辑选中单元格 | — |
 | EDIT_ROW | 编辑选中行并激活选中单元格 | — |
-| INSERT_ROW | 插入单行数据 | records |
-| INSERT_NEXT_ROW | 插入单行数据 | records |
-| INSERT_EDIT_ROW | 插入单行数据并激活编辑状态 | Array\<records, field\> |
+| INSERT_ROW | 顶部插入单行数据 | record |
+| INSERT_EDIT_ROW | 顶部插入单行数据并激活编辑状态 | Array\<record, field\> |
 | INSERT_AT_ROW | 插入单行数据到指定位置 | record |
 | BATCH_INSERT_AT_ROW | 插入多行数据到指定位置 | record |
 | INSERT_NEXT_AT_ROW | 插入单行数据到指定位置 | record |
