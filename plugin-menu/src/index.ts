@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles } from 'vxe-pc-ui'
-import type { VxeTableConstructor, VxeTablePrivateMethods, VxeTableDefines, VxeColumnPropTypes, VxeTableProDefines } from 'vxe-table'
+import type { VxeUIExport, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles, VxeNumberInputComponent } from 'vxe-pc-ui'
+import type { VxeTableConstructor, VxeTablePrivateMethods, VxeTableDefines, VxeColumnPropTypes, VxeTableExtendCellAreaDefines } from 'vxe-table'
 import type { VxeUIPluginMenuOptions } from '../types'
 
 let VxeUI: VxeUIExport
@@ -112,7 +112,7 @@ function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams & 
   }
 }
 
-function checkCellOverlay (params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, cellAreas: VxeTableProDefines.MouseCellArea[]) {
+function checkCellOverlay (params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, cellAreas: VxeTableExtendCellAreaDefines.MouseCellArea[]) {
   const { $table } = params
   const { visibleData } = $table.getTableData()
   const { visibleColumn } = $table.getTableColumn()
@@ -316,6 +316,63 @@ function handlePrivilegeEvent (params: VxeGlobalInterceptorHandles.InterceptorSh
     })
   })
   return true
+}
+
+function selectMultipleRows () {
+  return new Promise<{
+    size: number
+  }>(resolve => {
+    if (VxeUI.modal) {
+      const VxeNumberInputComponent = VxeUI.getComponent<VxeNumberInputComponent>('VxeNumberInput')
+      if (VxeNumberInputComponent) {
+        let rowSize = 1
+        VxeUI.modal.alert({
+          title: '请输入行数',
+          width: 220,
+          maskClosable: false,
+          slots: {
+            default (params, h) {
+              return h(VxeNumberInputComponent, {
+                style: {
+                  width: '100%'
+                },
+                props: {
+                  value: rowSize,
+                  min: 1,
+                  max: 100,
+                  align: 'center'
+                },
+                on: {
+                  modelValue (value: any) {
+                    rowSize = value
+                  }
+                }
+              })
+            }
+          }
+        }).then((type) => {
+          if (type === 'confirm') {
+            resolve({
+              size: rowSize || 1
+            })
+          } else {
+            resolve({
+              size: 0
+            })
+          }
+        })
+      } else {
+        console.error(VxeUI.getI18n('vxe.error.reqComp', ['vxe-number-input']))
+        resolve({
+          size: 0
+        })
+      }
+    } else {
+      resolve({
+        size: 0
+      })
+    }
+  })
 }
 
 function pluginSetup (options?: VxeUIPluginMenuOptions) {
@@ -647,7 +704,7 @@ export const VxeUIPluginMenu = {
       INSERT_ROW: {
         menuMethod (params) {
           const { $table, menu } = params
-          $table.insert(menu.params)
+          $table.insert(menu.params || {})
         }
       },
       /**
@@ -658,7 +715,7 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, menu, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
-          $table.insert(args[0])
+          $table.insert(args[0] || {})
             .then(({ row }) => {
               if ($table.setEditCell) {
                 $table.setEditCell(row, args[1] || column)
@@ -677,7 +734,7 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, menu, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
-          $table.insert(args[0])
+          $table.insert(args[0] || {})
             .then(({ row }) => {
               if ($table.setEditCell) {
                 $table.setEditCell(row, args[1] || column)
@@ -695,7 +752,22 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, menu, row } = params
           if (row) {
-            $table.insertAt(menu.params, row)
+            $table.insertAt(menu.params || {}, row)
+          }
+        }
+      },
+      /**
+       * 插入多行数据
+       */
+      BATCH_INSERT_AT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row } = params
+          if (row) {
+            selectMultipleRows().then(({ size }) => {
+              if (size) {
+                $table.insertAt(XEUtils.range(0, size).map(() => Object.assign({}, menu.params)), row)
+              }
+            })
           }
         }
       },
@@ -706,7 +778,22 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, menu, row } = params
           if (row) {
-            $table.insertNextAt(menu.params, row)
+            $table.insertNextAt(menu.params || {}, row)
+          }
+        }
+      },
+      /**
+       * 插入数据到指定位置
+       */
+      BATCH_INSERT_NEXT_AT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row } = params
+          if (row) {
+            selectMultipleRows().then(({ size }) => {
+              if (size) {
+                $table.insertNextAt(XEUtils.range(0, size).map(() => Object.assign({}, menu.params)), row)
+              }
+            })
           }
         }
       },
@@ -718,7 +805,7 @@ export const VxeUIPluginMenu = {
           const { $table, menu, row, column } = params
           if (row) {
             const args: any[] = menu.params || [] // [{}, 'field']
-            $table.insertAt(args[0], row)
+            $table.insertAt(args[0] || {}, row)
               .then(({ row }) => {
                 if ($table.setEditCell) {
                   $table.setEditCell(row, args[1] || column)
@@ -738,7 +825,7 @@ export const VxeUIPluginMenu = {
           const { $table, menu, row, column } = params
           if (row) {
             const args: any[] = menu.params || [] // [{}, 'field']
-            $table.insertAt(args[0], row)
+            $table.insertAt(args[0] || {}, row)
               .then(({ row }) => {
                 if ($table.setEditCell) {
                   $table.setEditCell(row, args[1] || column)
@@ -751,6 +838,30 @@ export const VxeUIPluginMenu = {
         }
       },
       /**
+       * 批量插入数据到指定位置并激活编辑状态
+       */
+      BATCH_INSERT_AT_EDIT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          if (row) {
+            const args: any[] = menu.params || [] // [{}, 'field']
+            selectMultipleRows().then(({ size }) => {
+              if (size) {
+                $table.insertAt(XEUtils.range(0, size).map(() => Object.assign({}, args[0])), row)
+                  .then(({ row }) => {
+                    if ($table.setEditCell) {
+                      $table.setEditCell(row, args[1] || column)
+                    } else {
+                      // 兼容老版本
+                      $table.setActiveCell(row, args[1] || column.field)
+                    }
+                  })
+              }
+            })
+          }
+        }
+      },
+      /**
        * 插入数据到指定位置并激活编辑状态
        */
       INSERT_NEXT_AT_EDIT_ROW: {
@@ -758,7 +869,7 @@ export const VxeUIPluginMenu = {
           const { $table, menu, row, column } = params
           if (row) {
             const args: any[] = menu.params || [] // [{}, 'field']
-            $table.insertNextAt(args[0], row)
+            $table.insertNextAt(args[0] || {}, row)
               .then(({ row }) => {
                 if ($table.setEditCell) {
                   $table.setEditCell(row, args[1] || column)
@@ -767,6 +878,30 @@ export const VxeUIPluginMenu = {
                   $table.setActiveCell(row, args[1] || column.field)
                 }
               })
+          }
+        }
+      },
+      /**
+       * 批量插入数据到指定位置并激活编辑状态
+       */
+      BATCH_INSERT_NEXT_AT_EDIT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          if (row) {
+            const args: any[] = menu.params || [] // [{}, 'field']
+            selectMultipleRows().then(({ size }) => {
+              if (size) {
+                $table.insertNextAt(XEUtils.range(0, size).map(() => Object.assign({}, args[0])), row)
+                  .then(({ row }) => {
+                    if ($table.setEditCell) {
+                      $table.setEditCell(row, args[1] || column)
+                    } else {
+                      // 兼容老版本
+                      $table.setActiveCell(row, args[1] || column.field)
+                    }
+                  })
+              }
+            })
           }
         }
       },
