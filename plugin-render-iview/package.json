@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-iview",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "description": "Vxe UI plug-in for compatibility with the view-ui-plus component.",
   "scripts": {
     "lib": "gulp build"
@@ -53,8 +53,8 @@
     "typescript": "~4.7.4",
     "vinyl-source-stream": "^2.0.0",
     "vue": "3.4.27",
-    "vxe-pc-ui": "^4.5.28",
-    "vxe-table": "^4.13.8"
+    "vxe-pc-ui": "^4.5.36",
+    "vxe-table": "^4.13.17"
   },
   "repository": {
     "type": "git",

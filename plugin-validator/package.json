@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-validator",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Vxe UI plug-in supports common validator configurations.",
   "scripts": {
     "lib": "gulp build"
@@ -51,8 +51,8 @@
     "sass": "^1.55.0",
     "typescript": "~4.7.4",
     "vue": "3.4.27",
-    "vxe-pc-ui": "^4.5.28",
-    "vxe-table": "^4.13.8"
+    "vxe-pc-ui": "^4.5.36",
+    "vxe-table": "^4.13.17"
   },
   "repository": {
     "type": "git",

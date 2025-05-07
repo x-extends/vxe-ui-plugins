@@ -17,7 +17,7 @@ const tsconfig = require('./tsconfig.json')
 const exportModuleName = 'VxeUIPluginExportPDF'
 const pluginName = pack.name
 const tableVersion = '4.7.0'
-const pluginUrl = 'https://vxeui.com/other4/#/plugin-export-xlsx/install'
+const pluginUrl = 'https://vxeui.com/other4/#/plugin-export-pdf/install'
 
 gulp.task('build_style', function () {
   return gulp.src('style.scss')

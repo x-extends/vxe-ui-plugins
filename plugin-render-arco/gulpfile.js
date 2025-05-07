@@ -16,10 +16,10 @@ const source = require('vinyl-source-stream')
 const pack = require('./package.json')
 const tsconfig = require('./tsconfig.json')
 
-const exportModuleName = 'VxeUIPluginRenderNaive'
+const exportModuleName = 'VxeUIPluginRenderArco'
 const pluginName = pack.name
 const tableVersion = '4.7.0'
-const pluginUrl = 'https://vxeui.com/other4/#/plugin-export-xlsx/install'
+const pluginUrl = 'https://vxeui.com/other4/#/plugin-render-arco/install'
 
 gulp.task('build_style', function () {
   return gulp.src('style.scss')
