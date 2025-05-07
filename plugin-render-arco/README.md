@@ -1,6 +1,6 @@
 # @vxe-ui/plugin-render-arco
 
-[Vxe UI](https://vxeui.com/) plug-in for compatibility with the [@arco-design/web-vue](https://www.npmjs.com/package/@arco-design/web-vue) component.
+[Vxe UI](https://vxeui.com/) plug-in for compatibility with the [arco-design](https://www.npmjs.com/package/@arco-design/web-vue) component.
 
 ## Compatibility
 
