@@ -5,14 +5,13 @@ $vxe-table-validate-error-color: #f56c6c;
 }
 
 %CompWidth {
-  & > .n-input,
-  & > .n-auto-complete,
-  & > .n-input-number,
-  & > .n-select,
-  & > .n-cascader,
-  & > .n-date-picker,
-  & > .n-color-picker{
-    vertical-align: middle;
+  & > .arco-input-wrapper,
+  & > .arco-select-view,
+  & > .arco-picker,
+  & > .arco-textarea-wrapper,
+  & > .arco-picker-range,
+  & > .arco-mention {
+    width: 100%;
   }
 }
 .vxe-form {
@@ -25,10 +24,12 @@ $vxe-table-validate-error-color: #f56c6c;
 }
 .vxe-table--filter-element-wrapper {
   padding: 0.8em 1em;
-  & > .n-input,
-  & > .n-input-number,
-  & > .n-auto-complete,
-  & > .n-select {
+  & > .arco-input-wrapper,
+  & > .arco-select-view,
+  & > .arco-picker,
+  & > .arco-textarea-wrapper,
+  & > .arco-picker-range,
+  & > .arco-mention {
     width: 180px;
   }
 }
@@ -44,42 +45,13 @@ $vxe-table-validate-error-color: #f56c6c;
 .col--valid-error {
   & > .vxe-cell,
   & > .vxe-tree-cell {
-    & > .n-input .n-input__input-el,
-    & > .n-auto-complete .n-input__input-el,
-    & > .n-input-number .n-input__input-el,
-    & > .n-select .n-input__input-el,
-    & > .n-cascader .n-input__input-el,
-    & > .n-date-picker .n-input__input-el {
+    & > .arco-input-wrapper,
+    & > .arco-select-view,
+    & > .arco-textarea-wrapper,
+    & > .arco-picker,
+    & > .arco-picker-range,
+    & > .arco-mention .arco-textarea-wrapper {
       border-color: $vxe-table-validate-error-color;
-    }
-  }
-}
-.vxe-table.cell--highlight {
-  .vxe-cell,
-  .vxe-tree-cell,
-  .vxe-cell--wrapper  {
-    & > .n-input,
-    & > .n-auto-complete,
-    & > .n-select,
-    & > .n-cascader {
-      .n-input__input-el {
-        padding: 0;
-        @extend %ResetBorder;
-      }
-    }
-    & > .n-input-number {
-      .n-input-number__decrease,
-      .n-input-number__increase {
-        @extend %ResetBorder;
-      }
-      .n-input__input-el {
-        @extend %ResetBorder;
-      }
-    }
-    & > .n-date-picker {
-      .n-input__input-el {
-        @extend %ResetBorder;
-      }
     }
   }
 }

@@ -36,7 +36,7 @@ VxeUI.use(VxeUIPluginRenderArco)
   :edit-config="{trigger: 'click', mode: 'cell'}">
   <vxe-column field="name" title="Name" :edit-render="{}">
     <template #edit="{ row }">
-      <n-input v-model:value="row.name"></n-input>
+      <a-input v-model="row.name"></a-input>
     </template>
     <template #default="{ row }">
       <span>{{ row.name }}</span>
@@ -44,7 +44,7 @@ VxeUI.use(VxeUIPluginRenderArco)
   </vxe-column>
   <vxe-column field="age" title="Age" :edit-render="{}">
     <template #edit="{ row }">
-      <n-input v-model:value="row.age"></n-input>
+      <a-input v-model="row.age"></a-input>
     </template>
     <template #default="{ row }">
       <span>{{ row.age }}</span>
@@ -52,7 +52,7 @@ VxeUI.use(VxeUIPluginRenderArco)
   </vxe-column>
   <vxe-column field="date" title="Date" width="200" :edit-render="{}">
     <template #edit="{ row }">
-      <n-date-picker type="date" v-model:value="row.date"></n-date-picker>
+      <a-date-picker v-model="row.date"></a-date-picker>
     </template>
     <template #default="{ row }">
       <span>{{ row.date }}</span>
