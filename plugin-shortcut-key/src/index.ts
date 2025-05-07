@@ -188,8 +188,8 @@ function handleCellArrowMove (arrowIndex: number) {
   return function (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
     const { $table } = params
     const selecteParams = $table.getSelectedCell()
-    const arrows: number[] = [0, 0, 0, 0]
-    arrows[arrowIndex] = 1
+    const arrows: boolean[] = [false, false, false, false]
+    arrows[arrowIndex] = true
     if (selecteParams) {
       if ($table.moveArrowSelected) {
         $table.moveArrowSelected(selecteParams, arrows[0], arrows[1], arrows[2], arrows[3], evnt)
