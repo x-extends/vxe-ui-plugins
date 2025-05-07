@@ -1,0 +1,85 @@
+$vxe-table-validate-error-color: #f56c6c;
+
+%ResetBorder {
+  border: 0;
+}
+
+%CompWidth {
+  & > .n-input,
+  & > .n-auto-complete,
+  & > .n-input-number,
+  & > .n-select,
+  & > .n-cascader,
+  & > .n-date-picker,
+  & > .n-color-picker{
+    vertical-align: middle;
+  }
+}
+.vxe-form {
+  .vxe-form--item-content {
+    @extend %CompWidth;
+  }
+  .vxe-form--item-inner {
+    @extend %CompWidth;
+  }
+}
+.vxe-table--filter-element-wrapper {
+  padding: 0.8em 1em;
+  & > .n-input,
+  & > .n-input-number,
+  & > .n-auto-complete,
+  & > .n-select {
+    width: 180px;
+  }
+}
+.vxe-table {
+  .vxe-cell,
+  .vxe-tree-cell {
+    @extend %CompWidth;
+  }
+  .vxe-cell--wrapper {
+    @extend %CompWidth;
+  }
+}
+.col--valid-error {
+  & > .vxe-cell,
+  & > .vxe-tree-cell {
+    & > .n-input .n-input__input-el,
+    & > .n-auto-complete .n-input__input-el,
+    & > .n-input-number .n-input__input-el,
+    & > .n-select .n-input__input-el,
+    & > .n-cascader .n-input__input-el,
+    & > .n-date-picker .n-input__input-el {
+      border-color: $vxe-table-validate-error-color;
+    }
+  }
+}
+.vxe-table.cell--highlight {
+  .vxe-cell,
+  .vxe-tree-cell,
+  .vxe-cell--wrapper  {
+    & > .n-input,
+    & > .n-auto-complete,
+    & > .n-select,
+    & > .n-cascader {
+      .n-input__input-el {
+        padding: 0;
+        @extend %ResetBorder;
+      }
+    }
+    & > .n-input-number {
+      .n-input-number__decrease,
+      .n-input-number__increase {
+        @extend %ResetBorder;
+      }
+      .n-input__input-el {
+        @extend %ResetBorder;
+      }
+    }
+    & > .n-date-picker {
+      .n-input__input-el {
+        @extend %ResetBorder;
+      }
+    }
+  }
+}
