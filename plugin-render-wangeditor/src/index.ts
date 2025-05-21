@@ -313,7 +313,7 @@ const WangEditorComponent = defineVxeComponent({
   }
 })
 
-function pluginSetup (options?: VxeUIPluginRenderWangEditorOptions) {
+function pluginConfig (options?: VxeUIPluginRenderWangEditorOptions) {
   globalOptions = options
 }
 
@@ -327,7 +327,7 @@ export const WangEditor = Object.assign({
  * 基于 Vxe UI 的扩展插件，支持渲染 wangEditor 富文本
  */
 export const VxeUIPluginRenderWangEditor = {
-  setConfig: pluginSetup,
+  setConfig: pluginConfig,
   WangEditor,
   install (core: VxeUIExport, options?: VxeUIPluginRenderWangEditorOptions) {
     VxeUI = core
@@ -338,7 +338,7 @@ export const VxeUIPluginRenderWangEditor = {
       console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
-    pluginSetup(options)
+    pluginConfig(options)
 
     defineFormRender(VxeUI, WangEditorComponent)
   }

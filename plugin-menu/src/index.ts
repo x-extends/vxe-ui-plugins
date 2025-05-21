@@ -375,14 +375,14 @@ function selectMultipleRows () {
   })
 }
 
-function pluginSetup (options?: VxeUIPluginMenuOptions) {
+function pluginConfig (options?: VxeUIPluginMenuOptions) {
   if (options && options.copy) {
     handleCopy = options.copy
   }
 }
 
 export const VxeUIPluginMenu = {
-  setConfig: pluginSetup,
+  setConfig: pluginConfig,
   install (core: VxeUIExport, options?: VxeUIPluginMenuOptions) {
     VxeUI = core
 
@@ -391,7 +391,7 @@ export const VxeUIPluginMenu = {
       console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
-    pluginSetup(options)
+    pluginConfig(options)
 
     VxeUI.menus.mixin({
       /**

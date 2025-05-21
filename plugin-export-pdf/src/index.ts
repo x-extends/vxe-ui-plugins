@@ -198,12 +198,12 @@ function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExpor
   }
 }
 
-function pluginSetup (options: VxeUIPluginExportPDFOptions) {
+function pluginConfig (options: VxeUIPluginExportPDFOptions) {
   Object.assign(globalOptions, options)
 }
 
 export const VxeUIPluginExportPDF = {
-  setConfig: pluginSetup,
+  setConfig: pluginConfig,
   install (core: VxeUIExport, options?: VxeUIPluginExportPDFOptions) {
     VxeUI = core
 
@@ -227,7 +227,7 @@ export const VxeUIPluginExportPDF = {
       'event.export': handleExportEvent
     })
     if (options) {
-      pluginSetup(options)
+      pluginConfig(options)
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-shortcut-key",
-  "version": "3.0.2",
+  "version": "3.0.4",
   "description": "Vxe UI plug-in, settings that provide shortcuts for keyboard operations.",
   "scripts": {
     "lib": "gulp build"
