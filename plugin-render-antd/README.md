@@ -126,10 +126,8 @@ export default {
 ```
 
 ```javascript
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup () {
+export default {
+  data () {
     return {
       nameOptions: [
         { data: '' }
@@ -141,7 +139,7 @@ export default defineComponent({
       ]
     }
   }
-})
+}
 ```
 
 ## Contributors

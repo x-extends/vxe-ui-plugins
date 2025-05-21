@@ -337,7 +337,7 @@ function parseListenerKey (options: VxeUIPluginShortcutKeyOptions) {
  * 设置参数
  * @param options 参数
  */
-function pluginSetup (options: VxeUIPluginShortcutKeyOptions) {
+function pluginConfig (options: VxeUIPluginShortcutKeyOptions) {
   if (options) {
     parseDisabledKey(options)
     parseSettingKey(options)
@@ -349,7 +349,12 @@ function pluginSetup (options: VxeUIPluginShortcutKeyOptions) {
  * 基于 vxe-table 表格的扩展插件，为键盘操作提供快捷键设置
  */
 export const VXETablePluginShortcutKey = {
-  setup: pluginSetup,
+  /**
+   * 已废弃，请使用 setConfig
+   * @deprecated
+   */
+  setup: pluginConfig,
+  setConfig: pluginConfig,
   install (core: VxeUIExport, options?: VxeUIPluginShortcutKeyOptions) {
     VxeUI = core
 
@@ -359,7 +364,7 @@ export const VXETablePluginShortcutKey = {
     }
 
     if (options) {
-      pluginSetup(options)
+      pluginConfig(options)
     }
     VxeUI.interceptor.add('event.keydown', (params) => {
       const evnt = params.$event as KeyboardEvent
