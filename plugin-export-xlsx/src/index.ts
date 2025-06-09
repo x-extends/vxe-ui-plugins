@@ -72,7 +72,7 @@ function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.Co
   return XEUtils.toValueString(cellValue)
 }
 
-function getFooterData ($xeTable: VxeTableConstructor,opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
+function getFooterData ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
   const { footerFilterMethod } = opts
   return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ $table: $xeTable, items, $rowIndex: index })) : footerData
 }
@@ -634,10 +634,6 @@ function downloadFile (params: VxeGlobalInterceptorHandles.InterceptorExportPara
   }
 }
 
-function checkImportData (tableFields: string[], fields: string[]) {
-  return fields.some(field => tableFields.indexOf(field) > -1)
-}
-
 function importError (params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
   const { modal, t } = VxeUI
   const { $table, options } = params
@@ -667,7 +663,7 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
   fileReader.onload = (evnt) => {
     const tableFieldMaps: Record<string, VxeTableDefines.ColumnInfo> = {}
     const tableTitleMaps: Record<string, VxeTableDefines.ColumnInfo> = {}
-      columns.forEach((column) => {
+    columns.forEach((column) => {
       const field = column.field
       const title = column.getTitle()
       if (field) {
