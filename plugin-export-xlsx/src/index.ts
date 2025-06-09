@@ -74,7 +74,7 @@ function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.Co
 
 function getFooterData ($xeTable: VxeTableConstructor,opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
   const { footerFilterMethod } = opts
-  return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ $table: $xeTable,items, $rowIndex: index })) : footerData
+  return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ $table: $xeTable, items, $rowIndex: index })) : footerData
 }
 
 function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, row: any, column: VxeTableDefines.ColumnInfo) {
