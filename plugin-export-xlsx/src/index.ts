@@ -72,9 +72,9 @@ function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.Co
   return XEUtils.toValueString(cellValue)
 }
 
-function getFooterData (opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
+function getFooterData ($xeTable: VxeTableConstructor,opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
   const { footerFilterMethod } = opts
-  return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ items, $rowIndex: index })) : footerData
+  return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ $table: $xeTable,items, $rowIndex: index })) : footerData
 }
 
 function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, row: any, column: VxeTableDefines.ColumnInfo) {
@@ -424,7 +424,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   // 处理表尾
   if (isFooter) {
     const { footerData } = $table.getTableData()
-    footList = getFooterData(options, footerData)
+    footList = getFooterData($table, options, footerData)
     const mergeFooterItems = $table.getMergeFooterItems()
     // 处理合并
     if (isMerge) {
@@ -665,11 +665,16 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
     importError(params)
   }
   fileReader.onload = (evnt) => {
-    const tableFields: string[] = []
-    columns.forEach((column) => {
+    const tableFieldMaps: Record<string, VxeTableDefines.ColumnInfo> = {}
+    const tableTitleMaps: Record<string, VxeTableDefines.ColumnInfo> = {}
+      columns.forEach((column) => {
       const field = column.field
+      const title = column.getTitle()
       if (field) {
-        tableFields.push(field)
+        tableFieldMaps[field] = column
+      }
+      if (title) {
+        tableTitleMaps[column.getTitle()] = column
       }
     })
     const workbook: ExcelJS.Workbook = new (globalExcelJS || (window as any).ExcelJS).Workbook()
@@ -680,17 +685,30 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
         if (firstSheet) {
           const sheetValues = Array.from(firstSheet.getSheetValues()) as string[][]
           const fieldIndex = XEUtils.findIndexOf(sheetValues, (list) => list && list.length > 0)
-          const fields = sheetValues[fieldIndex] as string[]
-          const status = checkImportData(tableFields, fields)
+          const heads = sheetValues[fieldIndex] as string[]
+          let status = false
+          const fields = heads.map(key => {
+            if (tableFieldMaps[key]) {
+              if (!status) {
+                status = true
+              }
+              return key
+            }
+            if (tableTitleMaps[key]) {
+              if (!status) {
+                status = true
+              }
+              return tableTitleMaps[key].field
+            }
+            return null
+          })
           if (status) {
             const records = sheetValues.slice(fieldIndex + 1).map(list => {
-              const item : any = {}
-              list.forEach((cellValue, cIndex) => {
-                item[fields[cIndex]] = cellValue
-              })
-              const record: any = {}
-              tableFields.forEach(field => {
-                record[field] = XEUtils.isUndefined(item[field]) ? null : item[field]
+              const record: Record<string, any> = {}
+              fields.forEach((field, cIndex) => {
+                if (field) {
+                  record[field] = XEUtils.isUndefined(list[cIndex]) ? null : list[cIndex]
+                }
               })
               return record
             })
