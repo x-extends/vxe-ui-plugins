@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-echarts",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "Vxe UI plug-in for compatibility with the echarts.",
   "scripts": {
     "lib": "gulp build"

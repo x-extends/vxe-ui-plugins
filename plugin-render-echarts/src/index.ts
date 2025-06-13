@@ -106,7 +106,7 @@ interface legendOpts {
 const menuMap = {
   CHART_BAR_X_AXIS: createChartModal((params) => {
     const { $table, menu } = params
-    const cellAreas = $table.getCellAreas()
+    const cellAreas = $table.getCellAreas ? $table.getCellAreas() : []
     const { rows, cols } = cellAreas[0]
     const { params: chartParams = {} } = menu
     const { category } = chartParams
@@ -158,7 +158,7 @@ const menuMap = {
   }),
   CHART_BAR_Y_AXIS: createChartModal((params) => {
     const { $table, menu } = params
-    const cellAreas = $table.getCellAreas()
+    const cellAreas = $table.getCellAreas ? $table.getCellAreas() : []
     const { rows, cols } = cellAreas[0]
     const { params: chartParams = {} } = menu
     const { category } = chartParams
@@ -210,7 +210,7 @@ const menuMap = {
   }),
   CHART_LINE: createChartModal((params) => {
     const { $table, menu } = params
-    const cellAreas = $table.getCellAreas()
+    const cellAreas = $table.getCellAreas ? $table.getCellAreas() : []
     const { rows, cols } = cellAreas[0]
     const { params: chartParams = {} } = menu
     const { category } = chartParams
@@ -253,7 +253,7 @@ const menuMap = {
   }),
   CHART_PIE: createChartModal((params) => {
     const { $table, menu } = params
-    const cellAreas = $table.getCellAreas()
+    const cellAreas = $table.getCellAreas ? $table.getCellAreas() : []
     const { rows, cols } = cellAreas[0]
     const { params: chartParams = {} } = menu
     const { category } = chartParams
@@ -312,7 +312,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     case 'CHART_PIE': {
       item.disabled = !column
       if (column) {
-        const cellAreas = $table.getCellAreas()
+        const cellAreas = $table.getCellAreas ? $table.getCellAreas() : []
         const validArea = cellAreas.length === 1
         item.disabled = !validArea
         if (validArea) {
