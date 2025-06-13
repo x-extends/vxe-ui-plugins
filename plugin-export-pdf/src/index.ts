@@ -44,9 +44,9 @@ function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTy
   return getCellText(XEUtils.get(row, column.field))
 }
 
-function getFooterData (opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
+function getFooterData ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
   const { footerFilterMethod } = opts
-  return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ items, $rowIndex: index })) : footerData
+  return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ $table: $xeTable, items, $rowIndex: index })) : footerData
 }
 
 function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
@@ -88,7 +88,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   })
   if (isFooter) {
     const { footerData } = $table.getTableData()
-    const footers = getFooterData(options, footerData)
+    const footers = getFooterData($table, options, footerData)
     footers.forEach(row => {
       const item: any = {}
       columns.forEach((column) => {
