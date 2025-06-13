@@ -19,7 +19,7 @@ const tsconfig = require('./tsconfig.json')
 const exportModuleName = 'VxeUIPluginRenderElement'
 const pluginName = pack.name
 const tableVersion = '3.9.0'
-const pluginUrl = 'https://vxeui.com/other3/#/plugin-export-xlsx/install'
+const pluginUrl = 'https://vxeui.com/other3/#/plugin-render-element/install'
 
 gulp.task('build_style', function () {
   return gulp.src('style.scss')

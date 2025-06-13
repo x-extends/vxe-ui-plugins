@@ -17,7 +17,7 @@ const tsconfig = require('./tsconfig.json')
 const exportModuleName = 'VxeUIPluginShortcutKey'
 const pluginName = pack.name
 const tableVersion = '3.9.0'
-const pluginUrl = 'https://vxeui.com/other3/#/plugin-export-xlsx/install'
+const pluginUrl = 'https://vxeui.com/other3/#/plugin-shortcut-key/install'
 
 gulp.task('build_commonjs', function () {
   return gulp.src(['src/index.ts'])

@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-menu",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "Vxe UI plug-in supports context menu.",
   "scripts": {
     "lib": "gulp build"
