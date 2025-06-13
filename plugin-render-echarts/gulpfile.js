@@ -11,8 +11,6 @@ const cleanCSS = require('gulp-clean-css')
 const prefixer = require('gulp-autoprefixer')
 const sourcemaps = require('gulp-sourcemaps')
 const ts = require('gulp-typescript')
-const browserify = require('browserify')
-const source = require('vinyl-source-stream')
 const pack = require('./package.json')
 const tsconfig = require('./tsconfig.json')
 
@@ -37,45 +35,30 @@ gulp.task('build_style', function () {
     .pipe(gulp.dest('dist'))
 })
 
-gulp.task('build_ts', function () {
-  return gulp.src(['src/**/*.ts'])
+gulp.task('build_commonjs', function () {
+  return gulp.src(['src/index.ts'])
     .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
     .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
     .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
+    // .pipe(sourcemaps.init())
     .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
       presets: ['@babel/env']
     }))
-    .pipe(gulp.dest('dist'))
-})
-
-gulp.task('build_commonjs', function () {
-  return gulp.src(['dist/index.js'])
     .pipe(rename({
       basename: 'index',
       extname: '.common.js'
     }))
+    // .pipe(sourcemaps.write())
     .pipe(gulp.dest('dist'))
 })
 
-gulp.task('browserify_common', function () {
-  return browserify({
-    entries: 'dist/index.js'
-  }).external([
-    'vue',
-    'xe-utils',
-    'dayjs'
-  ])
-    .bundle()
-    .pipe(source('all.common.js'))
-    .pipe(gulp.dest('dist'))
-})
-
-gulp.task('build_umd', gulp.series('browserify_common', function () {
-  return gulp.src(['dist/all.common.js'])
+gulp.task('build_umd', function () {
+  return gulp.src(['src/index.ts'])
     .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
     .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
     .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
+    .pipe(ts(tsconfig.compilerOptions))
     .pipe(babel({
       moduleId: pack.name,
       presets: [
@@ -86,8 +69,8 @@ gulp.task('build_umd', gulp.series('browserify_common', function () {
           globals: {
             [pack.name]: exportModuleName,
             vue: 'Vue',
-            'xe-utils': 'XEUtils',
-            dayjs: 'dayjs'
+            'vxe-table': 'VXETable',
+            'xe-utils': 'XEUtils'
           },
           exactGlobals: true
         }]
@@ -106,12 +89,12 @@ gulp.task('build_umd', gulp.series('browserify_common', function () {
       extname: '.js'
     }))
     .pipe(gulp.dest('dist'))
-}))
+})
 
 gulp.task('clear', () => {
   return del([
-    'dist'
+    'dist/depend.*'
   ])
 })
 
-gulp.task('build', gulp.series('clear', 'build_ts', gulp.parallel('build_commonjs', 'build_umd', 'build_style')))
+gulp.task('build', gulp.series(gulp.parallel('build_commonjs', 'build_umd', 'build_style'), 'clear'))
