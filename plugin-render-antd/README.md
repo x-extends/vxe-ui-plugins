@@ -42,11 +42,11 @@ import '@vxe-ui/plugin-render-antd/dist/style.css'
 // ...
 
 // If it is not a global installation, then a single import is required.
-import { ElInput, ElInputNumber, ElSelect } from 'ant-design-vue'
+import { AInput, AInputNumber, ASelect } from 'ant-design-vue'
 // ...
-VxeUIPluginRenderElement.component(AInput)
-VxeUIPluginRenderElement.component(AInputNumber)
-VxeUIPluginRenderElement.component(ASelect)
+VxeUIPluginRenderAntd.component(AInput)
+VxeUIPluginRenderAntd.component(AInputNumber)
+VxeUIPluginRenderAntd.component(ASelect)
 // ...
 
 VxeUI.use(VxeUIPluginRenderAntd)
