@@ -1,5 +1,6 @@
-import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
+import { defineComponent, h, PropType, ComponentOptions } from 'vue'
 import { useWidgetPropDataSource, WidgetDataSourceOptionObjVO } from './use'
+import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent, VxeInputComponent } from 'vxe-pc-ui'
@@ -131,7 +132,7 @@ export function createWidgetASelect (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('a-select') as ComponentOptions, {
+            return h(getCurrComponent('a-select') as ComponentOptions, {
               value: $formView ? $formView.getItemValue(widget) : null,
               options: options.options,
               placeholder: options.placeholder,

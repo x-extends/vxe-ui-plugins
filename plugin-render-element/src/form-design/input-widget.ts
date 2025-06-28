@@ -1,4 +1,5 @@
-import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
+import { defineComponent, h, PropType, ComponentOptions } from 'vue'
+import { getCurrComponent } from '../util/comp'
 
 import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent } from 'vxe-pc-ui'
 
@@ -53,7 +54,7 @@ export function createWidgetElInput (VxeUI: VxeUIExport) {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.name')
               }, {
                 default () {
-                  return h(resolveComponent('el-input') as ComponentOptions, {
+                  return h(getCurrComponent('el-input') as ComponentOptions, {
                     modelValue: widget.title,
                     'onUpdate:modelValue' (val: any) {
                       widget.title = val
@@ -120,7 +121,7 @@ export function createWidgetElInput (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('el-input') as ComponentOptions, {
+            return h(getCurrComponent('el-input') as ComponentOptions, {
               modelValue: $formView ? $formView.getItemValue(widget) : null,
               placeholder: options.placeholder,
               onChange: changeEvent,

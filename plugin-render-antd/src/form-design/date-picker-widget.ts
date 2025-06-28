@@ -1,4 +1,5 @@
-import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
+import { defineComponent, h, PropType, ComponentOptions } from 'vue'
+import { getCurrComponent } from '../util/comp'
 
 import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent, VxeInputComponent } from 'vxe-pc-ui'
 
@@ -120,7 +121,7 @@ export function createWidgetADatePicker (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('a-date-picker') as ComponentOptions, {
+            return h(getCurrComponent('a-date-picker') as ComponentOptions, {
               value: $formView ? $formView.getItemValue(widget) : null,
               placeholder: options.placeholder,
               onChange: changeEvent,

@@ -1,4 +1,5 @@
-import { h, resolveComponent, ComponentOptions } from 'vue'
+import { h, ComponentOptions } from 'vue'
+import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
@@ -102,7 +103,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       const { attrs } = renderOpts
       const itemValue = XEUtils.get(data, field)
       return [
-        h(resolveComponent(name), {
+        h(getCurrComponent(name), {
           ...attrs,
           ...getItemProps(renderOpts, params, itemValue, defaultProps),
           ...getItemOns(renderOpts, params)
@@ -115,7 +116,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     const { attrs } = renderOpts
     const props = getItemProps(renderOpts, params, null)
     return [
-      h(resolveComponent('a-button') as ComponentOptions, {
+      h(getCurrComponent('a-button') as ComponentOptions, {
         ...attrs,
         ...props,
         ...getItemOns(renderOpts, params)
@@ -147,14 +148,14 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       const valueProp = optionProps.value || 'value'
       const itemValue = XEUtils.get(data, field)
       return [
-        h(resolveComponent(`${name}Group`) as ComponentOptions, {
+        h(getCurrComponent(`${name}Group`) as ComponentOptions, {
           ...attrs,
           ...getItemProps(renderOpts, params, itemValue),
           ...getItemOns(renderOpts, params)
         }, {
           default: () => {
             return options.map((option, oIndex) => {
-              return h(resolveComponent(name) as ComponentOptions, {
+              return h(getCurrComponent(name) as ComponentOptions, {
                 key: oIndex,
                 value: option[valueProp],
                 disabled: option.disabled
@@ -188,7 +189,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
         const ons = getItemOns(renderOpts, params)
         if (optionGroups) {
           return [
-            h(resolveComponent('a-select') as ComponentOptions, {
+            h(getCurrComponent('a-select') as ComponentOptions, {
               ...attrs,
               ...props,
               options: optionGroups,
@@ -197,7 +198,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
           ]
         }
         return [
-          h(resolveComponent('a-select') as ComponentOptions, {
+          h(getCurrComponent('a-select') as ComponentOptions, {
             ...attrs,
             ...props,
             options: props.options || options,
@@ -242,14 +243,14 @@ export function defineFormRender (VxeUI: VxeUIExport) {
         const valueProp = optionProps.value || 'value'
         const itemValue = XEUtils.get(data, field)
         return [
-          h(resolveComponent('a-radio-group'), {
+          h(getCurrComponent('a-radio-group'), {
             ...attrs,
             ...getItemProps(renderOpts, params, itemValue),
             ...getItemOns(renderOpts, params)
           }, {
             default: () => {
               return options.map((option, oIndex) => {
-                return h(resolveComponent('a-radio'), {
+                return h(getCurrComponent('a-radio'), {
                   key: oIndex,
                   value: option[valueProp],
                   disabled: option.disabled
@@ -271,14 +272,14 @@ export function defineFormRender (VxeUI: VxeUIExport) {
         const valueProp = optionProps.value || 'value'
         const itemValue = XEUtils.get(data, field)
         return [
-          h(resolveComponent('a-checkbox-group'), {
+          h(getCurrComponent('a-checkbox-group'), {
             ...attrs,
             ...getItemProps(renderOpts, params, itemValue),
             ...getItemOns(renderOpts, params)
           }, {
             default: () => {
               return options.map((option, oIndex) => {
-                return h(resolveComponent('a-checkbox'), {
+                return h(getCurrComponent('a-checkbox'), {
                   key: oIndex,
                   value: option[valueProp],
                   disabled: option.disabled

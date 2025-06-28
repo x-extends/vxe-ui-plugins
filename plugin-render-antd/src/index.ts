@@ -1,6 +1,8 @@
 import { defineTableRender } from './table'
 import { defineFormRender } from './form'
 import { defineFormDesignRender } from './form-design'
+import { globalConfig, componentMaps } from './store'
+import XEUtils from 'xe-utils'
 
 import type { VxeUIPluginObject, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 import type { VxeUIPluginRenderAntdOptions } from '../types'
@@ -31,9 +33,30 @@ function getEventTargetNode (evnt: any, container: HTMLElement, className: strin
   return { flag: false }
 }
 
+function toComponentName (name: string) {
+  if (name) {
+    return name.slice(0, 1).toUpperCase() + name.slice(1)
+  }
+  return name
+}
+
 export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
+  component (comp: any) {
+    if (comp && comp.name) {
+      const kcName = XEUtils.kebabCase('el-button')
+      const ccName = toComponentName(XEUtils.camelCase('el-button'))
+      componentMaps[kcName] = comp
+      componentMaps[ccName] = comp
+    } else {
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] error component.', comp)
+    }
+  },
   install (VxeUI, options?: VxeUIPluginRenderAntdOptions) {
     const pluginOpts = Object.assign({ prefixCls: 'ant' }, options)
+    
+    if (options) {
+      Object.assign(globalConfig, options)
+    }
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
@@ -75,8 +98,13 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
   }
 }
 
-if (typeof window !== 'undefined' && window.VxeUI && window.VxeUI.use) {
-  window.VxeUI.use(VxeUIPluginRenderAntd)
+if (typeof window !== 'undefined') {
+  if (window.VxeUI && window.VxeUI.use) {
+    window.VxeUI.use(VxeUIPluginRenderAntd)
+  }
+  if ((window as any).antd) {
+    globalConfig.Antd = (window as any).antd
+  }
 }
 
 export default VxeUIPluginRenderAntd

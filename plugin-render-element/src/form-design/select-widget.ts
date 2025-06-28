@@ -1,5 +1,6 @@
-import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
+import { defineComponent, h, PropType, ComponentOptions } from 'vue'
 import { useWidgetPropDataSource, WidgetDataSourceOptionObjVO } from './use'
+import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent } from 'vxe-pc-ui'
@@ -62,7 +63,7 @@ export function createWidgetElSelect (VxeUI: VxeUIExport) {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.name')
               }, {
                 default () {
-                  return h(resolveComponent('el-input') as ComponentOptions, {
+                  return h(getCurrComponent('el-input') as ComponentOptions, {
                     modelValue: widget.title,
                     'onUpdate:modelValue' (val: any) {
                       widget.title = val
@@ -130,7 +131,7 @@ export function createWidgetElSelect (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('el-select') as ComponentOptions, {
+            return h(getCurrComponent('el-select') as ComponentOptions, {
               modelValue: $formView ? $formView.getItemValue(widget) : null,
               placeholder: options.placeholder,
               onChange: changeEvent,
@@ -143,7 +144,7 @@ export function createWidgetElSelect (VxeUI: VxeUIExport) {
               default: () => {
                 return options.options
                   ? options.options.map(item => {
-                    return h(resolveComponent('el-option') as ComponentOptions, {
+                    return h(getCurrComponent('el-option') as ComponentOptions, {
                       label: item.value,
                       value: item.value
                     })

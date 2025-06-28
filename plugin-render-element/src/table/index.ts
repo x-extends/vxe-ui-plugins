@@ -1,4 +1,5 @@
-import { h, resolveComponent, ComponentOptions } from 'vue'
+import { h, ComponentOptions } from 'vue'
+import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 import dayjs from 'dayjs'
 
@@ -258,7 +259,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       const { name, attrs } = renderOpts
       const cellValue = XEUtils.get(row, column.field)
       return [
-        h(resolveComponent(name), {
+        h(getCurrComponent(name), {
           ...attrs,
           ...getCellEditFilterProps(renderOpts, params, cellValue, defaultProps),
           ...getEditOns(renderOpts, params)
@@ -270,7 +271,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   function defaultButtonEditRender (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderEditParams) {
     const { attrs } = renderOpts
     return [
-      h(resolveComponent('el-button'), {
+      h(getCurrComponent('el-button'), {
         ...attrs,
         ...getCellEditFilterProps(renderOpts, params, null),
         ...getOns(renderOpts, params)
@@ -295,7 +296,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
           class: 'vxe-table--filter-element-wrapper'
         }, column.filters.map((option, oIndex) => {
           const optionValue = option.data
-          return h(resolveComponent(name), {
+          return h(getCurrComponent(name), {
             key: oIndex,
             ...attrs,
             ...getCellEditFilterProps(renderOpts, params, optionValue, defaultProps),
@@ -341,7 +342,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     const labelProp = optionProps.label || 'label'
     const valueProp = optionProps.value || 'value'
     return XEUtils.map(options, (item, oIndex) => {
-      return h(resolveComponent('el-option'), {
+      return h(getCurrComponent('el-option'), {
         key: oIndex,
         value: item[valueProp],
         label: item[labelProp],
@@ -395,14 +396,14 @@ export function defineTableRender (VxeUI: VxeUIExport) {
           const groupOptions = optionGroupProps.options || 'options'
           const groupLabel = optionGroupProps.label || 'label'
           return [
-            h(resolveComponent('el-select') as ComponentOptions, {
+            h(getCurrComponent('el-select') as ComponentOptions, {
               ...attrs,
               ...props,
               ...ons
             }, {
               default: () => {
                 return XEUtils.map(optionGroups, (group, gIndex) => {
-                  return h(resolveComponent('el-option-group') as ComponentOptions, {
+                  return h(getCurrComponent('el-option-group') as ComponentOptions, {
                     key: gIndex,
                     label: group[groupLabel]
                   }, {
@@ -414,7 +415,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
           ]
         }
         return [
-          h(resolveComponent('el-select') as ComponentOptions, {
+          h(getCurrComponent('el-select') as ComponentOptions, {
             ...props,
             ...attrs,
             ...ons
@@ -439,7 +440,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             ? column.filters.map((option, oIndex) => {
               const optionValue = option.data
               const props = getCellEditFilterProps(renderOpts, params, optionValue)
-              return h(resolveComponent('el-select') as ComponentOptions, {
+              return h(getCurrComponent('el-select') as ComponentOptions, {
                 key: oIndex,
                 ...attrs,
                 ...props,
@@ -450,7 +451,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
               }, {
                 default: () => {
                   return XEUtils.map(optionGroups, (group, gIndex) => {
-                    return h(resolveComponent('el-option-group') as ComponentOptions, {
+                    return h(getCurrComponent('el-option-group') as ComponentOptions, {
                       key: gIndex,
                       label: group[groupLabel]
                     }, {
@@ -463,7 +464,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             : column.filters.map((option, oIndex) => {
               const optionValue = option.data
               const props = getCellEditFilterProps(renderOpts, params, optionValue)
-              return h(resolveComponent('el-select') as ComponentOptions, {
+              return h(getCurrComponent('el-select') as ComponentOptions, {
                 key: oIndex,
                 ...attrs,
                 ...props,
@@ -514,7 +515,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             class: 'vxe-table--filter-element-wrapper'
           }, column.filters.map((option, oIndex) => {
             const optionValue = option.data
-            return h(resolveComponent(name as string), {
+            return h(getCurrComponent(name as string), {
               key: oIndex,
               ...attrs,
               ...getCellEditFilterProps(renderOpts, params, optionValue),
@@ -575,7 +576,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             class: 'vxe-table--filter-element-wrapper'
           }, column.filters.map((option, oIndex) => {
             const optionValue = option.data
-            return h(resolveComponent(name as string), {
+            return h(getCurrComponent(name as string), {
               key: oIndex,
               ...attrs,
               ...getCellEditFilterProps(renderOpts, params, optionValue),

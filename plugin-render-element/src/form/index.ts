@@ -1,4 +1,5 @@
-import { h, resolveComponent, ComponentOptions } from 'vue'
+import { h, ComponentOptions } from 'vue'
+import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
@@ -93,7 +94,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     const labelProp = optionProps.label || 'label'
     const valueProp = optionProps.value || 'value'
     return XEUtils.map(options, (item, oIndex) => {
-      return h(resolveComponent('el-option'), {
+      return h(getCurrComponent('el-option'), {
         key: oIndex,
         value: item[valueProp],
         label: item[labelProp],
@@ -113,7 +114,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       const { attrs } = renderOpts
       const itemValue = XEUtils.get(data, field)
       return [
-        h(resolveComponent(name), {
+        h(getCurrComponent(name), {
           ...attrs,
           ...getItemProps(renderOpts, params, itemValue, defaultProps),
           ...getItemOns(renderOpts, params)
@@ -126,7 +127,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     const { attrs } = renderOpts
     const props = getItemProps(renderOpts, params, null)
     return [
-      h(resolveComponent('el-button') as ComponentOptions, {
+      h(getCurrComponent('el-button') as ComponentOptions, {
         ...attrs,
         ...props,
         ...getOns(renderOpts, params)
@@ -156,14 +157,14 @@ export function defineFormRender (VxeUI: VxeUIExport) {
       const valueProp = optionProps.value || 'value'
       const itemValue = XEUtils.get(data, field)
       return [
-        h(resolveComponent(`${name}Group`) as ComponentOptions, {
+        h(getCurrComponent(`${name}Group`) as ComponentOptions, {
           ...attrs,
           ...getItemProps(renderOpts, params, itemValue),
           ...getItemOns(renderOpts, params)
         }, {
           default: () => {
             return options.map((option, oIndex) => {
-              return h(resolveComponent(name) as ComponentOptions, {
+              return h(getCurrComponent(name) as ComponentOptions, {
                 key: oIndex,
                 label: option[valueProp],
                 disabled: option.disabled
@@ -199,14 +200,14 @@ export function defineFormRender (VxeUI: VxeUIExport) {
           const groupOptions = optionGroupProps.options || 'options'
           const groupLabel = optionGroupProps.label || 'label'
           return [
-            h(resolveComponent('el-select') as ComponentOptions, {
+            h(getCurrComponent('el-select') as ComponentOptions, {
               ...attrs,
               ...props,
               ...ons
             }, {
               default: () => {
                 return XEUtils.map(optionGroups, (group, gIndex) => {
-                  return h(resolveComponent('el-option-group') as ComponentOptions, {
+                  return h(getCurrComponent('el-option-group') as ComponentOptions, {
                     label: group[groupLabel],
                     key: gIndex
                   }, {
@@ -218,7 +219,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
           ]
         }
         return [
-          h(resolveComponent('el-select') as ComponentOptions, {
+          h(getCurrComponent('el-select') as ComponentOptions, {
             ...attrs,
             ...props,
             ...ons
@@ -257,14 +258,14 @@ export function defineFormRender (VxeUI: VxeUIExport) {
         const valueProp = optionProps.value || 'value'
         const itemValue = XEUtils.get(data, field)
         return [
-          h(resolveComponent('el-radio-group'), {
+          h(getCurrComponent('el-radio-group'), {
             ...attrs,
             ...getItemProps(renderOpts, params, itemValue),
             ...getItemOns(renderOpts, params)
           }, {
             default: () => {
               return options.map((option, oIndex) => {
-                return h(resolveComponent('el-radio'), {
+                return h(getCurrComponent('el-radio'), {
                   key: oIndex,
                   value: option[valueProp],
                   disabled: option.disabled
@@ -285,14 +286,14 @@ export function defineFormRender (VxeUI: VxeUIExport) {
         const valueProp = optionProps.value || 'value'
         const itemValue = XEUtils.get(data, field)
         return [
-          h(resolveComponent('el-checkbox-group'), {
+          h(getCurrComponent('el-checkbox-group'), {
             ...attrs,
             ...getItemProps(renderOpts, params, itemValue),
             ...getItemOns(renderOpts, params)
           }, {
             default: () => {
               return options.map((option, oIndex) => {
-                return h(resolveComponent('el-checkbox'), {
+                return h(getCurrComponent('el-checkbox'), {
                   key: oIndex,
                   value: option[valueProp],
                   label: option[labelProp],

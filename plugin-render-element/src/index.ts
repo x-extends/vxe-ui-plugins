@@ -1,7 +1,10 @@
 import { defineTableRender } from './table'
 import { defineFormRender } from './form'
 import { defineFormDesignRender } from './form-design'
+import { globalConfig, componentMaps } from './store'
+import XEUtils from 'xe-utils'
 
+import type { VxeUIPluginRenderElementOptions } from '../types'
 import type { VxeUIPluginObject, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 
 // eslint-disable-next-line no-unused-vars
@@ -57,11 +60,29 @@ function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearF
   }
 }
 
+function toComponentName (name: string) {
+  if (name) {
+    return name.slice(0, 1).toUpperCase() + name.slice(1)
+  }
+  return name
+}
+
 export const VxeUIPluginRenderElement: VxeUIPluginObject = {
-  install (VxeUI, options?: {
-    ElementPlus?: any
-  }) {
-    ElementPlus = options ? options.ElementPlus : {}
+  component (comp: any) {
+    if (comp && comp.name) {
+      const kcName = XEUtils.kebabCase('el-button')
+      const ccName = toComponentName(XEUtils.camelCase('el-button'))
+      componentMaps[kcName] = comp
+      componentMaps[ccName] = comp
+    } else {
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] error component.', comp)
+    }
+  },
+  install (VxeUI, options?: VxeUIPluginRenderElementOptions) {
+    if (options) {
+      ElementPlus = options.ElementPlus
+      Object.assign(globalConfig, options)
+    }
 
     // 检查版本
     if (!/^(4)\./.test(VxeUI.uiVersion)) {
@@ -80,8 +101,13 @@ export const VxeUIPluginRenderElement: VxeUIPluginObject = {
   }
 }
 
-if (typeof window !== 'undefined' && window.VxeUI && window.VxeUI.use) {
-  window.VxeUI.use(VxeUIPluginRenderElement)
+if (typeof window !== 'undefined') {
+  if (window.VxeUI && window.VxeUI.use) {
+    window.VxeUI.use(VxeUIPluginRenderElement)
+  }
+  if ((window as any).ElementPlus) {
+    globalConfig.ElementPlus = (window as any).ElementPlus
+  }
 }
 
 export default VxeUIPluginRenderElement

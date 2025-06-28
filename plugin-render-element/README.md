@@ -23,6 +23,32 @@ import '@vxe-ui/plugin-render-element/dist/style.css'
 // ...
 
 VxeUI.use(VxeUIPluginRenderElement)
+// VxeUI.use(VxeUIPluginRenderElement, {
+//   ElementPlus
+// })
+```
+
+## Demand import
+
+```javascript
+// ...
+// Use vxe-pc-ui
+import { VxeUI } from 'vxe-pc-ui'
+// Use vxe-table
+// import { VxeUI } from 'vxe-table'
+import VxeUIPluginRenderElement from '@vxe-ui/plugin-render-element'
+import '@vxe-ui/plugin-render-element/dist/style.css'
+// ...
+
+// If it is not a global installation, then a single import is required.
+import { ElInput, ElInputNumber, ElSelect } from 'element-plus'
+// ...
+VxeUIPluginRenderElement.component(ElInput)
+VxeUIPluginRenderElement.component(ElInputNumber)
+VxeUIPluginRenderElement.component(ElSelect)
+// ...
+
+VxeUI.use(VxeUIPluginRenderElement)
 ```
 
 ## API

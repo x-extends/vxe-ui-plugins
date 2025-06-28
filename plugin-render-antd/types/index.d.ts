@@ -12,6 +12,7 @@ export interface VxeUIPluginRenderAntdOptions {
  * 基于 Vxe UI 的适配插件，用于兼容 ant-design-vue 组件库
  */
 export declare const VxeUIPluginRenderAntd: {
+  component (comp: any): void
   install (VxeUI: VxeUIExport, options?: VxeUIPluginRenderAntdOptions): void
 }
 

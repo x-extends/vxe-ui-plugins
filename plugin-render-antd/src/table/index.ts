@@ -1,4 +1,5 @@
-import { h, resolveComponent, ComponentOptions } from 'vue'
+import { h, ComponentOptions } from 'vue'
+import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
@@ -254,7 +255,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       const { name, attrs } = renderOpts
       const cellValue = XEUtils.get(row, column.field)
       return [
-        h(resolveComponent(name), {
+        h(getCurrComponent(name), {
           ...attrs,
           ...getCellEditFilterProps(renderOpts, params, cellValue, defaultProps),
           ...getEditOns(renderOpts, params)
@@ -266,7 +267,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   function defaultButtonEditRender (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderEditParams) {
     const { attrs } = renderOpts
     return [
-      h(resolveComponent('a-button'), {
+      h(getCurrComponent('a-button'), {
         ...attrs,
         ...getCellEditFilterProps(renderOpts, params, null),
         ...getOns(renderOpts, params)
@@ -291,7 +292,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
           class: 'vxe-table--filter-antd-wrapper'
         }, column.filters.map((option, oIndex) => {
           const optionValue = option.data
-          return h(resolveComponent(name), {
+          return h(getCurrComponent(name), {
             key: oIndex,
             ...attrs,
             ...getCellEditFilterProps(renderOpts, params, optionValue, defaultProps),
@@ -383,7 +384,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
         const ons = getEditOns(renderOpts, params)
         if (optionGroups) {
           return [
-            h(resolveComponent('a-select') as ComponentOptions, {
+            h(getCurrComponent('a-select') as ComponentOptions, {
               ...props,
               ...attrs,
               options: optionGroups,
@@ -392,7 +393,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
           ]
         }
         return [
-          h(resolveComponent('a-select') as ComponentOptions, {
+          h(getCurrComponent('a-select') as ComponentOptions, {
             ...props,
             ...attrs,
             options: props.options || options,
@@ -415,7 +416,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             ? column.filters.map((option, oIndex) => {
               const optionValue = option.data
               const props = getCellEditFilterProps(renderOpts, params, optionValue)
-              return h(resolveComponent('a-select') as ComponentOptions, {
+              return h(getCurrComponent('a-select') as ComponentOptions, {
                 key: oIndex,
                 ...attrs,
                 ...props,
@@ -429,7 +430,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             : column.filters.map((option, oIndex) => {
               const optionValue = option.data
               const props = getCellEditFilterProps(renderOpts, params, optionValue)
-              return h(resolveComponent('a-select') as ComponentOptions, {
+              return h(getCurrComponent('a-select') as ComponentOptions, {
                 key: oIndex,
                 ...attrs,
                 ...props,

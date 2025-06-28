@@ -1,4 +1,5 @@
-import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
+import { defineComponent, h, PropType, ComponentOptions } from 'vue'
+import { getCurrComponent } from '../util/comp'
 
 import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent, VxeInputComponent } from 'vxe-pc-ui'
 
@@ -121,7 +122,7 @@ export function createWidgetAInput (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('a-input') as ComponentOptions, {
+            return h(getCurrComponent('a-input') as ComponentOptions, {
               value: $formView ? $formView.getItemValue(widget) : null,
               onChange: changeEvent,
               'onUpdate:value' (val: any) {

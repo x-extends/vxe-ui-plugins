@@ -22,9 +22,34 @@ import VxeUIPluginRenderAntd from '@vxe-ui/plugin-render-antd'
 import '@vxe-ui/plugin-render-antd/dist/style.css'
 // ...
 
-VxeUI.use(VxeUIPluginRenderAntd, {
-  // prefixCls: 'ant'
-})
+VxeUI.use(VxeUIPluginRenderAntd)
+// VxeUI.use(VxeUIPluginRenderAntd, {
+//   // Antd,
+//   // prefixCls: 'ant'
+// })
+```
+
+## Demand import
+
+```javascript
+// ...
+// Use vxe-pc-ui
+import { VxeUI } from 'vxe-pc-ui'
+// Use vxe-table
+// import { VxeUI } from 'vxe-table'
+import VxeUIPluginRenderAntd from '@vxe-ui/plugin-render-antd'
+import '@vxe-ui/plugin-render-antd/dist/style.css'
+// ...
+
+// If it is not a global installation, then a single import is required.
+import { ElInput, ElInputNumber, ElSelect } from 'ant-design-vue'
+// ...
+VxeUIPluginRenderElement.component(AInput)
+VxeUIPluginRenderElement.component(AInputNumber)
+VxeUIPluginRenderElement.component(ASelect)
+// ...
+
+VxeUI.use(VxeUIPluginRenderAntd)
 ```
 
 

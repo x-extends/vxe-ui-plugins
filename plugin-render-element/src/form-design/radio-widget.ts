@@ -1,5 +1,6 @@
-import { defineComponent, h, PropType, resolveComponent, ComponentOptions } from 'vue'
+import { defineComponent, h, PropType, ComponentOptions } from 'vue'
 import { useWidgetPropDataSource, WidgetDataSourceOptionObjVO } from './use'
+import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent } from 'vxe-pc-ui'
@@ -60,7 +61,7 @@ export function createWidgetElRadio (VxeUI: VxeUIExport) {
                 title: VxeUI.getI18n('vxe.formDesign.widgetProp.name')
               }, {
                 default () {
-                  return h(resolveComponent('el-input') as ComponentOptions, {
+                  return h(getCurrComponent('el-input') as ComponentOptions, {
                     modelValue: widget.title,
                     'onUpdate:modelValue' (val: any) {
                       widget.title = val
@@ -128,7 +129,7 @@ export function createWidgetElRadio (VxeUI: VxeUIExport) {
           title: widget.title
         }, {
           default () {
-            return h(resolveComponent('el-radio-group') as ComponentOptions, {
+            return h(getCurrComponent('el-radio-group') as ComponentOptions, {
               modelValue: $formView ? $formView.getItemValue(widget) : null,
               onChange: changeEvent,
               'onUpdate:modelValue' (val: any) {
@@ -140,7 +141,7 @@ export function createWidgetElRadio (VxeUI: VxeUIExport) {
               default: () => {
                 return options.options
                   ? options.options.map((item, index) => {
-                    return h(resolveComponent('el-radio') as ComponentOptions, {
+                    return h(getCurrComponent('el-radio') as ComponentOptions, {
                       key: index,
                       value: item.value
                     }, {
