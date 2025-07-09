@@ -1,6 +1,6 @@
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles, VxeNumberInputComponent } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles } from 'vxe-pc-ui'
 import type { VxeTableConstructor, VxeTablePrivateMethods, VxeTableDefines, VxeColumnPropTypes, VxeTableExtendCellAreaDefines } from 'vxe-table'
 import type { VxeUIPluginMenuOptions } from '../types'
 
@@ -323,8 +323,8 @@ function selectMultipleRows () {
     size: number
   }>(resolve => {
     if (VxeUI.modal) {
-      const VxeNumberInputComponent = VxeUI.getComponent<VxeNumberInputComponent>('VxeNumberInput')
-      if (VxeNumberInputComponent) {
+      const VxeUINumberInputComponent = VxeUI.getComponent('VxeNumberInput')
+      if (VxeUINumberInputComponent) {
         let rowSize = 1
         VxeUI.modal.alert({
           title: '请输入行数',
@@ -332,7 +332,7 @@ function selectMultipleRows () {
           maskClosable: false,
           slots: {
             default (params, h) {
-              return h(VxeNumberInputComponent, {
+              return h(VxeUINumberInputComponent, {
                 style: {
                   width: '100%'
                 },
@@ -340,7 +340,10 @@ function selectMultipleRows () {
                   value: rowSize,
                   min: 1,
                   max: 100,
-                  align: 'center'
+                  align: 'center',
+                  controlConfig: {
+                    layout: 'default'
+                  }
                 },
                 on: {
                   modelValue (value: any) {
@@ -703,8 +706,105 @@ export const VxeUIPluginMenu = {
        */
       INSERT_ROW: {
         menuMethod (params) {
-          const { $table, menu } = params
-          $table.insert(menu.params || {})
+          const { $table, menu, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          $table.insert(menu.params || {}).then(({ rows }) => {
+            if (column && mouseConfig && mouseOpts.area) {
+              $table.setCellAreas([
+                { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+              ])
+            }
+          })
+        }
+      },
+      /**
+       * 插入数据到指定位置
+       */
+      INSERT_AT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (row) {
+            $table.insertAt(menu.params || {}, row).then(({ rows }) => {
+              if (column && mouseConfig && mouseOpts.area) {
+                $table.setCellAreas([
+                  { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+                ])
+              }
+            })
+          }
+        }
+      },
+      /**
+       * 插入多行数据
+       */
+      BATCH_INSERT_AT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (row) {
+            selectMultipleRows().then(({ size }) => {
+              if (size) {
+                $table.insertAt(XEUtils.range(0, size).map(() => Object.assign({}, menu.params)), row).then(({ rows }) => {
+                  if (column && mouseConfig && mouseOpts.area) {
+                    $table.setCellAreas([
+                      { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+                    ])
+                  }
+                })
+              }
+            })
+          }
+        }
+      },
+      /**
+       * 插入数据到指定位置
+       */
+      INSERT_NEXT_AT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (row) {
+            $table.insertNextAt(menu.params || {}, row).then(({ rows }) => {
+              if (column && mouseConfig && mouseOpts.area) {
+                $table.setCellAreas([
+                  { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+                ])
+              }
+            })
+          }
+        }
+      },
+      /**
+       * 插入数据到指定位置
+       */
+      BATCH_INSERT_NEXT_AT_ROW: {
+        menuMethod (params) {
+          const { $table, menu, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (row) {
+            selectMultipleRows().then(({ size }) => {
+              if (size) {
+                $table.insertNextAt(XEUtils.range(0, size).map(() => Object.assign({}, menu.params)), row).then(({ rows }) => {
+                  if (column && mouseConfig && mouseOpts.area) {
+                    $table.setCellAreas([
+                      { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+                    ])
+                  }
+                })
+              }
+            })
+          }
         }
       },
       /**
@@ -743,58 +843,6 @@ export const VxeUIPluginMenu = {
                 $table.setActiveCell(row, args[1] || column.field)
               }
             })
-        }
-      },
-      /**
-       * 插入数据到指定位置
-       */
-      INSERT_AT_ROW: {
-        menuMethod (params) {
-          const { $table, menu, row } = params
-          if (row) {
-            $table.insertAt(menu.params || {}, row)
-          }
-        }
-      },
-      /**
-       * 插入多行数据
-       */
-      BATCH_INSERT_AT_ROW: {
-        menuMethod (params) {
-          const { $table, menu, row } = params
-          if (row) {
-            selectMultipleRows().then(({ size }) => {
-              if (size) {
-                $table.insertAt(XEUtils.range(0, size).map(() => Object.assign({}, menu.params)), row)
-              }
-            })
-          }
-        }
-      },
-      /**
-       * 插入数据到指定位置
-       */
-      INSERT_NEXT_AT_ROW: {
-        menuMethod (params) {
-          const { $table, menu, row } = params
-          if (row) {
-            $table.insertNextAt(menu.params || {}, row)
-          }
-        }
-      },
-      /**
-       * 插入数据到指定位置
-       */
-      BATCH_INSERT_NEXT_AT_ROW: {
-        menuMethod (params) {
-          const { $table, menu, row } = params
-          if (row) {
-            selectMultipleRows().then(({ size }) => {
-              if (size) {
-                $table.insertNextAt(XEUtils.range(0, size).map(() => Object.assign({}, menu.params)), row)
-              }
-            })
-          }
         }
       },
       /**
