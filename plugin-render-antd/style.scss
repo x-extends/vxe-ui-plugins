@@ -23,6 +23,24 @@ $vxe-table-validate-error-color: #f56c6c;
   .vxe-form--item-inner {
     @extend %CompWidth;
   }
+  .vxe-form--item {
+    &.is--error {
+      & > .vxe-form--item-content {
+        & > .vxe-form--item-inner {
+          & > .ant-input,
+          & > .ant-select .ant-input,
+          & > .ant-select .ant-select-selection,
+          & > .ant-input-number,
+          & > .ant-cascader-picker .ant-cascader-input,
+          & > .ant-calendar-picker .ant-calendar-picker-input,
+          & > .ant-time-picker .ant-time-picker-input {
+            border-color: $vxe-table-validate-error-color;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+  }
 }
 .vxe-table--filter-antd-wrapper {
   padding: 0.8em 1em;
@@ -34,8 +52,9 @@ $vxe-table-validate-error-color: #f56c6c;
   }
 }
 .vxe-table {
-  .vxe-cell,
-  .vxe-tree-cell {
+  & > .vxe-cell,
+  & > .vxe-cell > .vxe-cell--wrapper,
+  & > .vxe-cell > .vxe-cell--wrapper > .vxe-cell--tree-node > .vxe-tree-cell {
     @extend %CompWidth;
     & > .ant-rate {
       vertical-align: bottom;
@@ -56,22 +75,24 @@ $vxe-table-validate-error-color: #f56c6c;
 }
 .col--valid-error {
   & > .vxe-cell,
-  & > .vxe-tree-cell {
+  & > .vxe-cell > .vxe-cell--wrapper,
+  & > .vxe-cell > .vxe-cell--wrapper > .vxe-cell--tree-node > .vxe-tree-cell {
     & > .ant-input,
     & > .ant-select .ant-input,
     & > .ant-select .ant-select-selection,
     & > .ant-input-number,
     & > .ant-cascader-picker .ant-cascader-input,
-    & > .ant-calendar-picker .ant-calendar-picker-input {
+    & > .ant-calendar-picker .ant-calendar-picker-input,
+    & > .ant-time-picker .ant-time-picker-input {
       border-color: $vxe-table-validate-error-color;
       box-shadow: none;
     }
   }
 }
 .vxe-table.cell--highlight {
-  .vxe-cell,
-  .vxe-tree-cell,
-  .vxe-cell--wrapper  {
+  & > .vxe-cell,
+  & > .vxe-cell > .vxe-cell--wrapper,
+  & > .vxe-cell > .vxe-cell--wrapper > .vxe-cell--tree-node > .vxe-tree-cell {
     & > .ant-input,
     & > .ant-input-number {
       padding: 0;
