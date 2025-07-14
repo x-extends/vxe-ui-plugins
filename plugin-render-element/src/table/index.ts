@@ -385,6 +385,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
     ElSelect: {
+      tableAutoFocus: 'input',
       renderTableEdit (renderOpts, params) {
         const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
         const { row, column } = params
@@ -496,6 +497,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableExportMethod: createExportMethod(getSelectCellValue)
     },
     ElCascader: {
+      tableAutoFocus: 'input',
       renderTableEdit: createEditRender(),
       renderTableCell (renderOpts, params) {
         return getCellLabelVNs(renderOpts, params, getCascaderCellValue(renderOpts, params))
@@ -503,6 +505,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableExportMethod: createExportMethod(getCascaderCellValue)
     },
     ElDatePicker: {
+      tableAutoFocus: 'input',
       renderTableEdit: createEditRender(),
       renderTableCell (renderOpts, params) {
         return getCellLabelVNs(renderOpts, params, getDatePickerCellValue(renderOpts, params))
@@ -550,6 +553,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableExportMethod: createExportMethod(getDatePickerCellValue)
     },
     ElTimePicker: {
+      tableAutoFocus: 'input',
       renderTableEdit: createEditRender(),
       renderTableCell (renderOpts, params) {
         return getCellLabelVNs(renderOpts, params, getTimePickerCellValue(renderOpts, params))
@@ -557,6 +561,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableExportMethod: createExportMethod(getTimePickerCellValue)
     },
     ElTimeSelect: {
+      tableAutoFocus: 'input',
       renderTableEdit: createEditRender()
     },
     ElRate: {

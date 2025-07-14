@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-element",
-  "version": "4.0.12",
+  "version": "4.0.13",
   "description": "Vxe UI plug-in for compatibility with the element-plus component.",
   "scripts": {
     "lib": "gulp build"

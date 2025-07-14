@@ -23,6 +23,28 @@ $vxe-table-validate-error-color: #f56c6c;
   .vxe-form--item-inner {
     @extend %CompWidth;
   }
+  .vxe-form--item {
+    &.is--error {
+      & > .vxe-form--item-content {
+        & > .vxe-form--item-inner {
+          & > .ant-input,
+          & > .ant-select .ant-input,
+          & > .ant-select .ant-select-selection,
+          & > .ant-select .ant-select-selector,
+          & > .ant-select:not(.ant-select-disabled) .ant-select-selector,
+          & > .ant-select:hover .ant-select-selector,
+          & > .ant-input-number,
+          & > .ant-cascader-picker .ant-cascader-input,
+          & > .ant-calendar-picker .ant-calendar-picker-input,
+          & > .ant-picker .ant-picker-input,
+          & > .ant-picker {
+            border-color: $vxe-table-validate-error-color;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+  }
 }
 .vxe-table--filter-antd-wrapper {
   padding: 0.8em 1em;
@@ -34,8 +56,9 @@ $vxe-table-validate-error-color: #f56c6c;
   }
 }
 .vxe-table {
-  .vxe-cell,
-  .vxe-tree-cell {
+  & > .vxe-cell,
+  & > .vxe-cell > .vxe-cell--wrapper,
+  & > .vxe-cell > .vxe-cell--wrapper > .vxe-cell--tree-node > .vxe-tree-cell {
     @extend %CompWidth;
     & > .ant-rate {
       vertical-align: bottom;
@@ -56,32 +79,36 @@ $vxe-table-validate-error-color: #f56c6c;
 }
 .col--valid-error {
   & > .vxe-cell,
-  & > .vxe-tree-cell {
+  & > .vxe-cell > .vxe-cell--wrapper,
+  & > .vxe-cell > .vxe-cell--wrapper > .vxe-cell--tree-node > .vxe-tree-cell {
     & > .ant-input,
     & > .ant-select .ant-input,
     & > .ant-select .ant-select-selection,
+    & > .ant-select .ant-select-selector,
+    & > .ant-select:not(.ant-select-disabled) .ant-select-selector,
+    & > .ant-select:hover .ant-select-selector,
     & > .ant-input-number,
     & > .ant-cascader-picker .ant-cascader-input,
-    & > .ant-calendar-picker .ant-calendar-picker-input {
+    & > .ant-calendar-picker .ant-calendar-picker-input,
+    & > .ant-picker .ant-picker-input,
+    & > .ant-picker {
       border-color: $vxe-table-validate-error-color;
       box-shadow: none;
     }
   }
 }
 .vxe-table.cell--highlight {
-  .vxe-cell,
-  .vxe-tree-cell,
-  .vxe-cell--wrapper  {
+  & > .vxe-cell,
+  & > .vxe-cell > .vxe-cell--wrapper,
+  & > .vxe-cell > .vxe-cell--wrapper > .vxe-cell--tree-node > .vxe-tree-cell {
     & > .ant-input,
     & > .ant-input-number {
       padding: 0;
       @extend %ResetBorder;
     }
-    & > .ant-select {
-      .ant-input {
-        padding: 0;
-        @extend %ResetBorder;
-      }
+    & > .ant-select .ant-input {
+      padding: 0;
+      @extend %ResetBorder;
     }
     & > .ant-input-number {
       .ant-input-number-input {
@@ -92,12 +119,11 @@ $vxe-table-validate-error-color: #f56c6c;
         @extend %ResetBorder;
       }
     }
-    & > .ant-select {
-      .ant-select-selection {
-        @extend %ResetBorder;
-        .ant-select-selection__rendered {
-          margin: 0;
-        }
+    & > .ant-select .ant-select-selection,
+    & > .ant-select .ant-select-selector {
+      @extend %ResetBorder;
+      .ant-select-selection__rendered {
+        margin: 0;
       }
     }
     & > .ant-cascader-picker {
@@ -108,17 +134,13 @@ $vxe-table-validate-error-color: #f56c6c;
         padding: 0;
       }
     }
-    & > .ant-calendar-picker {
-      .ant-calendar-picker-input {
-        padding: 0;
-        @extend %ResetBorder;
-      }
+    & > .ant-calendar-picker .ant-calendar-picker-input {
+      padding: 0;
+      @extend %ResetBorder;
     }
-    & > .ant-time-picker {
-      .ant-time-picker-input {
-        padding: 0;
-        @extend %ResetBorder;
-      }
+    & > .ant-time-picker .ant-time-picker-input {
+      padding: 0;
+      @extend %ResetBorder;
     }
   }
 }
