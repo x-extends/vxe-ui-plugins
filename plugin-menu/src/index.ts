@@ -198,6 +198,19 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
       item.disabled = !column || type !== 'header'
       break
     }
+    case 'SELECT_ALL_AREA': {
+      const { visibleData } = $table.getTableData()
+      const { visibleColumn } = $table.getTableColumn()
+      item.disabled = !(visibleData.length || visibleColumn.length)
+      break
+    }
+    case 'SELECT_AREA_TO_LEFT':
+    case 'SELECT_AREA_TO_RIGHT':
+    case 'SELECT_AREA_TO_TOP':
+    case 'SELECT_AREA_TO_BOTTON': {
+      item.disabled = !column || !row
+      break
+    }
     case 'EDIT_CELL':
     case 'CLEAR_CELL':
     case 'CLEAR_ROW':
@@ -478,6 +491,151 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table } = params
           $table.clearData()
+        }
+      },
+      /**
+       * 选取所有区域
+       */
+      SELECT_ALL_AREA: {
+        menuMethod (params) {
+          const { $table } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (mouseConfig && mouseOpts.area) {
+            const { visibleData } = $table.getTableData()
+            const { visibleColumn } = $table.getTableColumn()
+            $table.setCellAreas([{
+              startRow: XEUtils.first(visibleData),
+              endRow: XEUtils.last(visibleData),
+              startColumn: XEUtils.first(visibleColumn),
+              endColumn: XEUtils.last(visibleColumn)
+            }])
+          }
+        }
+      },
+      /**
+       * 以当前单元格为起点，范围选取到左侧单元格
+       */
+      SELECT_AREA_TO_LEFT: {
+        menuMethod (params) {
+          const { $table, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (mouseConfig && mouseOpts.area) {
+            const { visibleColumn } = $table.getTableColumn()
+            const cellAreas = $table.getCellAreas()
+            if (cellAreas.length === 1) {
+              const fitstArea = cellAreas[0]
+              $table.setCellAreas([{
+                startRow: XEUtils.first(fitstArea.rows),
+                endRow: XEUtils.last(fitstArea.rows),
+                startColumn: XEUtils.first(visibleColumn),
+                endColumn: XEUtils.last(fitstArea.cols)
+              }], { column, row })
+            } else {
+              $table.setCellAreas([{
+                startRow: row,
+                endRow: row,
+                startColumn: XEUtils.first(visibleColumn),
+                endColumn: column
+              }], { column, row })
+            }
+          }
+        }
+      },
+      /**
+       * 以当前单元格为起点，范围选取到右侧单元格
+       */
+      SELECT_AREA_TO_RIGHT: {
+        menuMethod (params) {
+          const { $table, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (mouseConfig && mouseOpts.area) {
+            const { visibleColumn } = $table.getTableColumn()
+            const cellAreas = $table.getCellAreas()
+            if (cellAreas.length === 1) {
+              const fitstArea = cellAreas[0]
+              $table.setCellAreas([{
+                startRow: XEUtils.first(fitstArea.rows),
+                endRow: XEUtils.last(fitstArea.rows),
+                startColumn: XEUtils.first(fitstArea.cols),
+                endColumn: XEUtils.last(visibleColumn)
+              }], { column, row })
+            } else {
+              $table.setCellAreas([{
+                startRow: row,
+                endRow: row,
+                startColumn: column,
+                endColumn: XEUtils.last(visibleColumn)
+              }], { column, row })
+            }
+          }
+        }
+      },
+      /**
+       * 以当前单元格为起点，范围选取到顶部单元格
+       */
+      SELECT_AREA_TO_TOP: {
+        menuMethod (params) {
+          const { $table, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (mouseConfig && mouseOpts.area) {
+            const { visibleData } = $table.getTableData()
+            const cellAreas = $table.getCellAreas()
+            if (cellAreas.length === 1) {
+              const fitstArea = cellAreas[0]
+              $table.setCellAreas([{
+                startRow: XEUtils.first(visibleData),
+                endRow: XEUtils.last(fitstArea.rows),
+                startColumn: XEUtils.first(fitstArea.cols),
+                endColumn: XEUtils.last(fitstArea.cols)
+              }], { column, row })
+            } else {
+              $table.setCellAreas([{
+                startRow: XEUtils.first(visibleData),
+                endRow: row,
+                startColumn: column,
+                endColumn: column
+              }], { column, row })
+            }
+          }
+        }
+      },
+      /**
+       * 以当前单元格为起点，范围选取到底部单元格
+       */
+      SELECT_AREA_TO_BOTTON: {
+        menuMethod (params) {
+          const { $table, row, column } = params
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (mouseConfig && mouseOpts.area) {
+            const { visibleData } = $table.getTableData()
+            const cellAreas = $table.getCellAreas()
+            if (cellAreas.length === 1) {
+              const fitstArea = cellAreas[0]
+              $table.setCellAreas([{
+                startRow: XEUtils.first(fitstArea.rows),
+                endRow: XEUtils.last(visibleData),
+                startColumn: XEUtils.first(fitstArea.cols),
+                endColumn: XEUtils.last(fitstArea.cols)
+              }], { column, row })
+            } else {
+              $table.setCellAreas([{
+                startRow: row,
+                endRow: XEUtils.last(visibleData),
+                startColumn: column,
+                endColumn: column
+              }], { column, row })
+            }
+          }
         }
       },
       /**

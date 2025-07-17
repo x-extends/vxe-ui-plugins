@@ -35,6 +35,11 @@ VxeUI.use(VxeUIPluginMenu)
 | CLEAR_CHECKBOX_ROW  | 清除复选框选中行数据的值 | — |
 | CLEAR_AREA_ROW  |  如果启用 mouse-config.area 功能，清除区域选择范围内数据的值，否则清除行数据的值 | — |
 | CLEAR_ALL  | 清除所有数据的值 | — |
+| SELECT_ALL_AREA  | 如果启用 mouse-config.area 功能，选择所有单元格 | — |
+| SELECT_AREA_TO_LEFT  | 如果启用 mouse-config.area 功能，以当前单元格为起点，范围选取到左侧单元格 | — |
+| SELECT_AREA_TO_RIGHT  | 如果启用 mouse-config.area 功能，以当前单元格为起点，范围选取到右侧单元格 | — |
+| SELECT_AREA_TO_TOP  | 如果启用 mouse-config.area 功能，以当前单元格为起点，范围选取到顶部单元格 | — |
+| SELECT_AREA_TO_BOTTON  | 如果启用 mouse-config.area 功能，以当前单元格为起点，范围选取到底部单元格 | — |
 | REVERT_CELL  | 还原单元格数据的值；如果启用 mouse-config.area 功能，则还原区域范围内的单元格数据 | — |
 | REVERT_ROW  | 还原行数据的值 | — |
 | REVERT_CHECKBOX_ROW  | 还原复选框选中行数据的值 | — |
