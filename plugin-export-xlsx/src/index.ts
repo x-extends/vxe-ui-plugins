@@ -711,10 +711,13 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
             $table.createData(records)
               .then((data: any[]) => {
                 let loadRest: Promise<any>
-                if (options.mode === 'insert') {
+                if (options.mode === 'insertTop') {
+                  loadRest = $table.insertAt(data, 0)
+                } else if (options.mode === 'insertBottom' || options.mode === 'insert') {
                   loadRest = $table.insertAt(data, -1)
                 } else {
-                  loadRest = $table.reloadData(data)
+                  const { visibleData } = $table.getTableData()
+                  loadRest = $table.remove(visibleData).then(() => $table.insert(data))
                 }
                 return loadRest.then(() => {
                   if (_importResolve) {
