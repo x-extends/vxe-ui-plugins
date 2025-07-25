@@ -21,7 +21,12 @@ import { VxeUI } from 'vxe-pc-ui'
 import VxeUIPluginValidator from '@vxe-ui/plugin-validator'
 // ...
 
-VxeUI.use(VxeUIPluginValidator)
+VxeUI.use(VxeUIPluginValidator, {
+  // Custom regular expression rules
+  // customRegExp: {
+  //   email: /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/
+  // }
+})
 ```
 
 ## API
