@@ -70,8 +70,8 @@ function toComponentName (name: string) {
 export const VxeUIPluginRenderElement: VxeUIPluginObject = {
   component (comp: any) {
     if (comp && comp.name) {
-      const kcName = XEUtils.kebabCase('el-button')
-      const ccName = toComponentName(XEUtils.camelCase('el-button'))
+      const kcName = XEUtils.kebabCase(comp.name)
+      const ccName = toComponentName(XEUtils.camelCase(comp.name))
       componentMaps[kcName] = comp
       componentMaps[ccName] = comp
     } else {

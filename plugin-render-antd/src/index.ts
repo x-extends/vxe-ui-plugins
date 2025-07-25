@@ -43,8 +43,8 @@ function toComponentName (name: string) {
 export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
   component (comp: any) {
     if (comp && comp.name) {
-      const kcName = XEUtils.kebabCase('el-button')
-      const ccName = toComponentName(XEUtils.camelCase('el-button'))
+      const kcName = XEUtils.kebabCase(comp.name)
+      const ccName = toComponentName(XEUtils.camelCase(comp.name))
       componentMaps[kcName] = comp
       componentMaps[ccName] = comp
     } else {
@@ -53,7 +53,7 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
   },
   install (VxeUI, options?: VxeUIPluginRenderAntdOptions) {
     const pluginOpts = Object.assign({ prefixCls: 'ant' }, options)
-    
+
     if (options) {
       Object.assign(globalConfig, options)
     }
