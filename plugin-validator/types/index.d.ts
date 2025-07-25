@@ -1,14 +1,23 @@
 import { VxeUIExport } from 'vxe-pc-ui'
 
-export interface VxeUIPluginMenuOptions {
-  copy?: (content: string | number) => boolean;
+export interface VxeUIPluginValidatorOptionCustomRegExp {
+  mobile?: RegExp
+  email?: RegExp
+  identityCard?: RegExp
+  ip?: RegExp
+  url?: RegExp
+  plateNumber?: RegExp
+}
+
+export interface VxeUIPluginValidatorOptions {
+  customRegExp?: VxeUIPluginValidatorOptionCustomRegExp
 }
 
 /**
- * 基于 Vxe UI 的扩展插件，支持右键菜单
+ * Vxe UI 的扩展插件，提供常用的校验配置
  */
 export declare const VxeUIPluginMenu: {
-  install (VxeUI: VxeUIExport, options?: VxeUIPluginMenuOptions): void
+  install (VxeUI: VxeUIExport, options?: VxeUIPluginValidatorOptions): void
 }
 
 export default VxeUIPluginMenu
