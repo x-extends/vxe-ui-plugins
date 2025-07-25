@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-naive",
-  "version": "4.0.11",
+  "version": "4.0.12",
   "description": "Vxe UI plug-in for compatibility with the naive-ui component.",
   "scripts": {
     "lib": "gulp build"

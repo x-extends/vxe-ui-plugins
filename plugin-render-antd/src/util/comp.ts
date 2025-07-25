@@ -6,10 +6,10 @@ function toCompName (name: string) {
 }
 
 export function getCurrComponent (name: string) {
-  const comp = resolveComponent(name)
+  const cName = toCompName(name)
+  const comp = componentMaps[name] || componentMaps[cName] || (globalConfig.Antd ? (globalConfig.Antd[name] || globalConfig.Antd[cName]) : null)
   if (comp) {
     return comp
   }
-  const cName = toCompName(name)
-  return componentMaps[name] || componentMaps[cName] || (globalConfig.Antd ? globalConfig.Antd[name] || globalConfig.Antd[cName] : null)
+  return resolveComponent(name)
 }
