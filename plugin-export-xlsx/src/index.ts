@@ -39,6 +39,14 @@ const defaultFontSizeMaps: Record<string, number> = {
 const httpPromiseMaps: Record<string, Promise<any>> = {}
 const httpBufferMaps: Record<string, ArrayBuffer> = {}
 
+function getExcelJS () {
+  const ExcelJS = globalExcelJS || (window as any).ExcelJS
+  if (!ExcelJS) {
+    console.error('[VUE_APP_VXE_PLUGIN_VERSION] Install error. ExcelJS not exist.')
+  }
+  return ExcelJS
+}
+
 function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.ColumnInfo, cellValue: any) {
   const { cellType, cellRender, editRender } = column
   const renderOpts = editRender || cellRender
@@ -449,7 +457,16 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   }
 
   const exportMethod = () => {
-    const workbook: ExcelJS.Workbook = new (globalExcelJS || (window as any).ExcelJS).Workbook()
+    const ExcelObj = getExcelJS()
+    if (!ExcelObj) {
+      if (modal) {
+        modal.close(msgKey)
+      }
+      return Promise.resolve({
+        status: false
+      })
+    }
+    const workbook: ExcelJS.Workbook = new ExcelObj.Workbook()
     const sheet = workbook.addWorksheet(sheetName || 'Sheet1')
     workbook.creator = 'vxe-table'
     sheet.columns = sheetCols
@@ -659,6 +676,15 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
   const tableInternalData = $table.internalData
 
   const { _importResolve } = tableInternalData
+  const ExcelObj = getExcelJS()
+  if (!ExcelObj) {
+    if (_importResolve) {
+      _importResolve({
+        status: false
+      })
+    }
+    return
+  }
   const showMsg = options.message !== false
   const fileReader = new FileReader()
   fileReader.onerror = () => {
@@ -677,7 +703,7 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
         tableTitleMaps[column.getTitle()] = column
       }
     })
-    const workbook: ExcelJS.Workbook = new (globalExcelJS || (window as any).ExcelJS).Workbook()
+    const workbook: ExcelJS.Workbook = new ExcelObj.Workbook()
     const readerTarget = evnt.target
     if (readerTarget) {
       workbook.xlsx.load(readerTarget.result as ArrayBuffer).then(wb => {
