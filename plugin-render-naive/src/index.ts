@@ -63,7 +63,7 @@ export const VxeUIPluginRenderNaive: VxeUIPluginObject = {
   install (VxeUI, options?: {
   }) {
     // 检查版本
-    if (!/^(4)\./.test(VxeUI.uiVersion)) {
+    if (!/^(4)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
       console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
