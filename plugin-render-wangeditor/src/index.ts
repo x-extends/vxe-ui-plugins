@@ -334,7 +334,7 @@ export const VxeUIPluginRenderWangEditor = {
     globalWangEditor = options ? options.wangEditor : undefined
 
     // 检查版本
-    if (!/^(3)\./.test(VxeUI.uiVersion)) {
+    if (!/^(3)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
       console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
     }
 
