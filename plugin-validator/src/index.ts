@@ -44,9 +44,18 @@ export const VxeUIPluginValidator = {
     VxeUI = core
 
     // 检查版本
-    if (!/^(4)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
-      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
+    if (VxeUI.checkVersion) {
+      const pVersion = 4
+      const sVersion = 7
+      if (!VxeUI.checkVersion(VxeUI.tableVersion, pVersion, sVersion)) {
+        console.error(`[VUE_APP_VXE_PLUGIN_VERSION] ${VxeUI.getI18n('vxe.error.errorVersion', [`vxe-table@${VxeUI.tableVersion || '?'}`, `vxe-table v${pVersion}.${sVersion}+`])} VUE_APP_VXE_PLUGIN_DESCRIBE`)
+      }
+    } else {
+      if (!/^(4)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
+        console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
+      }
     }
+
     if (options) {
       pluginConfig(options)
     }

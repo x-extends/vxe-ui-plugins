@@ -7,7 +7,6 @@ It depends on vxe-table v4.x
 ## Online document
 
 * Vxe UI [https://vxeui.com](https://vxeui.com)
-* Vxe Table [https://vxetable.cn](https://vxetable.cn)
 
 ## Contributors
 
