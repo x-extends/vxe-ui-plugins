@@ -35,8 +35,16 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
     const pluginOpts = Object.assign({ prefixCls: 'ant' }, options)
 
     // 检查版本
-    if (!/^(3)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
-      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
+    if (VxeUI.checkVersion) {
+      const pVersion = 3
+      const sVersion = 13
+      if (!VxeUI.checkVersion(VxeUI.tableVersion, pVersion, sVersion)) {
+        console.error(`[VUE_APP_VXE_PLUGIN_VERSION] ${VxeUI.getI18n('vxe.error.errorVersion', [`vxe-table@${VxeUI.tableVersion || '?'}`, `vxe-table v${pVersion}.${sVersion}+`])}`)
+      }
+    } else {
+      if (!/^(3)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
+        console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
+      }
     }
 
     /**

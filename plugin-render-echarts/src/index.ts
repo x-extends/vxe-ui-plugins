@@ -1,6 +1,7 @@
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeTableDefines, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles } from 'vxe-table'
+import type { VxeUIExport, VxeGlobalInterceptorHandles, VxeGlobalMenusHandles } from 'vxe-pc-ui'
+import type { VxeTableDefines, VxeTableConstructor, VxeTablePrivateMethods, TableReactData, TableInternalData } from 'vxe-table'
 
 let VxeUI: VxeUIExport
 let globalEcharts: any
@@ -103,6 +104,60 @@ interface legendOpts {
   data: any[];
 }
 
+const handleCellValue = (params: VxeGlobalMenusHandles.TableMenuMethodParams, row: any, column: VxeTableDefines.ColumnInfo, isCategory: boolean) => {
+  const { $table } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
+  const tableProps = $table
+  const { aggregateConfig, rowGroupConfig } = tableProps
+  const tableReactData = $table as unknown as TableReactData
+  const { isRowGroupStatus } = tableReactData
+  const { field, rowGroupNode, aggFunc } = column
+
+  let cellValue = XEUtils.get(row, field)
+  if ((aggregateConfig || rowGroupConfig) && isRowGroupStatus && row.isAggregate) {
+    const tableInternalData = $table as unknown as TableInternalData
+    const { fullColumnFieldData } = tableInternalData
+    const aggregateOpts = $table.computeAggregateOpts || {}
+    const { mode, contentMethod, mapChildrenField, countFields } = aggregateOpts
+    const aggCalcMethod = aggregateOpts.calcValuesMethod || aggregateOpts.countMethod || aggregateOpts.aggregateMethod
+    const groupField = row.groupField
+    const groupContent = row.groupContent
+    const childList = mapChildrenField ? (row[mapChildrenField] || []) : []
+    const childCount = row.childCount
+    if (isCategory) {
+      return groupContent
+    }
+    const colRest = fullColumnFieldData[groupField] || {}
+    const ctParams = {
+      $table,
+      groupField,
+      groupColumn: (colRest ? colRest.column : null) as VxeTableDefines.ColumnInfo,
+      column: column,
+      groupValue: groupContent,
+      children: childList,
+      childCount,
+      aggValue: null as any
+    }
+    if (mode === 'column' ? field === groupField : rowGroupNode) {
+      cellValue = groupContent
+      if (contentMethod) {
+        cellValue = `${contentMethod(ctParams)}`
+      }
+    } else if ($table.getPivotTableAggregateCellAggValue) {
+      cellValue = $table.getPivotTableAggregateCellAggValue({
+        $table,
+        row,
+        column
+      })
+    } else if (aggFunc === true || (countFields && countFields.includes(field))) {
+      if (aggCalcMethod) {
+        ctParams.aggValue = childCount
+        cellValue = `${aggCalcMethod(ctParams)}`
+      }
+    }
+  }
+  return cellValue || '-'
+}
+
 const menuMap = {
   CHART_BAR_X_AXIS: createChartModal((params) => {
     const { $table, menu } = params
@@ -118,7 +173,7 @@ const menuMap = {
     const seriesOpts: any[] = []
     const yAxisOpts = {
       type: 'category',
-      data: rows.map((row) => XEUtils.get(row, categoryColumn.field))
+      data: rows.map((row) => handleCellValue(params, row, categoryColumn, true))
     }
     // const seriesLabel = {
     //   normal: {
@@ -131,7 +186,7 @@ const menuMap = {
         name: column.title,
         type: 'bar',
         // label: seriesLabel,
-        data: rows.map((row) => XEUtils.get(row, column.field))
+        data: rows.map((row) => handleCellValue(params, row, column, false))
       })
     })
     const option = {
@@ -170,7 +225,7 @@ const menuMap = {
     const seriesOpts: any[] = []
     const xAxisOpts = {
       type: 'category',
-      data: rows.map((row) => XEUtils.get(row, categoryColumn.field))
+      data: rows.map((row) => handleCellValue(params, row, categoryColumn, true))
     }
     // const seriesLabel = {
     //   normal: {
@@ -183,7 +238,7 @@ const menuMap = {
         name: column.title,
         type: 'bar',
         // label: seriesLabel,
-        data: rows.map((row) => XEUtils.get(row, column.field))
+        data: rows.map((row) => handleCellValue(params, row, column, false))
       })
     })
     const option = {
@@ -222,14 +277,14 @@ const menuMap = {
     const seriesOpts: any[] = []
     const xAxisOpts = {
       type: 'category',
-      data: rows.map((row) => XEUtils.get(row, categoryColumn.field))
+      data: rows.map((row) => handleCellValue(params, row, categoryColumn, true))
     }
     serieColumns.forEach((column) => {
       legendOpts.data.push(column.title)
       seriesOpts.push({
         name: column.title,
         type: 'line',
-        data: rows.map((row) => XEUtils.get(row, column.field))
+        data: rows.map((row) => handleCellValue(params, row, column, false))
       })
     })
     const option = {
@@ -260,12 +315,12 @@ const menuMap = {
     const categoryColumn = $table.getColumnByField(category) || cols[0]
     const serieColumns = cols.filter((column) => column.field !== categoryColumn.field)
     const serieColumn = serieColumns[0]
-    const legendData = rows.map((row) => XEUtils.get(row, categoryColumn.field))
+    const legendData = rows.map((row) => handleCellValue(params, row, categoryColumn, true))
     const seriesData: any[] = []
     rows.forEach((row) => {
       seriesData.push({
-        name: XEUtils.get(row, categoryColumn.field),
-        value: XEUtils.get(row, serieColumn.field)
+        name: handleCellValue(params, row, categoryColumn, true),
+        value: handleCellValue(params, row, serieColumn, false)
       })
     })
     const option = {
@@ -314,31 +369,52 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
       if (column) {
         const cellAreas = $table.getCellAreas ? $table.getCellAreas() : []
         const validArea = cellAreas.length === 1
-        item.disabled = !validArea
-        if (validArea) {
-          const { rows, cols } = cellAreas[0]
-          const { category } = chartParams
-          switch (code) {
-            case 'CHART_BAR_X_AXIS':
-            case 'CHART_BAR_Y_AXIS':
-            case 'CHART_LINE': {
-              if (category) {
-                const serieColumns = cols.filter((column) => column.field !== category)
-                item.disabled = !rows.length || serieColumns.length < 1
-              } else {
-                item.disabled = !rows.length || cols.length < 2
-              }
-              break
+        if (!validArea) {
+          item.disabled = true
+          return
+        }
+        const tableProps = $table
+        const { aggregateConfig, rowGroupConfig } = tableProps
+        const { rows, cols } = cellAreas[0]
+        const { category } = chartParams
+        const firstRow = rows[0]
+        if (!firstRow) {
+          item.disabled = true
+          return
+        }
+        if (aggregateConfig || rowGroupConfig) {
+          if ($table.isAggregateRecord(firstRow)) {
+            if (!rows.every(row => $table.isAggregateRecord(row))) {
+              item.disabled = true
+              return
             }
-            case 'CHART_PIE': {
-              if (category) {
-                const serieColumns = cols.filter((column) => column.field !== category)
-                item.disabled = !rows.length || serieColumns.length !== 1
-              } else {
-                item.disabled = !rows.length || cols.length !== 2
-              }
-              break
+          } else {
+            if (rows.some(row => $table.isAggregateRecord(row))) {
+              item.disabled = true
+              return
             }
+          }
+        }
+        switch (code) {
+          case 'CHART_BAR_X_AXIS':
+          case 'CHART_BAR_Y_AXIS':
+          case 'CHART_LINE': {
+            if (category) {
+              const serieColumns = cols.filter((column) => column.field !== category)
+              item.disabled = serieColumns.length < 1
+            } else {
+              item.disabled = cols.length < 2
+            }
+            break
+          }
+          case 'CHART_PIE': {
+            if (category) {
+              const serieColumns = cols.filter((column) => column.field !== category)
+              item.disabled = serieColumns.length !== 1
+            } else {
+              item.disabled = cols.length !== 2
+            }
+            break
           }
         }
       }
@@ -378,8 +454,16 @@ export const VxeUIPluginRenderEcharts = {
     globalEcharts = options ? options.echarts : null
 
     // 检查版本
-    if (!/^(3)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
-      console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
+    if (VxeUI.checkVersion) {
+      const pVersion = 3
+      const sVersion = 15
+      if (!VxeUI.checkVersion(VxeUI.tableVersion, pVersion, sVersion)) {
+        console.error(`[VUE_APP_VXE_PLUGIN_VERSION] ${VxeUI.getI18n('vxe.error.errorVersion', [`vxe-table@${VxeUI.tableVersion || '?'}`, `vxe-table v${pVersion}.${sVersion}+`])}`)
+      }
+    } else {
+      if (!/^(3)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
+        console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
+      }
     }
 
     VxeUI.interceptor.add('unmounted', handleBeforeDestroyEvent)
