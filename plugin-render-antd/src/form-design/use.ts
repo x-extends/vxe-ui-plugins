@@ -1,6 +1,6 @@
 import { VNode, h, onMounted, ref, watch } from 'vue'
 
-import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormItemComponent, VxeButtonComponent, VxeTextareaComponent, VxeTipComponent } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
 
 export interface WidgetDataSourceOptionSubObjVO {
   value: string,
@@ -17,10 +17,10 @@ export function useWidgetPropDataSource (VxeUI: VxeUIExport, props: {
     options: WidgetDataSourceOptionObjVO[]
   }>;
 }, isSubOption: boolean) {
-  const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
-  const VxeUIButtonComponent = VxeUI.getComponent<VxeButtonComponent>('VxeButton')
-  const VxeUITextareaComponent = VxeUI.getComponent<VxeTextareaComponent>('VxeTextarea')
-  const VxeUITipComponent = VxeUI.getComponent<VxeTipComponent>('VxeTip')
+  const VxeUIFormItemComponent = VxeUI.getComponent('VxeFormItem')
+  const VxeUIButtonComponent = VxeUI.getComponent('VxeButton')
+  const VxeUITextareaComponent = VxeUI.getComponent('VxeTextarea')
+  const VxeUITipComponent = VxeUI.getComponent('VxeTip')
 
   const optionsContent = ref('')
   const expandIndexList = ref<number[]>([])

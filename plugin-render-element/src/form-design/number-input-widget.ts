@@ -1,7 +1,7 @@
 import { defineComponent, h, PropType, ComponentOptions } from 'vue'
 import { getCurrComponent } from '../util/comp'
 
-import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
 
 interface WidgetElInputNumberFormObjVO {
   placeholder: string
@@ -31,9 +31,9 @@ export function createWidgetElInputNumber (VxeUI: VxeUIExport) {
     },
     emits: [],
     setup (props) {
-      const VxeUIFormComponent = VxeUI.getComponent<VxeFormComponent>('VxeForm')
-      const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
-      const VxeUISwitchComponent = VxeUI.getComponent<VxeSwitchComponent>('VxeSwitch')
+      const VxeUIFormComponent = VxeUI.getComponent('VxeForm')
+      const VxeUIFormItemComponent = VxeUI.getComponent('VxeFormItem')
+      const VxeUISwitchComponent = VxeUI.getComponent('VxeSwitch')
 
       return () => {
         const { renderParams } = props
@@ -98,7 +98,7 @@ export function createWidgetElInputNumber (VxeUI: VxeUIExport) {
     },
     emits: [],
     setup (props) {
-      const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
+      const VxeUIFormItemComponent = VxeUI.getComponent('VxeFormItem')
 
       const changeEvent = () => {
         const { renderParams } = props

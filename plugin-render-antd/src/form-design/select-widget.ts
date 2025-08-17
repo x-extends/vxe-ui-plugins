@@ -3,7 +3,7 @@ import { useWidgetPropDataSource, WidgetDataSourceOptionObjVO } from './use'
 import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormComponent, VxeFormItemComponent, VxeSwitchComponent, VxeInputComponent } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
 
 interface WidgetASelectFormObjVO {
   placeholder: string
@@ -39,10 +39,10 @@ export function createWidgetASelect (VxeUI: VxeUIExport) {
     },
     emits: [],
     setup (props) {
-      const VxeUIFormComponent = VxeUI.getComponent<VxeFormComponent>('VxeForm')
-      const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
-      const VxeUISwitchComponent = VxeUI.getComponent<VxeSwitchComponent>('VxeSwitch')
-      const VxeUIInputComponent = VxeUI.getComponent<VxeInputComponent>('VxeInput')
+      const VxeUIFormComponent = VxeUI.getComponent('VxeForm')
+      const VxeUIFormItemComponent = VxeUI.getComponent('VxeFormItem')
+      const VxeUISwitchComponent = VxeUI.getComponent('VxeSwitch')
+      const VxeUIInputComponent = VxeUI.getComponent('VxeInput')
 
       const { renderDataSourceFormItem } = useWidgetPropDataSource(VxeUI, props, false)
 
@@ -110,7 +110,7 @@ export function createWidgetASelect (VxeUI: VxeUIExport) {
     },
     emits: [],
     setup (props) {
-      const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
+      const VxeUIFormItemComponent = VxeUI.getComponent('VxeFormItem')
 
       const changeEvent = () => {
         const { renderParams } = props
