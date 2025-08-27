@@ -44,7 +44,7 @@ $vxe-table-validate-error-color: #f56c6c;
           & > .el-select .el-input__inner,
           & > .el-cascader .el-input__inner,
           & > .el-date-picker .el-input__inner {
-            border-color: $vxe-table-validate-error-color;
+            border-color: var(--vxe-ui-form-validate-error-color, $vxe-table-validate-error-color);
           }
         }
       }
@@ -90,7 +90,7 @@ $vxe-table-validate-error-color: #f56c6c;
     & > .el-select .el-input__inner,
     & > .el-cascader .el-input__inner,
     & > .el-date-picker .el-input__inner {
-      border-color: $vxe-table-validate-error-color;
+      border-color: var(--vxe-ui-table-validate-error-color, $vxe-table-validate-error-color);
     }
   }
 }

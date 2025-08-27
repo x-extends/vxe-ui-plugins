@@ -1,0 +1,65 @@
+$vxe-table-validate-error-color: #f56c6c;
+
+%ResetBorder {
+  border: 0;
+  box-shadow: none;
+}
+
+%CompWidth {
+  & > .t-input__wrap,
+  & > .t-date-picker,
+  & > .t-select__wrap,
+  & > .t-time-picker,
+  & > .t-cascader {
+    width: 100%;
+  }
+}
+.vxe-form {
+  .vxe-form--item-content {
+    @extend %CompWidth;
+  }
+}
+.vxe-table--filter-iview-wrapper {
+  padding: 0.8em 1em;
+  & > .t-input__wrap,
+  & > .t-date-picker,
+  & > .t-select__wrap,
+  & > .t-time-picker,
+  & > .t-cascader {
+    width: 180px;
+  }
+}
+
+.vxe-table {
+  .vxe-cell,
+  .vxe-tree-cell {
+    @extend %CompWidth;
+    & > .ivu-rate {
+      height: 22px;
+      line-height: 22px;
+      vertical-align: bottom;
+    }
+  }
+  .vxe-cell--wrapper {
+    @extend %CompWidth;
+    & > .ivu-rate {
+      height: 22px;
+      line-height: 22px;
+      vertical-align: bottom;
+    }
+  }
+}
+
+.col--valid-error {
+  & > .vxe-cell,
+  & > .vxe-tree-cell {
+    & > .t-input__wrap .t-input,
+    & > .t-date-picker .t-input,
+    & > .t-select__wrap .t-input,
+    & > .t-time-picker .t-input,
+    & > .t-cascader .t-input {
+      border-color: var(--vxe-ui-table-validate-error-color, $vxe-table-validate-error-color);
+      box-shadow: none;
+    }
+  }
+}
