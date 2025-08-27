@@ -50,7 +50,7 @@ $vxe-table-validate-error-color: #f56c6c;
     & > .n-select .n-input__input-el,
     & > .n-cascader .n-input__input-el,
     & > .n-date-picker .n-input__input-el {
-      border-color: $vxe-table-validate-error-color;
+      border-color: var(--vxe-ui-table-validate-error-color, $vxe-table-validate-error-color);
     }
   }
 }

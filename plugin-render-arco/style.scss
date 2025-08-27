@@ -51,7 +51,7 @@ $vxe-table-validate-error-color: #f56c6c;
     & > .arco-picker,
     & > .arco-picker-range,
     & > .arco-mention .arco-textarea-wrapper {
-      border-color: $vxe-table-validate-error-color;
+      border-color: var(--vxe-ui-table-validate-error-color, $vxe-table-validate-error-color);
     }
   }
 }

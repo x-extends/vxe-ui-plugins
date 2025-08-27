@@ -60,7 +60,7 @@ $vxe-table-validate-error-color: #f56c6c;
     & > .ivu-select .ivu-select-selection,
     & > .ivu-cascader .ivu-input,
     & > .ivu-date-picker .ivu-input {
-      border-color: $vxe-table-validate-error-color;
+      border-color: var(--vxe-ui-table-validate-error-color, $vxe-table-validate-error-color);
       box-shadow: none;
     }
   }
