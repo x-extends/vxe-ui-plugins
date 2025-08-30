@@ -1,4 +1,3 @@
-import { resolveComponent } from 'vue'
 import { componentMaps } from '../store'
 
 export function getCurrComponent (name: string) {
@@ -6,5 +5,5 @@ export function getCurrComponent (name: string) {
   if (comp) {
     return comp
   }
-  return resolveComponent(name)
+  return 'name'
 }
