@@ -1,3 +1,6 @@
+import { componentMaps } from './store'
+import XEUtils from 'xe-utils'
+
 import type { VxeUIPluginObject, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 
 function getEventTarget (evnt: Event) {
@@ -40,7 +43,24 @@ function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearF
   }
 }
 
+function toComponentName (name: string) {
+  if (name) {
+    return name.slice(0, 1).toUpperCase() + name.slice(1)
+  }
+  return name
+}
+
 export const VxeUIPluginRenderIView: VxeUIPluginObject = {
+  component (comp: any) {
+    if (comp && comp.name) {
+      const kcName = XEUtils.kebabCase(comp.name)
+      const ccName = toComponentName(XEUtils.camelCase(comp.name))
+      componentMaps[kcName] = comp
+      componentMaps[ccName] = comp
+    } else {
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] error component.', comp)
+    }
+  },
   install (VxeUI, options?: {
   }) {
     // 检查版本

@@ -1,5 +1,7 @@
 import { defineTableRender } from './table'
 import { defineFormRender } from './form'
+import { componentMaps } from './store'
+import XEUtils from 'xe-utils'
 
 import type { VxeUIPluginObject, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 import type { VxeUIPluginRenderAntdOptions } from '../types'
@@ -30,7 +32,24 @@ function getEventTargetNode (evnt: any, container: HTMLElement, className: strin
   return { flag: false }
 }
 
+function toComponentName (name: string) {
+  if (name) {
+    return name.slice(0, 1).toUpperCase() + name.slice(1)
+  }
+  return name
+}
+
 export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
+  component (comp: any) {
+    if (comp && comp.name) {
+      const kcName = XEUtils.kebabCase(comp.name)
+      const ccName = toComponentName(XEUtils.camelCase(comp.name))
+      componentMaps[kcName] = comp
+      componentMaps[ccName] = comp
+    } else {
+      console.error('[VUE_APP_VXE_PLUGIN_VERSION] error component.', comp)
+    }
+  },
   install (VxeUI, options?: VxeUIPluginRenderAntdOptions) {
     const pluginOpts = Object.assign({ prefixCls: 'ant' }, options)
 

@@ -25,6 +25,22 @@ import '@vxe-ui/plugin-render-element/dist/style.css'
 VxeUI.use(VxeUIPluginRenderElement)
 ```
 
+## Import on-demand
+
+```javascript
+// ...
+import VxeUIPluginRenderElement from '@vxe-ui/plugin-render-element'
+// ...
+
+// If it is not a global installation, then a single import is required.
+import { Input, InputNumber, Select } from 'element-ui'
+// ...
+VxeUIPluginRenderElement.component(Input)
+VxeUIPluginRenderElement.component(InputNumber)
+VxeUIPluginRenderElement.component(Select)
+// ...
+```
+
 ## API
 
 ### cell-render 默认的渲染配置项说明

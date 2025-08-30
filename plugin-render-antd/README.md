@@ -27,6 +27,21 @@ VxeUI.use(VxeUIPluginRenderAntd, {
 })
 ```
 
+## Import on-demand
+
+```javascript
+// ...
+import VxeUIPluginRenderAntd from '@vxe-ui/plugin-render-antd'
+// ...
+
+// If it is not a global installation, then a single import is required.
+import { AInput, AInputNumber, ASelect } from 'ant-design-vue'
+// ...
+VxeUIPluginRenderAntd.component(AInput)
+VxeUIPluginRenderAntd.component(AInputNumber)
+VxeUIPluginRenderAntd.component(ASelect)
+// ...
+```
 
 ## API
 
