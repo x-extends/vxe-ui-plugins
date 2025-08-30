@@ -29,16 +29,11 @@ VxeUI.use(VxeUIPluginRenderAntd)
 // })
 ```
 
-## Demand import
+## Import on-demand
 
 ```javascript
 // ...
-// Use vxe-pc-ui
-import { VxeUI } from 'vxe-pc-ui'
-// Use vxe-table
-// import { VxeUI } from 'vxe-table'
 import VxeUIPluginRenderAntd from '@vxe-ui/plugin-render-antd'
-import '@vxe-ui/plugin-render-antd/dist/style.css'
 // ...
 
 // If it is not a global installation, then a single import is required.
@@ -48,8 +43,6 @@ VxeUIPluginRenderAntd.component(AInput)
 VxeUIPluginRenderAntd.component(AInputNumber)
 VxeUIPluginRenderAntd.component(ASelect)
 // ...
-
-VxeUI.use(VxeUIPluginRenderAntd)
 ```
 
 

@@ -1,6 +1,6 @@
-# @vxe-ui/plugin-render-element
+# @vxe-ui/plugin-render-tdesign
 
-[Vxe UI](https://vxeui.com/) plug-in for compatibility with the [element-plus](https://www.npmjs.com/package/element-plus) component.
+[Vxe UI](https://vxeui.com/) plug-in for compatibility with the [tdesign-vue-next](https://www.npmjs.com/package/tdesign-vue-next) component.
 
 ## Compatibility
 
@@ -9,7 +9,7 @@ It corresponds to [vxe-table v4](https://www.npmjs.com/package/vxe-table) or [vx
 ## Installing
 
 ```shell
-npm install @vxe-ui/plugin-render-element
+npm install @vxe-ui/plugin-render-tdesign
 ```
 
 ```javascript
@@ -18,30 +18,30 @@ npm install @vxe-ui/plugin-render-element
 import { VxeUI } from 'vxe-pc-ui'
 // Use vxe-table
 // import { VxeUI } from 'vxe-table'
-import VxeUIPluginRenderElement from '@vxe-ui/plugin-render-element'
-import '@vxe-ui/plugin-render-element/dist/style.css'
+import VxeUIPluginRenderTDesign from '@vxe-ui/plugin-render-tdesign'
+import '@vxe-ui/plugin-render-tdesign/dist/style.css'
 // ...
 
-VxeUI.use(VxeUIPluginRenderElement)
-// VxeUI.use(VxeUIPluginRenderElement, {
-//   ElementPlus
-// })
+VxeUI.use(VxeUIPluginRenderTDesign)
 ```
 
 ## Import on-demand
 
+```shell
+npm install @vxe-ui/plugin-render-tdesign
+```
+
 ```javascript
 // ...
-import VxeUIPluginRenderElement from '@vxe-ui/plugin-render-element'
+import VxeUIPluginRenderTDesign from '@vxe-ui/plugin-render-tdesign'
 // ...
 
 // If it is not a global installation, then a single import is required.
-import { ElInput, ElInputNumber, ElSelect } from 'element-plus'
+import { Button as TButton, AInput as TInput, ASelect as TSelect } from 'tdesign-vue-next';
 // ...
-VxeUIPluginRenderElement.component(ElInput)
-VxeUIPluginRenderElement.component(ElInputNumber)
-VxeUIPluginRenderElement.component(ElSelect)
-// ...
+VxeUIPluginRenderTDesign.component(TButton)
+VxeUIPluginRenderTDesign.component(TInput)
+VxeUIPluginRenderTDesign.component(TSelect)
 ```
 
 ## API
@@ -50,7 +50,7 @@ VxeUIPluginRenderElement.component(ElSelect)
 
 | 属性 | 描述 | 类型 | 可选值 | 默认值 |
 |------|------|-----|-----|-----|
-| name | 支持的渲染组件 | String | ElInput, ElAutocomplete, ElInputNumber, ElSwitch, ElRate, ElSlider, ElButton, ElButtons | — |
+| name | 支持的渲染组件 | String | TlInput, TAutocomplete, TInputNumber | — |
 | attrs | 渲染组件附加属性，参数请查看被渲染的 Component attrs | Object | — | {} |
 | props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
 | options | 只对 name=ElSelect 有效，下拉组件选项列表 | Array | — | [] |
@@ -63,7 +63,7 @@ VxeUIPluginRenderElement.component(ElSelect)
 
 | 属性 | 描述 | 类型 | 可选值 | 默认值 |
 |------|------|-----|-----|-----|
-| name | 支持的渲染组件 | String | ElInput, ElAutocomplete, ElInputNumber, ElSelect, ElCascader, ElTimeSelect, ElTimePicker, ElDatePicker, ElSwitch, ElRate, ElSlider, ElButton, ElButtons | — |
+| name | 支持的渲染组件 | String | TInput, TAutocomplete, TInputNumber | — |
 | attrs | 渲染组件附加属性，参数请查看被渲染的 Component attrs | Object | — | {} |
 | props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
 | options | 只对 name=ElSelect 有效，下拉组件选项列表 | Array | — | [] |
@@ -76,7 +76,7 @@ VxeUIPluginRenderElement.component(ElSelect)
 
 | 属性 | 描述 | 类型 | 可选值 | 默认值 |
 |------|------|-----|-----|-----|
-| name | 支持的渲染组件 | String | ElInput, ElInputNumber, ElAutocomplete, ElSelect, ElDatePicker, ElSwitch, ElRate, ElSlider | — |
+| name | 支持的渲染组件 | String | TInput, TInputNumber, TAutocomplete | — |
 | attrs | 渲染组件附加属性，参数请查看被渲染的 Component attrs | Object | — | {} |
 | props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
 | options | 只对 name=ElSelect 有效，下拉组件选项列表 | Array | — | [] |
@@ -89,7 +89,7 @@ VxeUIPluginRenderElement.component(ElSelect)
 
 | 属性 | 描述 | 类型 | 可选值 | 默认值 |
 |------|------|-----|-----|-----|
-| name | 支持的渲染组件 | String | ElInput, ElInputNumber, ElAutocomplete, ElSelect, ElDatePicker, ElSwitch, ElRate, ElSlider, ElRadio, ElCheckbox, ElButton, ElButtons | — |
+| name | 支持的渲染组件 | String | TInput, TInputNumber, TAutocomplete | — |
 | attrs | 渲染组件附加属性，参数请查看被渲染的 Component attrs | Object | — | {} |
 | props | 渲染组件附加属性，参数请查看被渲染的 Component props | Object | — | {} |
 | options | 只对 name=ElSelect 有效，下拉组件选项列表 | Array | — | [] |
@@ -97,12 +97,6 @@ VxeUIPluginRenderElement.component(ElSelect)
 | optionGroups | 只对 name=ElSelect 有效，下拉组件分组选项列表 | Array | — | [] |
 | optionGroupProps | 只对 name=ElSelect 有效，下拉组件分组选项属性参数配置 | Object | — | { options: 'options', label: 'label' } |
 | events | 渲染组件附加事件，参数为 ( {}, ...Component arguments ) | Object | — | — |
-
-### 表单设计器配置项
-
-| 描述 |
-|------|
-| 'ElInputWidget', 'ElTextareaWidget', 'ElNumberInputWidget', 'ElDatePickerWidget', 'ElSelectWidget',  'ElRadioWidget', 'ElCheckboxWidget', 'ElSwitchWidget' |
 
 ## Table Cell demo
 
@@ -112,9 +106,8 @@ VxeUIPluginRenderElement.component(ElSelect)
     height="600"
     :data="tableData"
     :edit-config="{trigger: 'click', mode: 'cell'}">
-    <vxe-column field="name" title="Name" :edit-render="{name: 'ElInput'}"></vxe-column>
-    <vxe-column field="age" title="Age" :edit-render="{name: 'ElInputNumber'}"></vxe-column>
-    <vxe-column field="date" title="Date" width="200" :edit-render="{name: 'ElDatePicker'}"></vxe-column>
+    <vxe-column field="name" title="Name" :edit-render="{name: 'TInput'}"></vxe-column>
+    <vxe-column field="age" title="Age" :edit-render="{name: 'TInputNumber'}"></vxe-column>
   </vxe-table>
 </template>
 
@@ -140,7 +133,7 @@ export default {
   <vxe-table
     height="600"
     :data="tableData">
-    <vxe-column field="name" title="Name":filters="nameOptions" :filter-render="{name: 'ElInput'}"></vxe-column>
+    <vxe-column field="name" title="Name":filters="nameOptions" :filter-render="{name: 'TInput'}"></vxe-column>
     <vxe-column field="age" title="Age"></vxe-column>
     <vxe-column field="date" title="Date" ></vxe-column>
   </vxe-table>

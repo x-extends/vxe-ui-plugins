@@ -1,0 +1,19 @@
+{
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "moduleResolution": "node",
+    "skipLibCheck": false,
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "esnext",
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ]
+  }
+}
