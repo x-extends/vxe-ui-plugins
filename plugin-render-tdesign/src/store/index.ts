@@ -1,3 +1,3 @@
-import type { DefineComponent, ConcreteComponent } from 'vue'
+import type { ComponentOptions } from 'vue'
 
-export const componentMaps: Record<string, DefineComponent | ConcreteComponent> = {}
+export const componentMaps: Record<string, ComponentOptions<any>> = {}
