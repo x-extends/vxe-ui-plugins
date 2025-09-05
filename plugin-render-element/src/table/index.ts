@@ -2,7 +2,7 @@ import { CreateElement } from 'vue'
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
-import type { VxeTableDefines, VxeColumnPropTypes } from 'vxe-table'
+import type { VxeTableDefines, VxeColumnPropTypes, TableInternalData } from 'vxe-table'
 
 /**
  * 表格 - 渲染器
@@ -160,8 +160,8 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     const colid = column.id
     let cellData: any
     if (filterable) {
-      const { internalData } = $table
-      const { fullAllDataRowIdData } = internalData
+      const tableInternalData = $table as unknown as TableInternalData
+      const { fullAllDataRowIdData } = tableInternalData
       const rest: any = fullAllDataRowIdData[rowid]
       if (rest) {
         cellData = rest.cellData
