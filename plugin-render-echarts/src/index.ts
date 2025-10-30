@@ -119,7 +119,7 @@ const handleCellValue = (params: VxeGlobalMenusHandles.TableMenuMethodParams, ro
   const { isRowGroupStatus } = tableReactData
   const { field, rowGroupNode, aggFunc } = column
 
-  let cellValue = XEUtils.get(row, field)
+  let cellValue = $table.getCellLabel(row, column)
   if ((aggregateConfig || rowGroupConfig) && isRowGroupStatus && row.isAggregate) {
     const tableInternalData = $table.internalData
     const { fullColumnFieldData } = tableInternalData
