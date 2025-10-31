@@ -24,7 +24,8 @@ import '@vxe-ui/plugin-render-element/dist/style.css'
 
 VxeUI.use(VxeUIPluginRenderElement)
 // VxeUI.use(VxeUIPluginRenderElement, {
-//   ElementPlus
+//   ElementPlus,
+  // prefixCls: 'el'
 // })
 ```
 

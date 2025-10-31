@@ -2,6 +2,10 @@ import { VxeUIExport } from 'vxe-pc-ui'
 
 export interface VxeUIPluginRenderElementOptions {
   ElementPlus?: any
+  /**
+   * 前缀 class，默认 'el-'
+   */
+  prefixCls?: string
 }
 
 /**

@@ -52,7 +52,7 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
     }
   },
   install (VxeUI, options?: VxeUIPluginRenderAntdOptions) {
-    const pluginOpts = Object.assign({ prefixCls: 'ant' }, options)
+    const pluginOpts = Object.assign({}, options)
 
     if (options) {
       Object.assign(globalConfig, options)
@@ -77,7 +77,7 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
     const handleClearEvent = (params: VxeGlobalInterceptorHandles.InterceptorClearFilterParams | VxeGlobalInterceptorHandles.InterceptorClearEditParams | VxeGlobalInterceptorHandles.InterceptorClearAreasParams) => {
       const { $event } = params
       const bodyElem = document.body
-      const prefixCls = `${pluginOpts.prefixCls || ''}`.replace(/-$/, '')
+      const prefixCls = `${pluginOpts.prefixCls || 'ant'}`.replace(/-$/, '')
       if (
         // 下拉框
         getEventTargetNode($event, bodyElem, `${prefixCls}-select-dropdown`).flag ||

@@ -36,30 +36,6 @@ function getEventTargetNode (evnt: any, container: HTMLElement, className: strin
   return { flag: false }
 }
 
-/**
- * 事件兼容性处理
- */
-function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearFilterParams | VxeGlobalInterceptorHandles.InterceptorClearEditParams | VxeGlobalInterceptorHandles.InterceptorClearAreasParams) {
-  const { $event } = params
-  const bodyElem = document.body
-  if (
-    // 远程搜索
-    getEventTargetNode($event, bodyElem, 'el-autocomplete-suggestion').flag ||
-    // 下拉框
-    getEventTargetNode($event, bodyElem, 'el-select-dropdown').flag ||
-    // 级联
-    getEventTargetNode($event, bodyElem, 'el-cascader__dropdown').flag ||
-    getEventTargetNode($event, bodyElem, 'el-cascader-menus').flag ||
-    // 日期
-    getEventTargetNode($event, bodyElem, 'el-time-panel').flag ||
-    getEventTargetNode($event, bodyElem, 'el-picker-panel').flag ||
-    // 颜色
-    getEventTargetNode($event, bodyElem, 'el-color-dropdown').flag
-  ) {
-    return false
-  }
-}
-
 function toComponentName (name: string) {
   if (name) {
     return name.slice(0, 1).toUpperCase() + name.slice(1)
@@ -79,6 +55,8 @@ export const VxeUIPluginRenderElement: VxeUIPluginObject = {
     }
   },
   install (VxeUI, options?: VxeUIPluginRenderElementOptions) {
+    const pluginOpts = Object.assign({}, options)
+
     if (options) {
       ElementPlus = options.ElementPlus
       Object.assign(globalConfig, options)
@@ -94,6 +72,31 @@ export const VxeUIPluginRenderElement: VxeUIPluginObject = {
     } else {
       if (!/^(4)\./.test(VxeUI.uiVersion || VxeUI.tableVersion)) {
         console.error('[VUE_APP_VXE_PLUGIN_VERSION] Requires VUE_APP_VXE_TABLE_VERSION+ version. VUE_APP_VXE_PLUGIN_DESCRIBE')
+      }
+    }
+
+    /**
+     * 事件兼容性处理
+     */
+    function handleClearEvent (params: VxeGlobalInterceptorHandles.InterceptorClearFilterParams | VxeGlobalInterceptorHandles.InterceptorClearEditParams | VxeGlobalInterceptorHandles.InterceptorClearAreasParams) {
+      const { $event } = params
+      const bodyElem = document.body
+      const prefixCls = `${pluginOpts.prefixCls || 'el'}`.replace(/-$/, '')
+      if (
+        // 远程搜索
+        getEventTargetNode($event, bodyElem, `${prefixCls}-autocomplete-suggestion`).flag ||
+        // 下拉框
+        getEventTargetNode($event, bodyElem, `${prefixCls}-select-dropdown`).flag ||
+        // 级联
+        getEventTargetNode($event, bodyElem, `${prefixCls}-cascader__dropdown`).flag ||
+        getEventTargetNode($event, bodyElem, `${prefixCls}-cascader-menus`).flag ||
+        // 日期
+        getEventTargetNode($event, bodyElem, `${prefixCls}-time-panel`).flag ||
+        getEventTargetNode($event, bodyElem, `${prefixCls}-picker-panel`).flag ||
+        // 颜色
+        getEventTargetNode($event, bodyElem, `${prefixCls}-color-dropdown`).flag
+      ) {
+        return false
       }
     }
 
