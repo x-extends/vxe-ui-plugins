@@ -22,7 +22,9 @@ import VxeUIPluginRenderElement from '@vxe-ui/plugin-render-element'
 import '@vxe-ui/plugin-render-element/dist/style.css'
 // ...
 
-VxeUI.use(VxeUIPluginRenderElement)
+VxeUI.use(VxeUIPluginRenderElement, {
+  // prefixCls: 'el'
+})
 ```
 
 ## Import on-demand

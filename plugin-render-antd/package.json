@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-antd",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Vxe UI plug-in for compatibility with the ant-design-vue component.",
   "scripts": {
     "lib": "gulp build"

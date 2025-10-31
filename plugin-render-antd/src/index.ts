@@ -51,7 +51,7 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
     }
   },
   install (VxeUI, options?: VxeUIPluginRenderAntdOptions) {
-    const pluginOpts = Object.assign({ prefixCls: 'ant' }, options)
+    const pluginOpts = Object.assign({}, options)
 
     // 检查版本
     if (VxeUI.checkVersion) {
@@ -72,7 +72,7 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
     const handleClearEvent = (params: VxeGlobalInterceptorHandles.InterceptorClearFilterParams | VxeGlobalInterceptorHandles.InterceptorClearEditParams | VxeGlobalInterceptorHandles.InterceptorClearAreasParams) => {
       const { $event } = params
       const bodyElem = document.body
-      const prefixCls = `${pluginOpts.prefixCls || ''}`.replace(/-$/, '')
+      const prefixCls = `${pluginOpts.prefixCls || 'ant'}`.replace(/-$/, '')
       if (
         // 下拉框
         getEventTargetNode($event, bodyElem, `${prefixCls}-select-dropdown`).flag ||
@@ -100,8 +100,10 @@ export const VxeUIPluginRenderAntd: VxeUIPluginObject = {
   }
 }
 
-if (typeof window !== 'undefined' && window.VxeUI && window.VxeUI.use) {
-  window.VxeUI.use(VxeUIPluginRenderAntd)
+if (typeof window !== 'undefined') {
+  if (window.VxeUI && window.VxeUI.use) {
+    window.VxeUI.use(VxeUIPluginRenderAntd)
+  }
 }
 
 export default VxeUIPluginRenderAntd
