@@ -563,15 +563,15 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
       // 自定义处理
       sheetMethod
         ? sheetMethod({
-          options: options,
-          workbook,
-          worksheet: sheet,
-          columns,
-          colgroups,
-          datas,
-          $grid,
-          $table
-        })
+            options: options,
+            workbook,
+            worksheet: sheet,
+            columns,
+            colgroups,
+            datas,
+            $grid,
+            $table
+          })
         : null
     ).then(() => {
       sheetMerges.forEach(({ s, e }) => {
