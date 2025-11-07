@@ -36,9 +36,12 @@ function getCellText (cellValue: any) {
 }
 
 function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, row: any, column: VxeTableDefines.ColumnInfo) {
-  const _columnIndex = $xeTable.getVTColumnIndex(column)
+  if ($xeTable.getFooterCellLabel) {
+    return getCellText($xeTable.getFooterCellLabel(row, column))
+  }
   // 兼容老模式
   if (XEUtils.isArray(row)) {
+    const _columnIndex = $xeTable.getVTColumnIndex(column)
     return getCellText(row[_columnIndex])
   }
   return getCellText(XEUtils.get(row, column.field))

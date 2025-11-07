@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-export-pdf",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "Vxe UI plug-in supports pdf file export.",
   "scripts": {
     "lib": "gulp build"
@@ -54,7 +54,7 @@
     "sass": "~1.55.0",
     "typescript": "~4.6.4",
     "vue": "2.6.14",
-    "vxe-pc-ui": "~3.9.0",
+    "vxe-pc-ui": "~3.9.18",
     "vxe-table": "~3.18.0"
   },
   "repository": {

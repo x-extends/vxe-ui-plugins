@@ -89,9 +89,12 @@ function getFooterData ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.E
 }
 
 function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, row: any, column: VxeTableDefines.ColumnInfo) {
-  const _columnIndex = $xeTable.getVTColumnIndex(column)
+  if ($xeTable.getFooterCellLabel) {
+    return getCellLabel($xeTable, column, $xeTable.getFooterCellLabel(row, column))
+  }
   // 兼容老模式
   if (XEUtils.isArray(row)) {
+    const _columnIndex = $xeTable.getVTColumnIndex(column)
     return getCellLabel($xeTable, column, row[_columnIndex])
   }
   return getCellLabel($xeTable, column, XEUtils.get(row, column.field))
