@@ -89,11 +89,11 @@ VxeUI.use(VxeUIPluginMenu)
 | RESET_COLUMN | 重置列的可视状态 | — |
 | RESET_RESIZABLE | 重置列宽状态 | — |
 | RESET_ALL | 重置列的所有状态 | — |
-| COMMIT_PROXY_INITIAL | 用于 proxy-config，重新初始化，恢复到初始状态，触发对应的 ajax.query | — |
-| COMMIT_PROXY_QUERY | 用于 proxy-config，重新加载，如果有分页，返回第一页，触发对应的 ajax.query | — |
-| COMMIT_PROXY_RELOAD | 用于 proxy-config，刷新当前页，触发对应的 ajax.query | — |
-| COMMIT_PROXY_DELETE | 用于 proxy-config，直接删除，触发对应的 ajax.delete | — |
-| COMMIT_PROXY_SAVE | 用于 proxy-config，保存数据，触发对应的 ajax.save | — |
+| COMMIT_PROXY_INITIAL | 仅支持 vxe-grid，用于 proxy-config，重新初始化，恢复到初始状态，触发对应的 ajax.query | — |
+| COMMIT_PROXY_QUERY | 仅支持 vxe-grid，用于 proxy-config，重新加载，如果有分页，返回第一页，触发对应的 ajax.query | — |
+| COMMIT_PROXY_RELOAD | 仅支持 vxe-grid，用于 proxy-config，刷新当前页，触发对应的 ajax.query | — |
+| COMMIT_PROXY_DELETE | 仅支持 vxe-grid，用于 proxy-config，直接删除，触发对应的 ajax.delete | — |
+| COMMIT_PROXY_SAVE | 仅支持 vxe-grid，用于 proxy-config，保存数据，触发对应的 ajax.save | — |
 
 ## Demo
 
