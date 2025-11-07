@@ -112,6 +112,15 @@ function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams & 
   }
 }
 
+function createCommitHandle (code: 'initial' | 'query' | 'reload' | 'delete' | 'save') {
+  return function (params: VxeGlobalMenusHandles.TableMenuMethodParams) {
+    const { $grid } = params
+    if ($grid) {
+      $grid.commitProxy(code)
+    }
+  }
+}
+
 function checkCellOverlay (params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, cellAreas: VxeTableExtendCellAreaDefines.MouseCellArea[]) {
   const { $table } = params
   const { visibleData } = $table.getTableData()
@@ -169,7 +178,7 @@ function handleClearMergeCells (params: VxeGlobalMenusHandles.TableMenuMethodPar
 
 function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines.MenuChildOption, params: VxeGlobalInterceptorHandles.InterceptorShowMenuParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }) {
   const { code } = item
-  const { $table, row, column, type } = params
+  const { $table, $grid, row, column, type } = params
   const tableProps = $table
   const { editConfig, mouseConfig } = tableProps
   switch (code) {
@@ -312,6 +321,14 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
             break
         }
       }
+      break
+    }
+    case 'COMMIT_PROXY_INITIAL':
+    case 'COMMIT_PROXY_QUERY':
+    case 'COMMIT_PROXY_RELOAD':
+    case 'COMMIT_PROXY_DELETE':
+    case 'COMMIT_PROXY_SAVE': {
+      item.disabled = !$grid
       break
     }
   }
@@ -1375,6 +1392,36 @@ export const VxeUIPluginMenu = {
           const { $table } = params
           $table.resetColumn(true)
         }
+      },
+      /**
+       * 用于 proxy-config，重新初始化，恢复到初始状态，触发对应的 ajax.query
+       */
+      COMMIT_PROXY_INITIAL: {
+        menuMethod: createCommitHandle('initial')
+      },
+      /**
+       * 用于 proxy-config，重新加载，如果有分页，返回第一页，触发对应的 ajax.query
+       */
+      COMMIT_PROXY_QUERY: {
+        menuMethod: createCommitHandle('query')
+      },
+      /**
+       * 用于 proxy-config，刷新当前页，触发对应的 ajax.quer
+       */
+      COMMIT_PROXY_RELOAD: {
+        menuMethod: createCommitHandle('reload')
+      },
+      /**
+       * 用于 proxy-config，直接删除，触发对应的 ajax.delete
+       */
+      COMMIT_PROXY_DELETE: {
+        menuMethod: createCommitHandle('delete')
+      },
+      /**
+       * 用于 proxy-config，保存数据，触发对应的 ajax.save
+       */
+      COMMIT_PROXY_SAVE: {
+        menuMethod: createCommitHandle('save')
       }
     })
 
