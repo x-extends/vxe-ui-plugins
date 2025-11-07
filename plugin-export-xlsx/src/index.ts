@@ -85,6 +85,7 @@ function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.Co
 function getFooterData ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
   const $xeGrid = $xeTable.xeGrid
   const $xeGantt = $xeTable.xeGantt
+
   const { footerFilterMethod } = opts
   return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ $table: $xeTable, $grid: $xeGrid, $gantt: $xeGantt, items, $rowIndex: index })) : footerData
 }
