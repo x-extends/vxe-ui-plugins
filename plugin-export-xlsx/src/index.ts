@@ -753,7 +753,7 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
                   loadRest = $table.insertAt(data, -1)
                 } else {
                   const { visibleData } = $table.getTableData()
-                  loadRest = $table.remove(visibleData).then(() => $table.insert(data))
+                  loadRest = $table.remove(visibleData).then(() => $table.insertAt(data, -1))
                 }
                 return loadRest.then(() => {
                   if (_importResolve) {
