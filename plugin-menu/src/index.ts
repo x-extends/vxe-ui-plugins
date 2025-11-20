@@ -443,20 +443,26 @@ export const VxeUIPluginMenu = {
       /**
        * 浏览器-刷新页面（对应按键F5）
        */
-      SYSTEM_PAGE_REFRESH () {
-        location.reload()
+      SYSTEM_PAGE_REFRESH: {
+        menuMethod () {
+          location.reload()
+        }
       },
       /**
        * 浏览器-前进
        */
-      SYSTEM_PAGE_FORWARD () {
-        history.forward()
+      SYSTEM_PAGE_FORWARD: {
+        menuMethod () {
+          history.forward()
+        }
       },
       /**
        * 浏览器-后退
        */
-      SYSTEM_PAGE_BACK () {
-        history.back()
+      SYSTEM_PAGE_BACK: {
+        menuMethod () {
+          history.back()
+        }
       },
       /**
        * 清除单元格数据的值；如果启用 mouse-config.area 功能，则清除区域范围内的单元格数据
