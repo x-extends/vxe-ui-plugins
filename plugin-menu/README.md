@@ -30,6 +30,9 @@ VxeUI.use(VxeUIPluginMenu)
 
 | code 编码 | describe 描述 | params 参数 |
 |------|------|------|
+| SYSTEM_PAGE_REFRESH | 刷新页面（对应按键F5） | — |
+| SYSTEM_PAGE_FORWARD | 页面前进 | — |
+| SYSTEM_PAGE_BACK | 页面后退 | — |
 | CLEAR_CELL | 清除单元格数据的值；如果启用 mouse-config.area 功能，则清除区域范围内的单元格数据 | — |
 | CLEAR_ROW  | 清除行数据的值 | — |
 | CLEAR_CHECKBOX_ROW  | 清除复选框选中行数据的值 | — |

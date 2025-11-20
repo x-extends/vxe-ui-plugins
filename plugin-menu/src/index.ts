@@ -213,7 +213,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     case 'SELECT_ALL_AREA': {
       const { visibleData } = $table.getTableData()
       const { visibleColumn } = $table.getTableColumn()
-      item.disabled = !(visibleData.length || visibleColumn.length)
+      item.disabled = !visibleData.length || !visibleColumn.length
       break
     }
     case 'SELECT_AREA_TO_LEFT':
@@ -221,6 +221,11 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     case 'SELECT_AREA_TO_TOP':
     case 'SELECT_AREA_TO_BOTTON': {
       item.disabled = !column || !row
+      break
+    }
+    case 'DELETE_CHECKBOX_ROW': {
+      const selectRecords = $table.getCheckboxRecords()
+      item.disabled = !selectRecords.length
       break
     }
     case 'EDIT_CELL':
@@ -233,9 +238,6 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     case 'MERGE_CELL':
     case 'REVERT_CELL':
     case 'REVERT_ROW':
-    case 'INSERT_AT_ROW':
-    case 'INSERT_AT_ACTIVED_ROW':
-    case 'INSERT_AT_EDIT_ROW':
     case 'DELETE_ROW':
     case 'DELETE_AREA_ROW':
     case 'CLEAR_SORT':
@@ -438,6 +440,24 @@ export const VxeUIPluginMenu = {
     pluginSetup(options)
 
     VxeUI.menus.mixin({
+      /**
+       * 浏览器-刷新页面（对应按键F5）
+       */
+      SYSTEM_PAGE_REFRESH () {
+        location.reload()
+      },
+      /**
+       * 浏览器-前进
+       */
+      SYSTEM_PAGE_FORWARD () {
+        history.forward()
+      },
+      /**
+       * 浏览器-后退
+       */
+      SYSTEM_PAGE_BACK () {
+        history.back()
+      },
       /**
        * 清除单元格数据的值；如果启用 mouse-config.area 功能，则清除区域范围内的单元格数据
        */
@@ -920,16 +940,14 @@ export const VxeUIPluginMenu = {
           const tableProps = $table.props
           const { mouseConfig } = tableProps
           const { computeMouseOpts } = $table.getComputeMaps()
-          const mouseOpts = computeMouseOpts.value
-          if (row) {
-            $table.insertAt(menu.params || {}, row).then(({ rows }) => {
-              if (column && mouseConfig && mouseOpts.area) {
-                $table.setCellAreas([
-                  { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
-                ])
-              }
-            })
-          }
+          const mouseOpts = computeMouseOpts.value;
+          (row ? $table.insertAt(menu.params || {}, row) : $table.insert(menu.params || {})).then(({ rows }) => {
+            if (column && mouseConfig && mouseOpts.area) {
+              $table.setCellAreas([
+                { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+              ])
+            }
+          })
         }
       },
       /**
@@ -942,19 +960,18 @@ export const VxeUIPluginMenu = {
           const { mouseConfig } = tableProps
           const { computeMouseOpts } = $table.getComputeMaps()
           const mouseOpts = computeMouseOpts.value
-          if (row) {
-            selectMultipleRows().then(({ size }) => {
-              if (size) {
-                $table.insertAt(XEUtils.range(0, size).map(() => Object.assign({}, menu.params)), row).then(({ rows }) => {
-                  if (column && mouseConfig && mouseOpts.area) {
-                    $table.setCellAreas([
-                      { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
-                    ])
-                  }
-                })
-              }
-            })
-          }
+          selectMultipleRows().then(({ size }) => {
+            if (size) {
+              const records = XEUtils.range(0, size).map(() => Object.assign({}, menu.params));
+              (row ? $table.insertAt(records, row) : $table.insert(records)).then(({ rows }) => {
+                if (column && mouseConfig && mouseOpts.area) {
+                  $table.setCellAreas([
+                    { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+                  ])
+                }
+              })
+            }
+          })
         }
       },
       /**
@@ -966,16 +983,14 @@ export const VxeUIPluginMenu = {
           const tableProps = $table.props
           const { mouseConfig } = tableProps
           const { computeMouseOpts } = $table.getComputeMaps()
-          const mouseOpts = computeMouseOpts.value
-          if (row) {
-            $table.insertNextAt(menu.params || {}, row).then(({ rows }) => {
-              if (column && mouseConfig && mouseOpts.area) {
-                $table.setCellAreas([
-                  { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
-                ])
-              }
-            })
-          }
+          const mouseOpts = computeMouseOpts.value;
+          (row ? $table.insertNextAt(menu.params || {}, row) : $table.insert(menu.params || {})).then(({ rows }) => {
+            if (column && mouseConfig && mouseOpts.area) {
+              $table.setCellAreas([
+                { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+              ])
+            }
+          })
         }
       },
       /**
@@ -988,19 +1003,18 @@ export const VxeUIPluginMenu = {
           const { mouseConfig } = tableProps
           const { computeMouseOpts } = $table.getComputeMaps()
           const mouseOpts = computeMouseOpts.value
-          if (row) {
-            selectMultipleRows().then(({ size }) => {
-              if (size) {
-                $table.insertNextAt(XEUtils.range(0, size).map(() => Object.assign({}, menu.params)), row).then(({ rows }) => {
-                  if (column && mouseConfig && mouseOpts.area) {
-                    $table.setCellAreas([
-                      { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
-                    ])
-                  }
-                })
-              }
-            })
-          }
+          selectMultipleRows().then(({ size }) => {
+            if (size) {
+              const records = XEUtils.range(0, size).map(() => Object.assign({}, menu.params));
+              (row ? $table.insertNextAt(records, row) : $table.insert(records)).then(({ rows }) => {
+                if (column && mouseConfig && mouseOpts.area) {
+                  $table.setCellAreas([
+                    { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
+                  ])
+                }
+              })
+            }
+          })
         }
       },
       /**
@@ -1011,15 +1025,15 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, menu, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
-          $table.insert(args[0] || {})
-            .then(({ row }) => {
-              if ($table.setEditCell) {
-                $table.setEditCell(row, args[1] || column)
-              } else {
+          const record = Object.assign({}, args[0] || {})
+          $table.insert(record).then(({ row }) => {
+            if ($table.setEditCell) {
+              $table.setEditCell(row, args[1] || column)
+            } else {
               // 兼容老版本
-                $table.setActiveCell(row, args[1] || column.field)
-              }
-            })
+              $table.setActiveCell(row, args[1] || column.field)
+            }
+          })
         }
       },
       /**
@@ -1030,15 +1044,15 @@ export const VxeUIPluginMenu = {
         menuMethod (params) {
           const { $table, menu, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
-          $table.insert(args[0] || {})
-            .then(({ row }) => {
-              if ($table.setEditCell) {
-                $table.setEditCell(row, args[1] || column)
-              } else {
+          const record = Object.assign({}, args[0] || {})
+          $table.insert(record).then(({ row }) => {
+            if ($table.setEditCell) {
+              $table.setEditCell(row, args[1] || column)
+            } else {
               // 兼容老版本
-                $table.setActiveCell(row, args[1] || column.field)
-              }
-            })
+              $table.setActiveCell(row, args[1] || column.field)
+            }
+          })
         }
       },
       /**
@@ -1047,18 +1061,16 @@ export const VxeUIPluginMenu = {
       INSERT_AT_ACTIVED_ROW: {
         menuMethod (params) {
           const { $table, menu, row, column } = params
-          if (row) {
-            const args: any[] = menu.params || [] // [{}, 'field']
-            $table.insertAt(args[0] || {}, row)
-              .then(({ row }) => {
-                if ($table.setEditCell) {
-                  $table.setEditCell(row, args[1] || column)
-                } else {
-                // 兼容老版本
-                  $table.setActiveCell(row, args[1] || column.field)
-                }
-              })
-          }
+          const args: any[] = menu.params || [] // [{}, 'field']
+          const record = Object.assign({}, args[0] || {});
+          (row ? $table.insertAt(record, row) : $table.insert(record)).then(({ row }) => {
+            if ($table.setEditCell) {
+              $table.setEditCell(row, args[1] || column)
+            } else {
+              // 兼容老版本
+              $table.setActiveCell(row, args[1] || column.field)
+            }
+          })
         }
       },
       /**
@@ -1067,18 +1079,16 @@ export const VxeUIPluginMenu = {
       INSERT_AT_EDIT_ROW: {
         menuMethod (params) {
           const { $table, menu, row, column } = params
-          if (row) {
-            const args: any[] = menu.params || [] // [{}, 'field']
-            $table.insertAt(args[0] || {}, row)
-              .then(({ row }) => {
-                if ($table.setEditCell) {
-                  $table.setEditCell(row, args[1] || column)
-                } else {
-                // 兼容老版本
-                  $table.setActiveCell(row, args[1] || column.field)
-                }
-              })
-          }
+          const args: any[] = menu.params || [] // [{}, 'field']
+          const record = Object.assign({}, args[0] || {});
+          (row ? $table.insertAt(record, row) : $table.insert(record)).then(({ row }) => {
+            if ($table.setEditCell) {
+              $table.setEditCell(row, args[1] || column)
+            } else {
+              // 兼容老版本
+              $table.setActiveCell(row, args[1] || column.field)
+            }
+          })
         }
       },
       /**
@@ -1087,22 +1097,20 @@ export const VxeUIPluginMenu = {
       BATCH_INSERT_AT_EDIT_ROW: {
         menuMethod (params) {
           const { $table, menu, row, column } = params
-          if (row) {
-            const args: any[] = menu.params || [] // [{}, 'field']
-            selectMultipleRows().then(({ size }) => {
-              if (size) {
-                $table.insertAt(XEUtils.range(0, size).map(() => Object.assign({}, args[0])), row)
-                  .then(({ row }) => {
-                    if ($table.setEditCell) {
-                      $table.setEditCell(row, args[1] || column)
-                    } else {
-                      // 兼容老版本
-                      $table.setActiveCell(row, args[1] || column.field)
-                    }
-                  })
-              }
-            })
-          }
+          const args: any[] = menu.params || [] // [{}, 'field']
+          selectMultipleRows().then(({ size }) => {
+            if (size) {
+              const records = XEUtils.range(0, size).map(() => Object.assign({}, args[0]));
+              (row ? $table.insertAt(records, row) : $table.insert(records)).then(({ row }) => {
+                if ($table.setEditCell) {
+                  $table.setEditCell(row, args[1] || column)
+                } else {
+                  // 兼容老版本
+                  $table.setActiveCell(row, args[1] || column.field)
+                }
+              })
+            }
+          })
         }
       },
       /**
@@ -1111,18 +1119,16 @@ export const VxeUIPluginMenu = {
       INSERT_NEXT_AT_EDIT_ROW: {
         menuMethod (params) {
           const { $table, menu, row, column } = params
-          if (row) {
-            const args: any[] = menu.params || [] // [{}, 'field']
-            $table.insertNextAt(args[0] || {}, row)
-              .then(({ row }) => {
-                if ($table.setEditCell) {
-                  $table.setEditCell(row, args[1] || column)
-                } else {
-                // 兼容老版本
-                  $table.setActiveCell(row, args[1] || column.field)
-                }
-              })
-          }
+          const args: any[] = menu.params || [] // [{}, 'field']
+          const record = Object.assign({}, args[0] || {});
+          (row ? $table.insertNextAt(record, row) : $table.insert(record)).then(({ row }) => {
+            if ($table.setEditCell) {
+              $table.setEditCell(row, args[1] || column)
+            } else {
+              // 兼容老版本
+              $table.setActiveCell(row, args[1] || column.field)
+            }
+          })
         }
       },
       /**
@@ -1131,22 +1137,20 @@ export const VxeUIPluginMenu = {
       BATCH_INSERT_NEXT_AT_EDIT_ROW: {
         menuMethod (params) {
           const { $table, menu, row, column } = params
-          if (row) {
-            const args: any[] = menu.params || [] // [{}, 'field']
-            selectMultipleRows().then(({ size }) => {
-              if (size) {
-                $table.insertNextAt(XEUtils.range(0, size).map(() => Object.assign({}, args[0])), row)
-                  .then(({ row }) => {
-                    if ($table.setEditCell) {
-                      $table.setEditCell(row, args[1] || column)
-                    } else {
-                      // 兼容老版本
-                      $table.setActiveCell(row, args[1] || column.field)
-                    }
-                  })
-              }
-            })
-          }
+          const args: any[] = menu.params || [] // [{}, 'field']
+          selectMultipleRows().then(({ size }) => {
+            if (size) {
+              const records = XEUtils.range(0, size).map(() => Object.assign({}, args[0]));
+              (row ? $table.insertNextAt(records, row) : $table.insert(records)).then(({ row }) => {
+                if ($table.setEditCell) {
+                  $table.setEditCell(row, args[1] || column)
+                } else {
+                  // 兼容老版本
+                  $table.setActiveCell(row, args[1] || column.field)
+                }
+              })
+            }
+          })
         }
       },
       /**
