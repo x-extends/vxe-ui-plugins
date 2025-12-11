@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-validator",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Vxe UI plug-in supports common validator configurations.",
   "scripts": {
     "lib": "gulp build"

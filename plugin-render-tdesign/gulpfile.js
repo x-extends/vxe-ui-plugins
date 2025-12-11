@@ -96,6 +96,7 @@ gulp.task('build_umd', gulp.series('browserify_common', function () {
       suffix: '.umd',
       extname: '.js'
     }))
+    .pipe(replace(`global.${exportModuleName} = mod.exports;`, `global.${exportModuleName} = mod.exports.default;`))
     .pipe(gulp.dest('dist'))
     .pipe(uglify())
     .pipe(rename({
