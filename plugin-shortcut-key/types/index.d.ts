@@ -23,6 +23,7 @@ export interface VxeUIPluginShortcutKeyOptions {
  * 基于 Vxe UI 的扩展插件，为键盘操作提供快捷键的设置
  */
 export declare const VxeUIPluginShortcutKey: {
+  setConfig(options?: VxeUIPluginShortcutKeyOptions): void
   install (VxeUI: VxeUIExport, options?: VxeUIPluginShortcutKeyOptions): void
 }
 

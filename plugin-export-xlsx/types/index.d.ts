@@ -10,13 +10,33 @@ declare module 'vxe-pc-ui' {
   }
 }
 
+declare module 'vxe-table' {
+  export namespace VxeTableDefines {
+    export interface ExtortSheetMethodParams {
+      workbook: ExcelJS.Workbook;
+      worksheet: ExcelJS.Worksheet;
+    }
+  }
+  export namespace VxeTableDefines {
+    export interface ColumnInfo {
+      _row: any;
+      _colSpan: number;
+      _rowSpan: number;
+      childNodes: VxeTableDefines.ColumnInfo[];
+    }
+  }
+}
+
+export interface VxeUIPluginExportXLSXOptions {
+  ExcelJS?: any
+}
+
 /**
  * 基于 Vxe UI 的扩展插件，支持导出 xlsx 文件
  */
 export declare const VxeUIPluginExportXLSX: {
-  install (VxeUI: VxeUIExport, options?: {
-    ExcelJS?: any
-  }): void
+  setConfig(options?: VxeUIPluginExportXLSXOptions): void
+  install (VxeUI: VxeUIExport, options?: VxeUIPluginExportXLSXOptions): void
 }
 
 export default VxeUIPluginExportXLSX
