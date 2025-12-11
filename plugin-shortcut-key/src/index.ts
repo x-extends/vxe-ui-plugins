@@ -344,7 +344,7 @@ function pluginConfig (options: VxeUIPluginShortcutKeyOptions) {
 /**
  * 基于 vxe-table 表格的扩展插件，为键盘操作提供快捷键设置
  */
-export const VXETablePluginShortcutKey = {
+export const VxeUIPluginShortcutKey = {
   /**
    * 已废弃，请使用 setConfig
    * @deprecated
@@ -376,7 +376,7 @@ export const VXETablePluginShortcutKey = {
 }
 
 if (typeof window !== 'undefined' && window.VxeUI && window.VxeUI.use) {
-  window.VxeUI.use(VXETablePluginShortcutKey)
+  window.VxeUI.use(VxeUIPluginShortcutKey)
 }
 
-export default VXETablePluginShortcutKey
+export default VxeUIPluginShortcutKey

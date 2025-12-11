@@ -3,24 +3,10 @@ import XEUtils from 'xe-utils'
 import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, TableReactData, TableInternalData, VxeTablePrivateMethods } from 'vxe-table'
 import type ExcelJS from 'exceljs'
+import type { VxeUIPluginExportXLSXOptions } from '../types'
 
 let VxeUI: VxeUIExport
 let globalExcelJS: any
-
-declare module 'vxe-table' {
-  export namespace VxeTableDefines {
-    export interface ExtortSheetMethodParams {
-      workbook: ExcelJS.Workbook;
-      worksheet: ExcelJS.Worksheet;
-    }
-    export interface ColumnInfo {
-      _row: any;
-      _colSpan: number;
-      _rowSpan: number;
-      childNodes: VxeTableDefines.ColumnInfo[];
-    }
-  }
-}
 
 const defaultHeaderBackgroundColor = 'f2f2f2'
 const defaultCellFontColor = '000000'
@@ -803,10 +789,13 @@ function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExpor
   }
 }
 
+function pluginSetup (options: VxeUIPluginExportXLSXOptions) {
+  globalExcelJS = options ? options.ExcelJS : null
+}
+
 export const VxeUIPluginExportXLSX = {
-  install (core: VxeUIExport, options?: {
-    ExcelJS?: any
-  }) {
+  setConfig: pluginSetup,
+  install (core: VxeUIExport, options?: VxeUIPluginExportXLSXOptions) {
     VxeUI = core
 
     // 检查版本
@@ -822,7 +811,9 @@ export const VxeUIPluginExportXLSX = {
       }
     }
 
-    globalExcelJS = options ? options.ExcelJS : null
+    if (options) {
+      pluginSetup(options)
+    }
 
     VxeUI.setConfig({
       table: {

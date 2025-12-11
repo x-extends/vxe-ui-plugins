@@ -8,6 +8,7 @@ export interface VxeUIPluginMenuOptions {
  * 基于 Vxe UI 的扩展插件，支持右键菜单
  */
 export declare const VxeUIPluginMenu: {
+  setConfig(options?: VxeUIPluginMenuOptions): void
   install (VxeUI: VxeUIExport, options?: VxeUIPluginMenuOptions): void
 }
 

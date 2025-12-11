@@ -3,6 +3,7 @@ import XEUtils from 'xe-utils'
 import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
 import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines } from 'vxe-table'
 import type jsPDF from 'jspdf'
+import type { VxeUIPluginExportPDFFonts, VxeUIPluginExportPDFOptions } from '../types'
 
 let VxeUI: VxeUIExport
 let globalJsPDF: any
@@ -13,19 +14,6 @@ declare module 'vxe-table' {
       fontName?: string;
     }
   }
-}
-
-interface VxeUIPluginExportPDFFonts {
-  fontName: string;
-  fontStyle?: 'normal';
-  fontUrl: string;
-}
-
-interface VxeUIPluginExportPDFOptions {
-  jsPDF?: any
-  fontName?: string;
-  fonts?: VxeUIPluginExportPDFFonts[];
-  beforeMethod?: Function;
 }
 
 const globalOptions: VxeUIPluginExportPDFOptions = {}
