@@ -35,6 +35,7 @@ export interface VxeUIPluginRenderWangEditorOptions {
  * 基于 Vxe UI 的扩展插件，支持渲染 wangEditor 富文本
  */
 export declare const VxeUIPluginRenderWangEditor: {
+  setConfig(options?: VxeUIPluginRenderWangEditorOptions): void
   install (VxeUI: VxeUIExport, options?: VxeUIPluginRenderWangEditorOptions): void
 }
 

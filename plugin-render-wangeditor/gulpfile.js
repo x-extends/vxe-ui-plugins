@@ -16,7 +16,7 @@ const source = require('vinyl-source-stream')
 const pack = require('./package.json')
 const tsconfig = require('./tsconfig.json')
 
-const exportModuleName = 'VxeUIPluginWangEditor'
+const exportModuleName = 'VxeUIPluginRenderWangEditor'
 const pluginName = pack.name
 const tableVersion = '4.7.0'
 const pluginUrl = 'https://vxeui.com/other4/#/plugin-render-wangeditor/install'
