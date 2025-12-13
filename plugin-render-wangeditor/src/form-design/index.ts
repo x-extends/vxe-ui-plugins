@@ -1,6 +1,6 @@
 import { PropType, h, defineComponent, ComputedOptions } from 'vue'
 
-import type { VxeUIExport, VxeFormComponent, VxeFormItemComponent, VxeInputComponent, VxeSwitchComponent, VxeGlobalRendererHandles } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
 
 interface WidgetWangEditorFormObjVO {
   placeholder: string
@@ -33,10 +33,10 @@ export function defineFormDesignRender (VxeUI: VxeUIExport, WangEditorComponent:
     },
     emits: [],
     setup (props) {
-      const VxeUIFormComponent = VxeUI.getComponent<VxeFormComponent>('VxeForm')
-      const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
-      const VxeUISwitchComponent = VxeUI.getComponent<VxeSwitchComponent>('VxeSwitch')
-      const VxeUIInputComponent = VxeUI.getComponent<VxeInputComponent>('VxeInput')
+      const VxeUIFormComponent = VxeUI.getComponent('VxeForm')
+      const VxeUIFormItemComponent = VxeUI.getComponent('VxeFormItem')
+      const VxeUISwitchComponent = VxeUI.getComponent('VxeSwitch')
+      const VxeUIInputComponent = VxeUI.getComponent('VxeInput')
 
       return () => {
         const { renderParams } = props
@@ -102,7 +102,7 @@ export function defineFormDesignRender (VxeUI: VxeUIExport, WangEditorComponent:
     },
     emits: [],
     setup (props) {
-      const VxeUIFormItemComponent = VxeUI.getComponent<VxeFormItemComponent>('VxeFormItem')
+      const VxeUIFormItemComponent = VxeUI.getComponent('VxeFormItem')
 
       const changeEvent = () => {
         const { renderParams } = props

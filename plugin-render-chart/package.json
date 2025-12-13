@@ -52,7 +52,12 @@
     "typescript": "~4.7.4",
     "vue": "3.4.27",
     "vxe-pc-ui": "^4.11.0",
-    "vxe-table": "^4.17.28"
+    "vxe-table": "^4.17.0"
+  },
+  "browserify-shim": {
+    "vue": "global:Vue",
+    "xe-utils": "global:XEUtils",
+     "dayjs": "global:dayjs"
   },
   "repository": {
     "type": "git",

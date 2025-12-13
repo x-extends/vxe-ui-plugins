@@ -24,7 +24,9 @@ export function defineFormRender (VxeUI: VxeUIExport, WangEditorComponent: Compu
   }
 
   function getItemProps (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderFormItemContentParams, value: any, defaultProps?: { [prop: string]: any }) {
-    return XEUtils.assign({}, defaultProps, renderOpts.props, { [getModelProp(renderOpts)]: value })
+    const itemProps = XEUtils.assign({}, defaultProps, renderOpts.props)
+    itemProps[getModelProp(renderOpts)] = value
+    return itemProps
   }
 
   function getOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderParams, inputFunc?: Function, changeFunc?: Function) {
@@ -77,11 +79,11 @@ export function defineFormRender (VxeUI: VxeUIExport, WangEditorComponent: Compu
       const { attrs } = renderOpts
       const itemValue = XEUtils.get(data, field)
       return [
-        h(WangEditorComponent, {
-          ...attrs,
-          ...getItemProps(renderOpts, params, itemValue, defaultProps),
-          ...getItemOns(renderOpts, params)
-        })
+        h(WangEditorComponent, XEUtils.assign(
+          attrs,
+          getItemProps(renderOpts, params, itemValue, defaultProps),
+          getItemOns(renderOpts, params)
+        ))
       ]
     }
   }

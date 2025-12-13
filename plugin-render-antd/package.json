@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-antd",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "Vxe UI plug-in for compatibility with the ant-design-vue component.",
   "scripts": {
     "lib": "gulp build"
@@ -24,6 +24,7 @@
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
     "browserify": "^17.0.0",
+    "browserify-shim": "^3.8.16",
     "del": "^6.0.0",
     "eslint": "^7.13.0",
     "eslint-config-prettier": "^6.15.0",
@@ -53,7 +54,12 @@
     "vinyl-source-stream": "^2.0.0",
     "vue": "3.4.27",
     "vxe-pc-ui": "^4.11.0",
-    "vxe-table": "^4.17.28"
+    "vxe-table": "^4.17.0"
+  },
+  "browserify-shim": {
+    "vue": "global:Vue",
+    "xe-utils": "global:XEUtils",
+     "dayjs": "global:dayjs"
   },
   "repository": {
     "type": "git",

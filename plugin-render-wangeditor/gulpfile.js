@@ -4,6 +4,7 @@ const uglify = require('gulp-uglify')
 const babel = require('gulp-babel')
 const rename = require('gulp-rename')
 const replace = require('gulp-replace')
+const concat = require('gulp-concat')
 const dartSass = require('sass')
 const gulpSass = require('gulp-sass')
 const sass = gulpSass(dartSass)
@@ -61,11 +62,8 @@ gulp.task('build_commonjs', function () {
 gulp.task('browserify_common', function () {
   return browserify({
     entries: 'dist/index.js'
-  }).external([
-    'vue',
-    'xe-utils',
-    'dayjs'
-  ])
+  })
+    .transform('browserify-shim')
     .bundle()
     .pipe(source('all.common.js'))
     .pipe(gulp.dest('dist'))
