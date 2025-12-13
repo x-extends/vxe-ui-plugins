@@ -61,10 +61,8 @@ gulp.task('build_commonjs', function () {
 gulp.task('browserify_common', function () {
   return browserify({
     entries: 'dist/index.js'
-  }).external([
-    'vue',
-    'xe-utils'
-  ])
+  })
+    .transform('browserify-shim')
     .bundle()
     .pipe(source('all.common.js'))
     .pipe(gulp.dest('dist'))
