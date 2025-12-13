@@ -1,18 +1,20 @@
 const gulp = require('gulp')
+const fs = require('fs')
 const del = require('del')
 const uglify = require('gulp-uglify')
 const babel = require('gulp-babel')
 const rename = require('gulp-rename')
 const replace = require('gulp-replace')
+const concat = require('gulp-concat')
 const dartSass = require('sass')
 const gulpSass = require('gulp-sass')
 const sass = gulpSass(dartSass)
 const cleanCSS = require('gulp-clean-css')
 const prefixer = require('gulp-autoprefixer')
 const sourcemaps = require('gulp-sourcemaps')
+const { rollup } = require('rollup')
+const commonjs = require('@rollup/plugin-commonjs')
 const ts = require('gulp-typescript')
-const browserify = require('browserify')
-const source = require('vinyl-source-stream')
 const pack = require('./package.json')
 const tsconfig = require('./tsconfig.json')
 
@@ -58,45 +60,28 @@ gulp.task('build_commonjs', function () {
     .pipe(gulp.dest('dist'))
 })
 
-gulp.task('browserify_common', function () {
-  return browserify({
-    entries: 'dist/index.js'
-  })
-    .transform('browserify-shim')
-    .bundle()
-    .pipe(source('all.common.js'))
-    .pipe(gulp.dest('dist'))
-})
+gulp.task('build_umd', gulp.series(async function () {
+  const rollupConfig = {
+    input: 'dist/index.js',
+    output: {
+      file: 'dist/index.common.js',
+      format: 'umd',
+      name: exportModuleName,
+      globals: {
+        vue: 'Vue',
+        'xe-utils': 'XEUtils',
+        dayjs: 'dayjs'
+      }
+    },
+    plugins: [commonjs()],
+    external: ['vue', 'xe-utils', 'dayjs']
+  }
 
-gulp.task('build_umd', gulp.series('browserify_common', function () {
-  return gulp.src(['dist/all.common.js'])
-    .pipe(replace('VUE_APP_VXE_PLUGIN_VERSION', `${pluginName} ${pack.version}`))
-    .pipe(replace('VUE_APP_VXE_TABLE_VERSION', `vxe-table ${tableVersion}`))
-    .pipe(replace('VUE_APP_VXE_PLUGIN_DESCRIBE', `${pluginUrl}`))
-    .pipe(babel({
-      moduleId: pack.name,
-      presets: [
-        '@babel/env'
-      ],
-      plugins: [
-        ['@babel/transform-modules-umd', {
-          globals: {
-            [pack.name]: exportModuleName,
-            vue: 'Vue',
-            'xe-utils': 'XEUtils',
-            dayjs: 'dayjs'
-          },
-          exactGlobals: true
-        }]
-      ]
-    }))
-    .pipe(rename({
-      basename: 'index',
-      suffix: '.umd',
-      extname: '.js'
-    }))
-    .pipe(replace(`global.${exportModuleName} = mod.exports;`, `global.${exportModuleName} = mod.exports.default;`))
-    .pipe(gulp.dest('dist'))
+  const bundle = await rollup(rollupConfig)
+  const { output } = await bundle.generate(rollupConfig.output)
+  fs.writeFileSync('dist/index.umd.js', output[0].code, 'utf-8')
+
+  return gulp.src('dist/index.umd.js')
     .pipe(uglify())
     .pipe(rename({
       basename: 'index',

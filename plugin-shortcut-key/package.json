@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-shortcut-key",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Vxe UI plug-in, settings that provide shortcuts for keyboard operations.",
   "scripts": {
     "lib": "gulp build"
@@ -22,6 +22,7 @@
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/runtime": "^7.12.5",
+    "@rollup/plugin-commonjs": "^29.0.0",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
     "del": "^6.0.0",
@@ -48,6 +49,7 @@
     "gulp-uglify": "^3.0.2",
     "markdown-doctest": "^1.1.0",
     "prettier": "^2.1.2",
+    "rollup": "^4.53.3",
     "sass": "^1.55.0",
     "typescript": "~4.7.4",
     "vue": "3.4.27",
