@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-arco",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Vxe UI plug-in for compatibility with the arco-design component.",
   "scripts": {
     "lib": "gulp build"
