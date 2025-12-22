@@ -1,5 +1,5 @@
 import { h, ComponentOptions } from 'vue'
-import { getCurrComponent } from '../util/comp'
+import { getCurrComponent, hasInputType } from '../util/comp'
 import XEUtils from 'xe-utils'
 import dayjs from 'dayjs'
 
@@ -65,7 +65,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return cellValue >= getFormatDate(data[0], props, defaultFormat) && cellValue <= getFormatDate(data[1], props, defaultFormat)
   }
 
-  function getCellEditFilterProps (renderOpts: any, params: VxeGlobalRendererHandles.RenderEditParams | VxeGlobalRendererHandles.RenderFilterParams, value: any, defaultProps?: { [prop: string]: any }) {
+  function getCellEditFilterProps (renderOpts: any, params: VxeGlobalRendererHandles.RenderTableEditParams | VxeGlobalRendererHandles.RenderTableFilterParams | VxeGlobalRendererHandles.RenderTableFloatingFilterParams, value: any, defaultProps?: { [prop: string]: any }) {
     return XEUtils.assign({}, defaultProps, renderOpts.props, { [getModelProp(renderOpts)]: value })
   }
 
@@ -73,7 +73,17 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return '' + (isEmptyValue(cellValue) ? '' : cellValue)
   }
 
-  function getCellLabelVNs (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams, cellLabel: any) {
+  function updateFilterChangeOption (params: VxeGlobalRendererHandles.RenderTableFilterParams | VxeGlobalRendererHandles.RenderTableFloatingFilterParams, checked: boolean, option: VxeTableDefines.FilterOption) {
+    const { $table } = params
+    $table.updateFilterOptionStatus(option, checked)
+  }
+
+  function saveFilterEvent (params: VxeGlobalRendererHandles.RenderTableFilterParams | VxeGlobalRendererHandles.RenderTableFloatingFilterParams) {
+    const { $table, column } = params
+    $table.saveFilterByEvent(new Event('change'), column)
+  }
+
+  function getCellLabelVNs (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderTableCellParams, cellLabel: any) {
     const { placeholder } = renderOpts
     return [
       h('span', {
@@ -88,29 +98,44 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     ]
   }
 
-  function getOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderParams, inputFunc?: Function, changeFunc?: Function) {
+  const blurEvent = 'blur'
+  const clearEvent = 'clear'
+
+  /**
+ * 组件事件处理
+ * @param renderOpts
+ * @param params
+ * @param modelFunc
+ * @param changeFunc
+ */
+  function getComponentOns (renderOpts: VxeGlobalRendererHandles.RenderTableCellOptions | VxeGlobalRendererHandles.RenderTableFilterOptions, params: any, eFns?: {
+    model: (cellValue: any) => void
+    change?: (...args: any[]) => void
+    blur?: (...args: any[]) => void
+    clear?: (...args: any[]) => void
+  }, eventOns?: Record<string, any>) {
     const { events } = renderOpts
     const modelEvent = getModelEvent(renderOpts)
     const changeEvent = getChangeEvent(renderOpts)
-    const isSameEvent = changeEvent === modelEvent
-    const ons: { [type: string]: Function } = {}
-    XEUtils.objectEach(events, (func: Function, key: string) => {
+    const { model: modelFunc, change: changeFunc, blur: blurFunc, clear: clearFunc } = eFns || {}
+    const ons: any = {}
+    XEUtils.objectEach(events, (func, key: any) => {
       ons[getOnName(key)] = function (...args: any[]) {
+        if (!XEUtils.isFunction(func)) {
+          console.error(`Parameter "${func}" is not a method`)
+        }
         func(params, ...args)
       }
     })
-    if (inputFunc) {
+    if (modelFunc) {
       ons[getOnName(modelEvent)] = function (targetEvnt: any) {
-        inputFunc(targetEvnt)
+        modelFunc(targetEvnt)
         if (events && events[modelEvent]) {
           events[modelEvent](params, targetEvnt)
         }
-        if (isSameEvent && changeFunc) {
-          changeFunc(targetEvnt)
-        }
       }
     }
-    if (!isSameEvent && changeFunc) {
+    if (changeFunc) {
       ons[getOnName(changeEvent)] = function (...args: any[]) {
         changeFunc(...args)
         if (events && events[changeEvent]) {
@@ -118,25 +143,83 @@ export function defineTableRender (VxeUI: VxeUIExport) {
         }
       }
     }
-    return ons
+    if (blurFunc) {
+      ons[getOnName(blurEvent)] = function (...args: any[]) {
+        blurFunc(...args)
+        if (events && events[blurEvent]) {
+          events[blurEvent](params, ...args)
+        }
+      }
+    }
+    if (clearFunc) {
+      ons[getOnName(clearEvent)] = function (...args: any[]) {
+        clearFunc(...args)
+        if (events && events[clearEvent]) {
+          events[clearEvent](params, ...args)
+        }
+      }
+    }
+    return eventOns ? Object.assign(ons, eventOns) : ons
   }
 
-  function getEditOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderEditParams) {
+  function getEditOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderTableEditParams) {
     const { $table, row, column } = params
-    return getOns(renderOpts, params, (value: any) => {
-    // 处理 model 值双向绑定
-      XEUtils.set(row, column.field, value)
-    }, () => {
-    // 处理 change 事件相关逻辑
-      $table.updateStatus(params)
+    return getComponentOns(renderOpts, params, {
+      model (value) {
+        // 处理 model 值双向绑定
+        XEUtils.set(row, column.field, value)
+      },
+      change () {
+        // 处理 change 事件相关逻辑
+        $table.updateStatus(params)
+      }
     })
   }
 
-  function getFilterOns (renderOpts: any, params: VxeGlobalRendererHandles.RenderFilterParams, option: VxeTableDefines.FilterOption, changeFunc: Function) {
-    return getOns(renderOpts, params, (value: any) => {
-    // 处理 model 值双向绑定
-      option.data = value
-    }, changeFunc)
+  function getFilterOns (renderOpts: any, params: VxeGlobalRendererHandles.RenderTableFilterParams, option: VxeTableDefines.FilterOption, changeFunc: ((...args: any[]) => void)) {
+    return getComponentOns(renderOpts, params, {
+      model (value: any) {
+        // 处理 model 值双向绑定
+        option.data = value
+      },
+      change: changeFunc
+    })
+  }
+
+  function getFloatingFilterOns (renderOpts: VxeGlobalRendererHandles.RenderTableFilterOptions, params: VxeGlobalRendererHandles.RenderTableFloatingFilterParams, option: VxeTableDefines.FilterOption) {
+    const { $table, column } = params
+    if (hasInputType(renderOpts)) {
+      return getComponentOns(renderOpts, params, {
+        model (value: any) {
+          // 处理 model 值双向绑定
+          option.data = value
+        },
+        change () {
+          updateFilterChangeOption(params, !isEmptyValue(option.data), option)
+        },
+        clear () {
+          updateFilterChangeOption(params, !isEmptyValue(option.data), option)
+          saveFilterEvent(params)
+        },
+        blur () {
+          $table.saveFilterByEvent(new Event('change'), column)
+        }
+      })
+    }
+    return getComponentOns(renderOpts, params, {
+      model (value: any) {
+        // 处理 model 值双向绑定
+        option.data = value
+      },
+      clear () {
+        updateFilterChangeOption(params, !isEmptyValue(option.data), option)
+        $table.saveFilterByEvent(new Event('change'), column)
+      },
+      change () {
+        updateFilterChangeOption(params, !isEmptyValue(option.data), option)
+        $table.saveFilterByEvent(new Event('change'), column)
+      }
+    })
   }
 
   function matchCascaderData (index: number, list: any[], values: any[], labels: any[]) {
@@ -151,7 +234,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
-  function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderCellParams) {
+  function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderTableCellParams) {
     const { options = [], optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = renderOpts
     const { $table, rowid, row, column } = params
     const { filterable, multiple } = props
@@ -199,7 +282,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return ''
   }
 
-  function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams) {
+  function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderTableCellParams) {
     const { props = {} } = renderOpts
     const { row, column } = params
     const cellValue = XEUtils.get(row, column.field)
@@ -209,7 +292,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(` ${props.separator || '/'} `)
   }
 
-  function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.ExportMethodParams) {
+  function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderTableCellParams | VxeGlobalRendererHandles.ExportMethodParams) {
     const { props = {} } = renderOpts
     const { row, column } = params
     const { rangeSeparator = '-' } = props
@@ -242,7 +325,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return cellValue
   }
 
-  function getTimePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.RenderEditParams) {
+  function getTimePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderTableCellParams | VxeGlobalRendererHandles.RenderTableEditParams) {
     const { props = {} } = renderOpts
     const { row, column } = params
     const { isRange, format = 'HH:mm:ss', rangeSeparator = '-' } = props
@@ -254,13 +337,14 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   }
 
   function createEditRender (defaultProps?: { [key: string]: any }) {
-    return function (renderOpts: VxeColumnPropTypes.EditRender & { name: string }, params: VxeGlobalRendererHandles.RenderEditParams) {
+    return function (renderOpts: VxeColumnPropTypes.EditRender & { name: string }, params: VxeGlobalRendererHandles.RenderTableEditParams) {
       const { row, column } = params
-      const { name, attrs } = renderOpts
+      const { name, attrs, props } = renderOpts
       const cellValue = XEUtils.get(row, column.field)
       return [
         h(getCurrComponent(name), {
           ...attrs,
+          ...props,
           ...getCellEditFilterProps(renderOpts, params, cellValue, defaultProps),
           ...getEditOns(renderOpts, params)
         })
@@ -268,18 +352,19 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
-  function defaultButtonEditRender (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderEditParams) {
-    const { attrs } = renderOpts
+  function defaultButtonEditRender (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderTableEditParams) {
+    const { attrs, props } = renderOpts
     return [
       h(getCurrComponent('el-button'), {
         ...attrs,
+        ...props,
         ...getCellEditFilterProps(renderOpts, params, null),
-        ...getOns(renderOpts, params)
+        ...getComponentOns(renderOpts, params)
       }, cellText(renderOpts.content))
     ]
   }
 
-  function defaultButtonsEditRender (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderEditParams) {
+  function defaultButtonsEditRender (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderTableEditParams) {
     const { children } = renderOpts
     if (children) {
       return children.map((childRenderOpts: VxeColumnPropTypes.EditRender) => defaultButtonEditRender(childRenderOpts, params)[0])
@@ -288,9 +373,9 @@ export function defineTableRender (VxeUI: VxeUIExport) {
   }
 
   function createFilterRender (defaultProps?: { [key: string]: any }) {
-    return function (renderOpts: VxeColumnPropTypes.FilterRender & { name: string }, params: VxeGlobalRendererHandles.RenderFilterParams) {
+    return function (renderOpts: VxeColumnPropTypes.FilterRender & { name: string }, params: VxeGlobalRendererHandles.RenderTableFilterParams) {
       const { column } = params
-      const { name, attrs } = renderOpts
+      const { name, attrs, props } = renderOpts
       return [
         h('div', {
           class: 'vxe-table--filter-element-wrapper'
@@ -299,6 +384,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
           return h(getCurrComponent(name), {
             key: oIndex,
             ...attrs,
+            ...props,
             ...getCellEditFilterProps(renderOpts, params, optionValue, defaultProps),
             ...getFilterOns(renderOpts, params, option, () => {
             // 处理 change 事件相关逻辑
@@ -310,7 +396,23 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
-  function handleConfirmFilter (params: VxeGlobalRendererHandles.RenderFilterParams, checked: boolean, option: VxeTableDefines.FilterOption) {
+  function createFloatingFilterRender (defaultProps?: { [key: string]: any }) {
+    return function (renderOpts: VxeGlobalRendererHandles.RenderTableFloatingFilterOptions & { name: string }, params: VxeGlobalRendererHandles.RenderTableFloatingFilterParams) {
+      const { option } = params
+      const { name, attrs, props } = renderOpts
+      const optionValue = option.data
+      return [
+        h(getCurrComponent(name), {
+          ...attrs,
+          ...props,
+          ...getCellEditFilterProps(renderOpts, params, optionValue, defaultProps),
+          ...getFloatingFilterOns(renderOpts, params, option)
+        })
+      ]
+    }
+  }
+
+  function handleConfirmFilter (params: VxeGlobalRendererHandles.RenderTableFilterParams, checked: boolean, option: VxeTableDefines.FilterOption) {
     const { $panel } = params
     $panel.changeOption(null, checked, option)
   }
@@ -362,11 +464,18 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
+  function defaultFilterOptions () {
+    return [
+      { data: null }
+    ]
+  }
+
   VxeUI.renderer.mixin({
     ElAutocomplete: {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      createTableFilterOptions: defaultFilterOptions,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
@@ -374,14 +483,18 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      createTableFilterOptions: defaultFilterOptions,
       renderTableFilter: createFilterRender(),
+      renderTableFloatingFilter: createFloatingFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
     ElInputNumber: {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      createTableFilterOptions: defaultFilterOptions,
       renderTableFilter: createFilterRender(),
+      renderTableFloatingFilter: createFloatingFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
     ElSelect: {
@@ -428,6 +541,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       renderTableCell (renderOpts, params) {
         return getCellLabelVNs(renderOpts, params, getSelectCellValue(renderOpts, params))
       },
+      createTableFilterOptions: defaultFilterOptions,
       renderTableFilter (renderOpts, params) {
         const { options = [], optionGroups, optionProps = {}, optionGroupProps = {} } = renderOpts
         const groupOptions = optionGroupProps.options || 'options'
@@ -510,6 +624,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       renderTableCell (renderOpts, params) {
         return getCellLabelVNs(renderOpts, params, getDatePickerCellValue(renderOpts, params))
       },
+      createTableFilterOptions: defaultFilterOptions,
       renderTableFilter (renderOpts, params) {
         const { column } = params
         const { name, attrs } = renderOpts
@@ -530,6 +645,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
           }))
         ]
       },
+      renderTableFloatingFilter: createFloatingFilterRender(),
       tableFilterDefaultMethod (params) {
         const { option, row, column } = params
         const { data } = option
@@ -567,6 +683,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     ElRate: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      createTableFilterOptions: defaultFilterOptions,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
@@ -598,6 +715,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     ElSlider: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      createTableFilterOptions: defaultFilterOptions,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
