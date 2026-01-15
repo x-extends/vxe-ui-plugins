@@ -18,7 +18,7 @@ const rowIndexOf = ($table: VxeTableConstructor & VxeTablePrivateMethods, rows: 
 
 function handleFixedColumn (fixed: VxeColumnPropTypes.Fixed) {
   return {
-    menuMethod (params: VxeGlobalMenusHandles.TableMenuMethodParams) {
+    tableMenuMethod (params: VxeGlobalMenusHandles.TableMenuMethodParams) {
       const { $table, column } = params
       XEUtils.eachTree([column], (column) => {
         column.fixed = fixed
@@ -410,6 +410,27 @@ function selectMultipleRows () {
   })
 }
 
+/**
+ * 浏览器-刷新页面（对应按键F5）
+ */
+function systemPageRefresh () {
+  location.reload()
+}
+
+/**
+ * 浏览器-前进
+ */
+function systemPageforward () {
+  history.forward()
+}
+
+/**
+ * 浏览器-后退
+ */
+function systemPageBack () {
+  history.back()
+}
+
 function pluginSetup (options?: VxeUIPluginMenuOptions) {
   if (options && options.copy) {
     handleCopy = options.copy
@@ -444,31 +465,37 @@ export const VxeUIPluginMenu = {
        * 浏览器-刷新页面（对应按键F5）
        */
       SYSTEM_PAGE_REFRESH: {
-        menuMethod () {
-          location.reload()
-        }
+        tableMenuMethod: systemPageRefresh,
+        treeMenuMethod: systemPageRefresh,
+        calendarMenuMethod: systemPageRefresh,
+        menuMenuMethod: systemPageRefresh,
+        formDesignMenuMethod: systemPageRefresh
       },
       /**
        * 浏览器-前进
        */
       SYSTEM_PAGE_FORWARD: {
-        menuMethod () {
-          history.forward()
-        }
+        tableMenuMethod: systemPageforward,
+        treeMenuMethod: systemPageforward,
+        calendarMenuMethod: systemPageforward,
+        menuMenuMethod: systemPageforward,
+        formDesignMenuMethod: systemPageforward
       },
       /**
        * 浏览器-后退
        */
       SYSTEM_PAGE_BACK: {
-        menuMethod () {
-          history.back()
-        }
+        tableMenuMethod: systemPageBack,
+        treeMenuMethod: systemPageBack,
+        calendarMenuMethod: systemPageBack,
+        menuMenuMethod: systemPageBack,
+        formDesignMenuMethod: systemPageBack
       },
       /**
        * 清除单元格数据的值；如果启用 mouse-config.area 功能，则清除区域范围内的单元格数据
        */
       CLEAR_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           if (row && column) {
             const tableProps = $table.props
@@ -497,7 +524,7 @@ export const VxeUIPluginMenu = {
        * 清除行数据的值
        */
       CLEAR_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row } = params
           if (row) {
             $table.clearData(row)
@@ -508,7 +535,7 @@ export const VxeUIPluginMenu = {
        * 清除复选框选中行数据的值
        */
       CLEAR_CHECKBOX_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.clearData($table.getCheckboxRecords())
         }
@@ -517,7 +544,7 @@ export const VxeUIPluginMenu = {
        * 清除区域选择范围内数据的值
        */
       CLEAR_AREA_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -540,7 +567,7 @@ export const VxeUIPluginMenu = {
        * 清除所有数据的值
        */
       CLEAR_ALL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.clearData()
         }
@@ -549,7 +576,7 @@ export const VxeUIPluginMenu = {
        * 选取所有区域
        */
       SELECT_ALL_AREA: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -571,7 +598,7 @@ export const VxeUIPluginMenu = {
        * 以当前单元格为起点，范围选取到左侧单元格
        */
       SELECT_AREA_TO_LEFT: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -603,7 +630,7 @@ export const VxeUIPluginMenu = {
        * 以当前单元格为起点，范围选取到右侧单元格
        */
       SELECT_AREA_TO_RIGHT: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -635,7 +662,7 @@ export const VxeUIPluginMenu = {
        * 以当前单元格为起点，范围选取到顶部单元格
        */
       SELECT_AREA_TO_TOP: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -667,7 +694,7 @@ export const VxeUIPluginMenu = {
        * 以当前单元格为起点，范围选取到底部单元格
        */
       SELECT_AREA_TO_BOTTON: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -699,7 +726,7 @@ export const VxeUIPluginMenu = {
        * 还原单元格数据的值；如果启用 mouse-config.area 功能，则还原区域范围内的单元格数据
        */
       REVERT_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           if (row && column) {
             const tableProps = $table.props
@@ -728,7 +755,7 @@ export const VxeUIPluginMenu = {
        * 还原行数据的值
        */
       REVERT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row } = params
           if (row) {
             $table.revertData(row)
@@ -739,7 +766,7 @@ export const VxeUIPluginMenu = {
        * 还原复选框选中行数据的值
        */
       REVERT_CHECKBOX_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.revertData($table.getCheckboxRecords())
         }
@@ -748,7 +775,7 @@ export const VxeUIPluginMenu = {
        * 还原所有数据的值
        */
       REVERT_ALL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.revertData()
         }
@@ -757,7 +784,7 @@ export const VxeUIPluginMenu = {
        * 复制列头标题
        */
       COPY_TITLE: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { column } = params
           const text = column.getTitle()
           if (text) {
@@ -774,7 +801,7 @@ export const VxeUIPluginMenu = {
        * 复制单元格数据的值；如果启用 mouse-config.area 功能，则复制区域范围内的单元格数据，支持 Excel 和 WPS
        */
       COPY_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           handleCopyOrCut(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods })
         }
       },
@@ -782,7 +809,7 @@ export const VxeUIPluginMenu = {
        * 剪贴单元格数据的值；如果启用 mouse-config.area 功能，则剪贴区域范围内的单元格数据，支持 Excel 和 WPS
        */
       CUT_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           handleCopyOrCut(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, true)
         }
       },
@@ -790,7 +817,7 @@ export const VxeUIPluginMenu = {
        * 粘贴从表格中被复制的数据；如果启用 mouse-config.area 功能，则粘贴区域范围内的单元格数据，不支持读取剪贴板
        */
       PASTE_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table, row, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -811,7 +838,7 @@ export const VxeUIPluginMenu = {
        * 如果启用 mouse-config.area 功能，如果所选区域内已存在合并单元格，则取消临时合并，否则临时合并
        */
       MERGE_OR_CLEAR: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table } = params
           const cellAreas = $table.getCellAreas()
           const beenMerges = getBeenMerges(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods })
@@ -839,7 +866,7 @@ export const VxeUIPluginMenu = {
        * 如果启用 mouse-config.area 功能，临时合并区域范围内的单元格，不管是否存在已合并
        */
       MERGE_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table } = params
           const { visibleData } = $table.getTableData()
           const { visibleColumn } = $table.getTableColumn()
@@ -869,7 +896,7 @@ export const VxeUIPluginMenu = {
        * 如果启用 mouse-config.area 功能，清除区域范围内单元格的临时合并状态
        */
       CLEAR_MERGE_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table } = params
           const beenMerges = handleClearMergeCells(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods })
           if (beenMerges.length) {
@@ -881,7 +908,7 @@ export const VxeUIPluginMenu = {
        * 清除所有单元格及表尾的临时合并状态
        */
       CLEAR_ALL_MERGE: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table } = params
           const mergeCells = $table.getMergeCells()
           const mergeFooterItems = $table.getMergeFooterItems()
@@ -894,7 +921,7 @@ export const VxeUIPluginMenu = {
        * 编辑单元格
        */
       EDIT_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           if ($table.setEditCell) {
             $table.setEditCell(row, column)
@@ -908,7 +935,7 @@ export const VxeUIPluginMenu = {
        * 编辑行
        */
       EDIT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row } = params
           if ($table.setEditRow) {
             $table.setEditRow(row)
@@ -922,7 +949,7 @@ export const VxeUIPluginMenu = {
        * 插入数据
        */
       INSERT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -941,7 +968,7 @@ export const VxeUIPluginMenu = {
        * 插入数据到指定位置
        */
       INSERT_AT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -960,7 +987,7 @@ export const VxeUIPluginMenu = {
        * 插入多行数据
        */
       BATCH_INSERT_AT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -984,7 +1011,7 @@ export const VxeUIPluginMenu = {
        * 插入数据到指定位置
        */
       INSERT_NEXT_AT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -1003,7 +1030,7 @@ export const VxeUIPluginMenu = {
        * 批量插入数据到指定位置
        */
       BATCH_INSERT_NEXT_AT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -1028,7 +1055,7 @@ export const VxeUIPluginMenu = {
        * @deprecated
        */
       INSERT_ACTIVED_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
           const record = Object.assign({}, args[0] || {})
@@ -1047,7 +1074,7 @@ export const VxeUIPluginMenu = {
        * @deprecated
        */
       INSERT_EDIT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
           const record = Object.assign({}, args[0] || {})
@@ -1065,7 +1092,7 @@ export const VxeUIPluginMenu = {
        * 插入数据到指定位置并激活编辑状态
        */
       INSERT_AT_ACTIVED_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
           const record = Object.assign({}, args[0] || {});
@@ -1083,7 +1110,7 @@ export const VxeUIPluginMenu = {
        * 插入数据到指定位置并激活编辑状态
        */
       INSERT_AT_EDIT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
           const record = Object.assign({}, args[0] || {});
@@ -1101,7 +1128,7 @@ export const VxeUIPluginMenu = {
        * 批量插入数据到指定位置并激活编辑状态
        */
       BATCH_INSERT_AT_EDIT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
           selectMultipleRows().then(({ size }) => {
@@ -1123,7 +1150,7 @@ export const VxeUIPluginMenu = {
        * 插入数据到指定位置并激活编辑状态
        */
       INSERT_NEXT_AT_EDIT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
           const record = Object.assign({}, args[0] || {});
@@ -1141,7 +1168,7 @@ export const VxeUIPluginMenu = {
        * 批量插入数据到指定位置并激活编辑状态
        */
       BATCH_INSERT_NEXT_AT_EDIT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row, column } = params
           const args: any[] = menu.params || [] // [{}, 'field']
           selectMultipleRows().then(({ size }) => {
@@ -1163,7 +1190,7 @@ export const VxeUIPluginMenu = {
        * 移除行数据
        */
       DELETE_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row } = params
           if (row) {
             $table.remove(row)
@@ -1174,7 +1201,7 @@ export const VxeUIPluginMenu = {
        * 如果启用 mouse-config.area 功能，移除所选区域行数据
        */
       DELETE_AREA_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row } = params
           const tableProps = $table.props
           const { mouseConfig } = tableProps
@@ -1197,7 +1224,7 @@ export const VxeUIPluginMenu = {
        * 移除复选框选中行数据
        */
       DELETE_CHECKBOX_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.removeCheckboxRow()
         }
@@ -1206,7 +1233,7 @@ export const VxeUIPluginMenu = {
        * 移除所有行数据
        */
       DELETE_ALL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.remove()
         }
@@ -1215,7 +1242,7 @@ export const VxeUIPluginMenu = {
        * 清除所选列排序条件
        */
       CLEAR_SORT: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           if (column) {
             $table.triggerSortEvent($event, column, null)
@@ -1226,7 +1253,7 @@ export const VxeUIPluginMenu = {
        * 清除所有排序条件
        */
       CLEAR_ALL_SORT: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table } = params
           const sortList = $table.getSortColumns()
           if (sortList.length) {
@@ -1239,7 +1266,7 @@ export const VxeUIPluginMenu = {
        * 按所选列的值升序
        */
       SORT_ASC: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           if (column) {
             $table.triggerSortEvent($event, column, 'asc')
@@ -1250,7 +1277,7 @@ export const VxeUIPluginMenu = {
        * 按所选列的值倒序
        */
       SORT_DESC: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           if (column) {
             $table.triggerSortEvent($event, column, 'desc')
@@ -1261,7 +1288,7 @@ export const VxeUIPluginMenu = {
        * 清除复选框选中列的筛选条件
        */
       CLEAR_FILTER: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table, column } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           if (column) {
             $table.handleClearFilter(column)
@@ -1273,7 +1300,7 @@ export const VxeUIPluginMenu = {
        * 清除所有列筛选条件
        */
       CLEAR_ALL_FILTER: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table } = params
           const filterList = $table.getCheckedFilters()
           if (filterList.length) {
@@ -1286,7 +1313,7 @@ export const VxeUIPluginMenu = {
        * 根据单元格值筛选
        */
       FILTER_CELL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, row, column } = params
           if (row && column) {
             const { field, filters } = column
@@ -1303,7 +1330,7 @@ export const VxeUIPluginMenu = {
        * 导出行数据
        */
       EXPORT_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu, row } = params
           if (row) {
             const opts = { data: [row] }
@@ -1315,7 +1342,7 @@ export const VxeUIPluginMenu = {
        * 导出复选框选中行数据
        */
       EXPORT_CHECKBOX_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu } = params
           const opts = { data: $table.getCheckboxRecords() }
           $table.exportData(XEUtils.assign({}, menu.params ? menu.params[0] : {}, opts))
@@ -1325,7 +1352,7 @@ export const VxeUIPluginMenu = {
        * 导出所有行数据
        */
       EXPORT_ALL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu } = params
           $table.exportData(menu.params)
         }
@@ -1334,7 +1361,7 @@ export const VxeUIPluginMenu = {
        * 打印所有行数据
        */
       PRINT_ALL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu } = params
           $table.print(menu.params)
         }
@@ -1343,7 +1370,7 @@ export const VxeUIPluginMenu = {
        * 打印复选框选中行
        */
       PRINT_CHECKBOX_ROW: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, menu } = params
           const opts = { data: $table.getCheckboxRecords() }
           $table.print(XEUtils.assign(opts, menu.params))
@@ -1353,7 +1380,7 @@ export const VxeUIPluginMenu = {
        * 打开查找功能
        */
       OPEN_FIND: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           $table.triggerFNROpenEvent($event, 'find')
         }
@@ -1362,7 +1389,7 @@ export const VxeUIPluginMenu = {
        * 打开替换功能
        */
       OPEN_REPLACE: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $event, $table } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
           $table.triggerFNROpenEvent($event, 'replace')
         }
@@ -1371,7 +1398,7 @@ export const VxeUIPluginMenu = {
        * 隐藏当前列
        */
       HIDDEN_COLUMN: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table, column } = params
           if (column) {
             $table.hideColumn(column)
@@ -1394,7 +1421,7 @@ export const VxeUIPluginMenu = {
        * 重置列的可视状态
        */
       RESET_COLUMN: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.resetColumn({ visible: true, resizable: false })
         }
@@ -1403,7 +1430,7 @@ export const VxeUIPluginMenu = {
        * 重置列宽状态
        */
       RESET_RESIZABLE: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.resetColumn({ visible: false, resizable: true })
         }
@@ -1412,7 +1439,7 @@ export const VxeUIPluginMenu = {
        * 重置列的所有状态
        */
       RESET_ALL: {
-        menuMethod (params) {
+        tableMenuMethod (params) {
           const { $table } = params
           $table.resetColumn(true)
         }
@@ -1421,31 +1448,31 @@ export const VxeUIPluginMenu = {
        * 用于 proxy-config，重新初始化，恢复到初始状态，触发对应的 ajax.query
        */
       COMMIT_PROXY_INITIAL: {
-        menuMethod: createCommitHandle('initial')
+        tableMenuMethod: createCommitHandle('initial')
       },
       /**
        * 用于 proxy-config，重新加载，如果有分页，返回第一页，触发对应的 ajax.query
        */
       COMMIT_PROXY_QUERY: {
-        menuMethod: createCommitHandle('query')
+        tableMenuMethod: createCommitHandle('query')
       },
       /**
        * 用于 proxy-config，刷新当前页，触发对应的 ajax.quer
        */
       COMMIT_PROXY_RELOAD: {
-        menuMethod: createCommitHandle('reload')
+        tableMenuMethod: createCommitHandle('reload')
       },
       /**
        * 用于 proxy-config，直接删除，触发对应的 ajax.delete
        */
       COMMIT_PROXY_DELETE: {
-        menuMethod: createCommitHandle('delete')
+        tableMenuMethod: createCommitHandle('delete')
       },
       /**
        * 用于 proxy-config，保存数据，触发对应的 ajax.save
        */
       COMMIT_PROXY_SAVE: {
-        menuMethod: createCommitHandle('save')
+        tableMenuMethod: createCommitHandle('save')
       }
     })
 

@@ -54,8 +54,8 @@
     "sass": "^1.55.0",
     "typescript": "~4.7.4",
     "vue": "3.4.27",
-    "vxe-pc-ui": "^4.11.0",
-    "vxe-table": "^4.17.0"
+    "vxe-pc-ui": "^4.12.0",
+    "vxe-table": "^4.17.42"
   },
   "browserify-shim": {
     "vue": "global:Vue",
