@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 
 import type { VxeUIExport, VxeGlobalInterceptorHandles } from 'vxe-pc-ui'
-import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, TableReactData, TableInternalData, VxeTablePrivateMethods } from 'vxe-table'
+import type { VxeTableConstructor, VxeTablePropTypes, VxeTableDefines, TableReactData, TableInternalData, VxeTablePrivateMethods, VxeColumnPropTypes } from 'vxe-table'
 import type ExcelJS from 'exceljs'
 import type { VxeUIPluginExportXLSXOptions } from '../types'
 
@@ -66,7 +66,7 @@ function getCellLabel ($xeTable: VxeTableConstructor, column: VxeTableDefines.Co
   return XEUtils.toValueString(cellValue)
 }
 
-function getFooterData ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, footerData: any[][]) {
+function getFooterData ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportHandleOptions, footerData: any[]) {
   const $xeGrid = $xeTable.$xeGrid
   const $xeGantt = $xeTable.$xeGantt
 
@@ -74,7 +74,24 @@ function getFooterData ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.E
   return footerFilterMethod ? footerData.filter((items, index) => footerFilterMethod({ $table: $xeTable, $grid: $xeGrid, $gantt: $xeGantt, items, $rowIndex: index })) : footerData
 }
 
-function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportConfig, row: any, column: VxeTableDefines.ColumnInfo) {
+function getFooterCellValue ($xeTable: VxeTableConstructor, opts: VxeTablePropTypes.ExportHandleOptions, row: any, column: VxeTableDefines.ColumnInfo) {
+  const { renderer } = VxeUI
+  const columnOpts = $xeTable.computeColumnOpts
+  const renderOpts = column.editRender || column.cellRender
+  let footLabelMethod: VxeColumnPropTypes.FooterExportMethod | undefined = column.footerExportMethod
+  if (!footLabelMethod && renderOpts && renderOpts.name) {
+    const compConf = renderer.get(renderOpts.name)
+    if (compConf) {
+      footLabelMethod = compConf.tableFooterExportMethod || compConf.footerExportMethod
+    }
+  }
+  if (!footLabelMethod) {
+    footLabelMethod = columnOpts.footerExportMethod
+  }
+  if (footLabelMethod) {
+    const _columnIndex = $xeTable.getVTColumnIndex(column)
+    return footLabelMethod({ $table: $xeTable, items: row, itemIndex: _columnIndex, row, _columnIndex, column, options: opts })
+  }
   if ($xeTable.getFooterCellLabel) {
     return getCellLabel($xeTable, column, $xeTable.getFooterCellLabel(row, column))
   }
