@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-tdesign",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Vxe UI plug-in for compatibility with the tdesign-vue component.",
   "scripts": {
     "lib": "gulp build"
