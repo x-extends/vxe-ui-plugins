@@ -2,7 +2,7 @@ import { h, ComponentOptions } from 'vue'
 import { getCurrComponent } from '../util/comp'
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormConstructor, VxeFormPrivateMethods } from 'vxe-pc-ui'
 
 /**
  * 表单 - 渲染器
@@ -79,7 +79,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     return ons
   }
 
-  function getItemOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: any) {
+  function getItemOns (renderOpts: VxeGlobalRendererHandles.RenderFormItemContentOptions, params: any) {
     const { $form, data, field } = params
     return getOns(renderOpts, params, (value: any) => {
     // 处理 model 值双向绑定
@@ -87,6 +87,9 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     }, () => {
     // 处理 change 事件相关逻辑
       $form.updateStatus(params)
+      if (renderOpts.changeToSubmit) {
+        ($form as VxeFormConstructor & VxeFormPrivateMethods).handleSubmitEvent(new Event('change'))
+      }
     })
   }
 

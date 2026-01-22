@@ -372,6 +372,7 @@ function selectMultipleRows () {
                 modelValue: rowSize.value,
                 min: 1,
                 max: 100,
+                type: 'integer',
                 align: 'center',
                 controlConfig: {
                   layout: 'default'

@@ -2,6 +2,9 @@
 .history
 node_modules
 /dist
+/es
+/lib
+/docs
 package-lock.json
 yarn.lock
 

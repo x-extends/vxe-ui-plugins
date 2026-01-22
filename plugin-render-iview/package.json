@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-render-iview",
-  "version": "4.1.3",
+  "version": "4.2.0",
   "description": "Vxe UI plug-in for compatibility with the view-ui-plus component.",
   "scripts": {
     "lib": "gulp build"
@@ -8,19 +8,21 @@
   "files": [
     "types",
     "dist",
+    "es",
+    "lib",
     "src"
   ],
-  "main": "dist/index.common.js",
-  "unpkg": "dist/index.umd.js",
-  "jsdelivr": "dist/index.umd.js",
-  "style": "dist/style.css",
+  "main": "lib/index.common.js",
+  "module": "es/index.esm.js",
+  "unpkg": "lib/index.umd.js",
+  "jsdelivr": "lib/index.umd.js",
+  "style": "lib/style.css",
   "typings": "types/index.d.ts",
   "devDependencies": {
-    "@types/node": "20.10.0",
-    "@babel/core": "^7.12.3",
-    "@babel/plugin-transform-runtime": "^7.12.1",
-    "@babel/preset-env": "^7.12.1",
-    "@babel/runtime": "^7.12.5",
+    "@types/node": "20.14.8",
+    "@babel/core": "~7.28.6",
+    "@babel/preset-env": "~7.28.6",
+    "@babel/runtime": "~7.28.6",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
@@ -56,11 +58,6 @@
     "vue": "3.4.27",
     "vxe-pc-ui": "^4.12.0",
     "vxe-table": "^4.17.42"
-  },
-  "browserify-shim": {
-    "vue": "global:Vue",
-    "xe-utils": "global:XEUtils",
-     "dayjs": "global:dayjs"
   },
   "repository": {
     "type": "git",
