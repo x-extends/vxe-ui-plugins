@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-export-xlsx",
-  "version": "3.4.2",
+  "version": "3.5.0",
   "description": "Vxe UI plug-in supports xlsx file export.",
   "scripts": {
     "lib": "gulp build"
@@ -11,17 +11,17 @@
     "*.ts",
     "*.d.ts"
   ],
-  "main": "dist/index.common.js",
-  "unpkg": "dist/index.umd.js",
-  "jsdelivr": "dist/index.umd.js",
-  "style": "dist/style.css",
+  "main": "lib/index.common.js",
+  "module": "es/index.esm.js",
+  "unpkg": "lib/index.umd.js",
+  "jsdelivr": "lib/index.umd.js",
+  "style": "lib/style.css",
   "typings": "types/index.d.ts",
   "devDependencies": {
-    "@types/node": "20.10.0",
-    "@babel/core": "~7.12.3",
-    "@babel/plugin-transform-runtime": "~7.12.1",
-    "@babel/preset-env": "~7.12.1",
-    "@babel/runtime": "~7.12.5",
+    "@types/node": "20.14.8",
+    "@babel/core": "~7.28.6",
+    "@babel/preset-env": "~7.28.6",
+    "@babel/runtime": "~7.28.6",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@typescript-eslint/eslint-plugin": "~4.6.1",
     "@typescript-eslint/parser": "~4.6.1",
@@ -36,7 +36,7 @@
     "eslint-plugin-promise": "~4.2.1",
     "eslint-plugin-standard": "~4.0.2",
     "eslint-plugin-typescript": "~0.14.0",
-    "exceljs": "~4.4.0",
+    "exceljs": "4.4.0",
     "gulp": "~4.0.2",
     "gulp-autoprefixer": "~8.0.0",
     "gulp-babel": "~8.0.0",

@@ -76,11 +76,6 @@ export const enum FUNC_NANE {
   PAGER_NEXT_JUMP = 'pager.nextJump'
 }
 
-export const enum SKEY_NANE {
-  TRIGGER = 'trigger',
-  EMIT = 'emit'
-}
-
 export class SKey {
   realKey: string;
   specialKey: string;
@@ -93,7 +88,7 @@ export class SKey {
     this.kConf = kConf
   }
 
-  [SKEY_NANE.TRIGGER] (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: any) {
+  trigger (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: any) {
     if (!this.specialKey || evnt[`${this.specialKey}Key`]) {
       if (this.funcName && handleFuncs[this.funcName]) {
         return handleFuncs[this.funcName](params, evnt)
@@ -101,7 +96,7 @@ export class SKey {
     }
   }
 
-  [SKEY_NANE.EMIT] (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: any) {
+  emit (params: VxeGlobalInterceptorHandles.InterceptorKeydownParams, evnt: any) {
     if (!this.specialKey || evnt[`${this.specialKey}Key`]) {
       if (this.kConf && this.kConf.callback) {
         return this.kConf.callback(params, evnt)
@@ -261,7 +256,7 @@ export const handleFuncs = {
   [FUNC_NANE.PAGER_NEXT_JUMP]: handleChangePage('handleNextJump')
 }
 
-function runEvent (key: string, maps: any, prop: SKEY_NANE, params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
+function runEvent (key: string, maps: any, prop: 'trigger' | 'emit', params: VxeGlobalInterceptorHandles.InterceptorKeydownParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, evnt: Event) {
   const skeyList: SKey[] = maps[key.toLowerCase()]
   if (skeyList) {
     return !skeyList.some((skey: SKey) => skey[prop](params, evnt) === false)
@@ -365,11 +360,11 @@ export const VxeUIPluginShortcutKey = {
     VxeUI.interceptor.add('event.keydown', (params) => {
       const evnt = params.$event as KeyboardEvent
       const key: string = getEventKey(evnt.key)
-      if (!runEvent(key, disabledMaps, SKEY_NANE.EMIT, params, evnt)) {
-        if (runEvent(key, settingMaps, SKEY_NANE.TRIGGER, params, evnt) === false) {
+      if (!runEvent(key, disabledMaps, 'emit', params, evnt)) {
+        if (runEvent(key, settingMaps, 'trigger', params, evnt) === false) {
           return false
         }
-        runEvent(key, listenerMaps, SKEY_NANE.EMIT, params, evnt)
+        runEvent(key, listenerMaps, 'emit', params, evnt)
       }
     })
   }

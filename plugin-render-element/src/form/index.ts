@@ -1,7 +1,7 @@
 import { CreateElement } from 'vue'
 import XEUtils from 'xe-utils'
 
-import type { VxeUIExport, VxeGlobalRendererHandles } from 'vxe-pc-ui'
+import type { VxeUIExport, VxeGlobalRendererHandles, VxeFormConstructor, VxeFormPrivateMethods } from 'vxe-pc-ui'
 
 /**
  * 表单 - 渲染器
@@ -15,11 +15,11 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     return XEUtils.kebabCase(type)
   }
 
-  function getModelProp (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
+  function getModelProp (_renderOpts: VxeGlobalRendererHandles.RenderOptions) {
     return 'value'
   }
 
-  function getModelEvent (renderOpts: VxeGlobalRendererHandles.RenderOptions) {
+  function getModelEvent (_renderOpts: VxeGlobalRendererHandles.RenderOptions) {
     return 'input'
   }
 
@@ -37,7 +37,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     return type
   }
 
-  function getItemProps (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: any, value: any, defaultProps?: { [prop: string]: any }) {
+  function getItemProps (renderOpts: VxeGlobalRendererHandles.RenderOptions, _params: VxeGlobalRendererHandles.RenderFormItemContentParams, value: any, defaultProps?: { [prop: string]: any }) {
     return XEUtils.assign({}, defaultProps, renderOpts.props, { [getModelProp(renderOpts)]: value })
   }
 
@@ -78,7 +78,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     return ons
   }
 
-  function getItemOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: any) {
+  function getItemOns (renderOpts: VxeGlobalRendererHandles.RenderFormItemContentOptions, params: VxeGlobalRendererHandles.RenderFormItemContentParams) {
     const { $form, data, field } = params
     return getOns(renderOpts, params, (value: any) => {
     // 处理 model 值双向绑定
@@ -86,6 +86,9 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     }, () => {
     // 处理 change 事件相关逻辑
       $form.updateStatus(params)
+      if (renderOpts.changeToSubmit) {
+        ($form as VxeFormConstructor & VxeFormPrivateMethods).handleSubmitEvent(new Event('change'))
+      }
     })
   }
 
@@ -109,7 +112,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
   }
 
   function createFormItemRender (defaultProps?: { [key: string]: any }) {
-    return function (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: any) {
+    return function (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderFormItemContentOptions & { name: string }, params: VxeGlobalRendererHandles.RenderFormItemContentParams) {
       const { data, field } = params
       const { name } = renderOpts
       const { attrs } = renderOpts
@@ -126,7 +129,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     }
   }
 
-  function defaultButtonItemRender (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: any) {
+  function defaultButtonItemRender (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderFormItemContentOptions, params: VxeGlobalRendererHandles.RenderFormItemContentParams) {
     const { attrs } = renderOpts
     const props = getItemProps(renderOpts, params, null)
     return [
@@ -143,10 +146,10 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     ]
   }
 
-  function defaultButtonsItemRender (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions, params: any) {
+  function defaultButtonsItemRender (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderFormItemContentOptions, params: VxeGlobalRendererHandles.RenderFormItemContentParams) {
     const { children } = renderOpts
     if (children) {
-      return children.map((childRenderOpts: VxeGlobalRendererHandles.RenderItemContentOptions) => defaultButtonItemRender(h, childRenderOpts, params)[0])
+      return children.map((childRenderOpts: VxeGlobalRendererHandles.RenderFormItemContentOptions) => defaultButtonItemRender(h, childRenderOpts, params)[0])
     }
     return []
   }
@@ -156,7 +159,7 @@ export function defineFormRender (VxeUI: VxeUIExport) {
    * @deprecated
    */
   function createOldFormItemRadioAndCheckboxRender () {
-    return function (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderItemContentOptions & { name: string }, params: any) {
+    return function (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderFormItemContentOptions & { name: string }, params: VxeGlobalRendererHandles.RenderFormItemContentParams) {
       const { name, options = [], optionProps = {}, attrs } = renderOpts
       const { data, field } = params
       const labelProp = optionProps.label || 'label'

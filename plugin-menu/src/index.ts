@@ -365,17 +365,18 @@ function selectMultipleRows () {
           slots: {
             default (params, h) {
               return h(VxeUINumberInputComponent, {
-                style: {
-                  width: '100%'
-                },
                 props: {
                   value: rowSize,
                   min: 1,
                   max: 100,
+                  type: 'integer',
                   align: 'center',
                   controlConfig: {
                     layout: 'default'
                   }
+                },
+                style: {
+                  width: '100%'
                 },
                 on: {
                   modelValue (value: any) {
