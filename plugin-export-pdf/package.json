@@ -6,14 +6,13 @@
     "lib": "gulp build"
   },
   "files": [
-    "types",
     "fonts/source-han-sans-normal.js",
     "fonts/source-han-sans-bold.js",
+    "types",
     "dist",
     "es",
     "lib",
-    "*.ts",
-    "*.d.ts"
+    "src"
   ],
   "main": "lib/index.common.js",
   "module": "es/index.esm.js",
