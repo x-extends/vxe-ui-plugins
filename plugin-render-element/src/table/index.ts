@@ -444,35 +444,35 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             class: 'vxe-table--filter-element-wrapper'
           }, optionGroups
             ? column.filters.map((option, oIndex) => {
-              const optionValue = option.data
-              const props = getCellEditFilterProps(renderOpts, params, optionValue)
-              return h('el-select', {
-                key: oIndex,
-                attrs,
-                props,
-                on: {
-                  ...getFilterOns(renderOpts, params, option, () => {
+                const optionValue = option.data
+                const props = getCellEditFilterProps(renderOpts, params, optionValue)
+                return h('el-select', {
+                  key: oIndex,
+                  attrs,
+                  props,
+                  on: {
+                    ...getFilterOns(renderOpts, params, option, () => {
                     // 处理 change 事件相关逻辑
-                    handleConfirmFilter(params, props.multiple ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
-                  })
-                },
-                scopedSlots: {
-                  default: () => {
-                    return XEUtils.map(optionGroups, (group, gIndex) => {
-                      return h('el-option-group', {
-                        key: gIndex,
-                        props: {
-                          label: group[groupLabel]
-                        },
-                        scopedSlots: {
-                          default: () => renderOptions(h, group[groupOptions], optionProps)
-                        }
-                      })
+                      handleConfirmFilter(params, props.multiple ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
                     })
+                  },
+                  scopedSlots: {
+                    default: () => {
+                      return XEUtils.map(optionGroups, (group, gIndex) => {
+                        return h('el-option-group', {
+                          key: gIndex,
+                          props: {
+                            label: group[groupLabel]
+                          },
+                          scopedSlots: {
+                            default: () => renderOptions(h, group[groupOptions], optionProps)
+                          }
+                        })
+                      })
+                    }
                   }
-                }
+                })
               })
-            })
             : column.filters.map((option, oIndex) => {
               const optionValue = option.data
               const props = getCellEditFilterProps(renderOpts, params, optionValue)

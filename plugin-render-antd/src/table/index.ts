@@ -449,21 +449,21 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             class: 'vxe-table--filter-antd-wrapper'
           }, optionGroups
             ? column.filters.map((option, oIndex) => {
-              const optionValue = option.data
-              const props = getCellEditFilterProps(renderOpts, params, optionValue)
-              return h('a-select', {
-                key: oIndex,
-                attrs,
-                props: {
-                  ...props,
-                  options: groupOptions
-                },
-                on: getFilterOns(renderOpts, params, option, () => {
+                const optionValue = option.data
+                const props = getCellEditFilterProps(renderOpts, params, optionValue)
+                return h('a-select', {
+                  key: oIndex,
+                  attrs,
+                  props: {
+                    ...props,
+                    options: groupOptions
+                  },
+                  on: getFilterOns(renderOpts, params, option, () => {
                   // 处理 change 事件相关逻辑
-                  handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
+                    handleConfirmFilter(params, props.mode === 'multiple' ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
+                  })
                 })
               })
-            })
             : column.filters.map((option, oIndex) => {
               const optionValue = option.data
               const props = getCellEditFilterProps(renderOpts, params, optionValue)
