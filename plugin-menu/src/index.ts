@@ -1369,7 +1369,11 @@ export const VxeUIPluginMenu = {
       OPEN_FIND: {
         tableMenuMethod (params) {
           const { $event, $table } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
-          $table.triggerFNROpenEvent($event, 'find')
+          if ($table.triggerFnrOpenEvent) {
+            $table.triggerFnrOpenEvent($event, 'find')
+          } else {
+            ($table as any).triggerFNROpenEvent($event, 'find')
+          }
         }
       },
       /**
@@ -1378,7 +1382,11 @@ export const VxeUIPluginMenu = {
       OPEN_REPLACE: {
         tableMenuMethod (params) {
           const { $event, $table } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
-          $table.triggerFNROpenEvent($event, 'replace')
+          if ($table.triggerFnrOpenEvent) {
+            $table.triggerFnrOpenEvent($event, 'replace')
+          } else {
+            ($table as any).triggerFNROpenEvent($event, 'replace')
+          }
         }
       },
       /**
