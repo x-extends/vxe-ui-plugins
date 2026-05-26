@@ -114,7 +114,7 @@ function getValidColumn (column: VxeTableDefines.ColumnInfo): VxeTableDefines.Co
 
 function setExcelRowHeight (excelRow: ExcelJS.Row, height: number) {
   if (height) {
-    excelRow.height = XEUtils.floor(height * 1.13, 2)
+    excelRow.height = XEUtils.floor(height * 0.92, 2)
   }
 }
 
