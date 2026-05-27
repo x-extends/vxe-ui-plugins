@@ -28,10 +28,17 @@ function getStyleUnit (val?: number | string) {
   return XEUtils.isNumber(val) ? `${val}px` : val
 }
 
-function showTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams, formatter: string, value: any) {
+function showTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams, formatter: string | ((params: any) => string), value: any, label:string, index: number) {
   const { row, column, $table } = params
-  const content = XEUtils.isString(formatter) ? XEUtils.template(formatter, { value, row, column }, tmplOpts) : null
-  $table.openTooltip(elem, content || '')
+  let content = null
+  if (XEUtils.isString(formatter)) {
+    content = XEUtils.template(formatter, { label, value, row, column, index }, tmplOpts)
+  } else if (XEUtils.isFunction(formatter)) {
+    content = formatter({ value, row, column, index })
+  }
+  if (content) {
+    $table.openTooltip(elem, content)
+  }
 }
 
 function hideTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams) {
@@ -44,7 +51,7 @@ function hideTooltip (elem: HTMLElement, params: VxeGlobalRendererHandles.Render
 function createBarVNs (h: CreateElement, params: VxeGlobalRendererHandles.RenderTableDefaultParams, renderOpts: VxeGlobalRendererHandles.RenderTableDefaultOptions) {
   const { row, column } = params
   const { props = {} } = renderOpts
-  const { margin, colors = [], bar = {}, label: barLabel = {}, tooltip = {} } = props
+  const { margin, colors = [], labels = [], bar = {}, label: barLabel = {}, tooltip = {} } = props
   const { max } = bar
   const barHeight = getStyleUnit(bar.width)
   let cellValue = row[column.field] as any[]
@@ -67,6 +74,7 @@ function createBarVNs (h: CreateElement, params: VxeGlobalRendererHandles.Render
     } else if (barValue > 70) {
       labelPosition = 'inner'
     }
+    const label = labels[index]
     return h('span', {
       class: ['vxe-renderer-bar', {
         [`label--${labelPosition}`]: labelPosition
@@ -91,7 +99,7 @@ function createBarVNs (h: CreateElement, params: VxeGlobalRendererHandles.Render
               elem.style.backgroundColor = hoverColor
             }
             if (tooltip.formatter) {
-              showTooltip(elem, params, tooltip.formatter, numList[index])
+              showTooltip(elem, params, tooltip.formatter, numList[index], label, index)
             }
           },
           mouseleave (evnt: MouseEvent) {
@@ -107,7 +115,7 @@ function createBarVNs (h: CreateElement, params: VxeGlobalRendererHandles.Render
         style: {
           color: barLabel.color
         }
-      }, XEUtils.isString(barLabel.formatter) ? XEUtils.template(barLabel.formatter, { value: numList[index], row, column }, tmplOpts) : '')
+      }, XEUtils.isString(barLabel.formatter) ? XEUtils.template(barLabel.formatter, { label, value: numList[index], row, column, labels }, tmplOpts) : '')
     ])
   })
 }
@@ -147,7 +155,7 @@ function createPieVNs (h: CreateElement, params: VxeGlobalRendererHandles.Render
   return renderOptList.map((renderOpts, renderIndex) => {
     const { row, column } = params
     const { props = {} } = renderOpts
-    const { margin, colors = [], ring = {}, label: ringLabel = {}, tooltip = {} } = props
+    const { margin, colors = [], labels = [], ring = {}, label: ringLabel = {}, tooltip = {} } = props
     let pieVals = cellValue[renderIndex] as any[]
     const pieDiameter = getStyleUnit(props.diameter)
     const ringDiameter = getStyleUnit(ring.diameter)
@@ -173,7 +181,7 @@ function createPieVNs (h: CreateElement, params: VxeGlobalRendererHandles.Render
           })
         }
         if (tooltip.formatter) {
-          showTooltip(elem, params, tooltip.formatter, blockList[index].val)
+          showTooltip(elem, params, tooltip.formatter, blockList[index].val, labels[index], index)
         }
       },
       mouseleave (evnt: MouseEvent) {
@@ -191,14 +199,15 @@ function createPieVNs (h: CreateElement, params: VxeGlobalRendererHandles.Render
       h('span', {
         class: 'vxe-renderer-pie--next-half'
       }, nextList.map((item) => {
+        const { deg, index } = item
         return h('span', {
-          class: ['vxe-renderer-pie--block', `block-${item.index}`],
+          class: ['vxe-renderer-pie--block', `block-${index}`],
           style: {
-            backgroundColor: colors[item.index] || getDefaultColor(item.index),
-            transform: `rotate(${item.deg - 180}deg)`
+            backgroundColor: colors[index] || getDefaultColor(index),
+            transform: `rotate(${deg - 180}deg)`
           },
           attrs: {
-            block: item.index
+            block: index
           },
           on: blockOns
         })
@@ -206,14 +215,15 @@ function createPieVNs (h: CreateElement, params: VxeGlobalRendererHandles.Render
       h('span', {
         class: 'vxe-renderer-pie--prve-half'
       }, prveList.map((item) => {
+        const { deg, index } = item
         return h('span', {
-          class: ['vxe-renderer-pie--block', `block-${item.index}`],
+          class: ['vxe-renderer-pie--block', `block-${index}`],
           style: {
-            backgroundColor: colors[item.index] || getDefaultColor(item.index),
-            transform: `rotate(${item.deg}deg)`
+            backgroundColor: colors[index] || getDefaultColor(index),
+            transform: `rotate(${deg}deg)`
           },
           attrs: {
-            block: item.index
+            block: index
           },
           on: blockOns
         })
@@ -235,7 +245,7 @@ function createPieVNs (h: CreateElement, params: VxeGlobalRendererHandles.Render
           style: {
             color: ringLabel.color
           }
-        }, XEUtils.isString(ringLabel.formatter) ? XEUtils.template(ringLabel.formatter, { value: row[column.field] || [], row, column }, tmplOpts) : '')
+        }, XEUtils.isString(ringLabel.formatter) ? XEUtils.template(ringLabel.formatter, { label: '', value: row[column.field] || [], row, column, labels }, tmplOpts) : '')
       )
     }
 

@@ -36,6 +36,7 @@ VxeUI.use(VxeUIPluginRenderChart)
 | bar.width | 柱子宽度 | number,string | — | — |
 | bar.max | 柱子最大值 | number | — | — |
 | colors | 柱子颜色列表 | string[] | — | — |
+| labels | 柱子标题列表 | string[] | — | — |
 | tooltip.formatter | 提示内容格式 | string | — | — |
 | label.color | 显示值的颜色 | string | — | — |
 | label.formatter | 显示值的格式（{row, value}） | string | — | — |
@@ -49,6 +50,7 @@ VxeUI.use(VxeUIPluginRenderChart)
 | diameter | 饼图直径 | number,string | — | — |
 | margin | 饼图间距 | number,string | — | 1px |
 | colors | 扇区的颜色列表 | string[] | — | — |
+| labels | 柱子标题列表 | string[] | — | — |
 | tooltip.formatter | 提示内容格式 | string | — | — |
 | ring.diameter| 内圆直径 | number,string | — | — |
 | ring.color | 内圆的颜色 | string | — | — |
