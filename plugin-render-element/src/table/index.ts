@@ -234,14 +234,13 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
-  function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, params: VxeGlobalRendererHandles.RenderTableCellParams) {
+  function handleSelectCellValue (cellValue: any, renderOpts: VxeGlobalRendererHandles.RenderTableCellOptions, renderParams: VxeGlobalRendererHandles.RenderCellParams) {
     const { options = [], optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = renderOpts
-    const { $table, rowid, row, column } = params
+    const { $table, rowid, column } = renderParams
     const { filterable, multiple } = props
     const labelProp = optionProps.label || 'label'
     const valueProp = optionProps.value || 'value'
     const groupOptions = optionGroupProps.options || 'options'
-    const cellValue = XEUtils.get(row, column.field)
     const colid = column.id
     let cellData: any
     if (filterable) {
@@ -280,6 +279,12 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       return selectlabel
     }
     return ''
+  }
+
+  function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, renderParams: VxeGlobalRendererHandles.RenderTableCellParams) {
+    const { row, column } = renderParams
+    const cellValue = XEUtils.get(row, column.field)
+    return handleSelectCellValue(cellValue, renderOpts, renderParams)
   }
 
   function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderTableCellParams) {
@@ -538,8 +543,28 @@ export function defineTableRender (VxeUI: VxeUIExport) {
           })
         ]
       },
-      renderTableCell (renderOpts, params) {
-        return getCellLabelVNs(renderOpts, params, getSelectCellValue(renderOpts, params))
+      renderTableCell (renderOpts, renderParams) {
+        const { options, optionGroups } = renderOpts
+        const { $table, row, column } = renderParams
+        const opSize = options ? options.length : null
+        const ogSize = optionGroups ? optionGroups.length : null
+        if ($table.effectCellData) {
+          const { cellResult } = $table.effectCellData(row, column, {
+            key: 'render_table_cell',
+            isChanged ({ oldValue, cellValue }) {
+              return oldValue && oldValue[0] === cellValue && oldValue[1] === opSize && oldValue[2] === ogSize
+            },
+            setValue ({ cellValue }) {
+              return [cellValue, opSize, ogSize]
+            },
+            getResult ({ cellValue }) {
+              return handleSelectCellValue(cellValue, renderOpts, renderParams)
+            }
+          })
+          return getCellLabelVNs(renderOpts, renderParams, cellResult)
+        }
+        const cellResult = getSelectCellValue(renderOpts, renderParams)
+        return getCellLabelVNs(renderOpts, renderParams, cellResult)
       },
       createTableFilterOptions: defaultFilterOptions,
       renderTableFilter (renderOpts, params) {
