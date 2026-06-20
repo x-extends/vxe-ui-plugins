@@ -1,11 +1,11 @@
 {
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
   ],
   "compilerOptions": {
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "skipLibCheck": false,
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
