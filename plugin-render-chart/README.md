@@ -25,38 +25,6 @@ import '@vxe-ui/plugin-render-chart/dist/style.css'
 VxeUI.use(VxeUIPluginRenderChart)
 ```
 
-## API
-
-### bar 柱状图
-
-#### bar Props
-
-| 属性 | 描述 | 类型 | 可选值 | 默认值 |
-|------|------|-----|-----|-----|
-| bar.width | 柱子宽度 | number,string | — | — |
-| bar.max | 柱子最大值 | number | — | — |
-| colors | 柱子颜色列表 | string[] | — | — |
-| labels | 柱子标题列表 | string[] | — | — |
-| tooltip.formatter | 提示内容格式 | string | — | — |
-| label.color | 显示值的颜色 | string | — | — |
-| label.formatter | 显示值的格式（{row, value}） | string | — | — |
-
-### pie 饼图
-
-#### pie Props
-
-| 属性 | 描述 | 类型 | 可选值 | 默认值 |
-|------|------|-----|-----|-----|
-| diameter | 饼图直径 | number,string | — | — |
-| margin | 饼图间距 | number,string | — | 1px |
-| colors | 扇区的颜色列表 | string[] | — | — |
-| labels | 柱子标题列表 | string[] | — | — |
-| tooltip.formatter | 提示内容格式 | string | — | — |
-| ring.diameter| 内圆直径 | number,string | — | — |
-| ring.color | 内圆的颜色 | string | — | — |
-| label.color | 显示值的颜色 | string | — | — |
-| label.formatter | 显示值的格式（{row, value}） | string | — | — |
-
 ## Demo
 
 ```html
