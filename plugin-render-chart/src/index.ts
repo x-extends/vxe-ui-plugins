@@ -76,7 +76,7 @@ function createBarVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams
     }
     const label = labels[index]
     return h('span', {
-      class: ['vxe-renderer-bar', {
+      class: ['vxe-render-chart-bar', {
         [`label--${labelPosition}`]: labelPosition
       }],
       style: {
@@ -86,7 +86,7 @@ function createBarVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams
       }
     }, [
       h('span', {
-        class: 'vxe-renderer-bar--chart',
+        class: 'vxe-render-chart-bar--chart',
         style: {
           width: `${barValue}%`,
           backgroundColor: colors[index] || getDefaultColor(index)
@@ -109,7 +109,7 @@ function createBarVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams
         }
       }),
       h('span', {
-        class: 'vxe-renderer-bar--label',
+        class: 'vxe-render-chart-bar--label',
         style: {
           color: barLabel.color
         }
@@ -195,11 +195,11 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams
 
     const pieVNs = [
       h('span', {
-        class: 'vxe-renderer-pie--next-half'
+        class: 'vxe-render-chart-pie--next-half'
       }, nextList.map((item) => {
         const { deg, index } = item
         return h('span', {
-          class: ['vxe-renderer-pie--block', `block-${index}`],
+          class: ['vxe-render-chart-pie--block', `block-${index}`],
           style: {
             backgroundColor: colors[index] || getDefaultColor(index),
             transform: `rotate(${deg - 180}deg)`
@@ -209,11 +209,11 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams
         })
       })),
       h('span', {
-        class: 'vxe-renderer-pie--prve-half'
+        class: 'vxe-render-chart-pie--prve-half'
       }, prveList.map((item) => {
         const { deg, index } = item
         return h('span', {
-          class: ['vxe-renderer-pie--block', `block-${index}`],
+          class: ['vxe-render-chart-pie--block', `block-${index}`],
           style: {
             backgroundColor: colors[index] || getDefaultColor(index),
             transform: `rotate(${deg}deg)`
@@ -227,7 +227,7 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams
     if (ringDiameter) {
       pieVNs.push(
         h('span', {
-          class: 'vxe-renderer-pie--ring-bg',
+          class: 'vxe-render-chart-pie--ring-bg',
           style: {
             width: ringDiameter,
             height: ringDiameter,
@@ -235,7 +235,7 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams
           }
         }),
         h('span', {
-          class: 'vxe-renderer-pie--ring-label',
+          class: 'vxe-render-chart-pie--ring-label',
           style: {
             color: ringLabel.color
           }
@@ -244,7 +244,7 @@ function createPieVNs (params: VxeGlobalRendererHandles.RenderTableDefaultParams
     }
 
     return h('span', {
-      class: 'vxe-renderer-pie',
+      class: 'vxe-render-chart-pie',
       style: {
         margin: getStyleUnit(margin),
         width: pieDiameter,
@@ -328,7 +328,7 @@ export const VxeUIPluginRenderChart = {
               : {}
             rateVNs.push(
               h('span', {
-                class: 'vxe-renderer-rate-item',
+                class: 'vxe-render-chart-rate-item',
                 style: {
                   color: itemColor
                 },
@@ -338,8 +338,47 @@ export const VxeUIPluginRenderChart = {
           })
           return [
             h('div', {
-              class: 'vxe-renderer-rate'
+              class: 'vxe-render-chart-rate'
             }, rateVNs)
+          ]
+        }
+      },
+      progress: {
+        renderDefault (renderOpts, params) {
+          const { row, column } = params
+          const { props = {} } = renderOpts
+          const { max, height, label: pssLabel = {}, bgColor, completedBgColor } = props
+          const currMax = (max ? XEUtils.toNumber(max) : 100) || 100
+          const labelFormat = pssLabel.formatter
+          const labelColor = pssLabel.color
+          const cellValue = row[column.field]
+          const cellNum = cellValue ? (XEUtils.toNumber(cellValue) / (currMax / 100)) : 0
+          const valStr = cellNum + '%'
+          const pssParams = { row, column, value: cellValue }
+          return [
+            h('div', {
+              class: 'vxe-render-chart-progress',
+              style: height || bgColor
+                ? {
+                    height: XEUtils.isNumber(height) ? (height + 'px') : height,
+                    backgroundColor: bgColor ? (XEUtils.isFunction(bgColor) ? bgColor(pssParams) : bgColor) : undefined
+                  }
+                : undefined
+            }, [
+              h('div', {
+                class: 'vxe-render-chart-progress-completed',
+                style: {
+                  width: valStr,
+                  backgroundColor: completedBgColor ? (XEUtils.isFunction(completedBgColor) ? completedBgColor(pssParams) : completedBgColor) : undefined
+                }
+              }),
+              h('div', {
+                class: 'vxe-render-chart-progress-text',
+                style: {
+                  color: labelColor ? (XEUtils.isFunction(labelColor) ? labelColor(pssParams) : labelColor) : undefined
+                }
+              }, labelFormat ? XEUtils.template(labelFormat, pssParams) : valStr)
+            ])
           ]
         }
       }

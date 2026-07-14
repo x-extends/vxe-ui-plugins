@@ -39,7 +39,7 @@ VxeUI.use(VxeUIPluginRenderChart)
 | labels | 柱子标题列表 | string[] | — | — |
 | tooltip.formatter | 提示内容格式 | string | — | — |
 | label.color | 显示值的颜色 | string | — | — |
-| label.formatter | 显示值的格式（{row, value}） | string | — | — |
+| label.formatter | 显示值的格式 | string | (({row,column,value}) => string) | — | — |
 
 ### pie 饼图
 
@@ -55,7 +55,29 @@ VxeUI.use(VxeUIPluginRenderChart)
 | ring.diameter| 内圆直径 | number,string | — | — |
 | ring.color | 内圆的颜色 | string | — | — |
 | label.color | 显示值的颜色 | string | — | — |
-| label.formatter | 显示值的格式（{row, value}） | string | — | — |
+| label.formatter | 显示值的格式 | string | (({row,column,value}) => string) | — | — |
+
+### pies 饼图组
+
+#### pies Props
+
+| 属性 | 描述 | 类型 | 可选值 | 默认值 |
+|------|------|-----|-----|-----|
+| children | pie 饼图配置数组 | pie[] | — | — |
+
+### progress 进度
+
+#### progress Props
+
+| 属性 | 描述 | 类型 | 可选值 | 默认值 |
+|------|------|-----|-----|-----|
+| max | 最大值 | number | — | 100 |
+| height | 高度 | number,string | — | 1.4em |
+| bgColor | 背景颜色 | string | — | — |
+| completedBgColor | 已完成的背景颜色 | string | (({row,column,value}) => string) | — | — |
+| tooltip.formatter | 提示内容格式 | string | — | — |
+| label.color | 显示值的颜色 | string | (({row,column,value}) => string) |  | — | — |
+| label.formatter | 显示值的格式 | string | (({row,column,value}) => string) | — | — |
 
 ## Table Demo
 
