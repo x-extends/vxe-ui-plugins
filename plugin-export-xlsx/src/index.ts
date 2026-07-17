@@ -118,13 +118,14 @@ function setExcelRowHeight (excelRow: ExcelJS.Row, height: number) {
   }
 }
 
-function setExcelCellStyle (excelCell: ExcelJS.Cell, align?: VxeTablePropTypes.Align | VxeTablePropTypes.HeaderAlign | VxeTablePropTypes.FooterAlign) {
+function setExcelCellStyle (excelCell: ExcelJS.Cell, cellAlign: VxeTablePropTypes.Align | VxeTablePropTypes.HeaderAlign | VxeTablePropTypes.FooterAlign | undefined, cellOverflow: VxeTablePropTypes.ShowOverflow | undefined) {
   excelCell.protection = {
     locked: false
   }
   excelCell.alignment = {
     vertical: 'middle',
-    horizontal: align || 'left'
+    horizontal: cellAlign || 'left',
+    wrapText: !cellOverflow 
   }
 }
 
@@ -363,7 +364,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const { $table, $grid, options, columns, colgroups, datas } = params
   const tableProps = $table
   const tableReactData = $table as unknown as TableReactData
-  const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = tableProps
+  const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign, showOverflow: allShowOverflow, showHeaderOverflow: allShowHeaderOverflow, showFooterOverflow: allShowFooterOverflow } = tableProps
   const { rowHeight } = tableReactData
   const { message, download, sheetName, isHeader, isFooter, isMerge, isColgroup, isTitle, useStyle, sheetMethod } = options
   const vSize = $table.computeSize
@@ -483,8 +484,9 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         excelRow.eachCell(excelCell => {
           const excelCol = sheet.getColumn(excelCell.col)
           const column: any = $table.getColumnById(excelCol.key as string)
-          const { headerAlign, align } = column
-          setExcelCellStyle(excelCell, headerAlign || align || allHeaderAlign || allAlign)
+          const { headerAlign, align ,showHeaderOverflow} = column
+          const headOverflow = XEUtils.eqNull(showHeaderOverflow) ? allShowHeaderOverflow : showHeaderOverflow
+          setExcelCellStyle(excelCell, headerAlign || align || allHeaderAlign || allAlign, headOverflow)
           if (useStyle) {
             Object.assign(excelCell, {
               font: {
@@ -516,8 +518,9 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         const excelCol = sheet.getColumn(excelCell.col)
         const column = $table.getColumnById(excelCol.key as string)
         if (column) {
-          const { align } = column
-          setExcelCellStyle(excelCell, align || allAlign)
+          const { align, showOverflow } = column
+          const cellOverflow = XEUtils.eqNull(showOverflow) ? allShowOverflow : showOverflow
+          setExcelCellStyle(excelCell, align || allAlign, cellOverflow)
           settExcelCellFormat(workbook, sheet, excelCell, column, excelRow, row)
           if (useStyle) {
             Object.assign(excelCell, {
@@ -543,8 +546,9 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           const excelCol = sheet.getColumn(excelCell.col)
           const column = $table.getColumnById(excelCol.key as string)
           if (column) {
-            const { footerAlign, align } = column
-            setExcelCellStyle(excelCell, footerAlign || align || allFooterAlign || allAlign)
+            const { footerAlign, align, showFooterOverflow } = column
+            const footOverflow = XEUtils.eqNull(showFooterOverflow) ? allShowFooterOverflow : showFooterOverflow
+            setExcelCellStyle(excelCell, footerAlign || align || allFooterAlign || allAlign, footOverflow)
             settExcelCellFormat(workbook, sheet, excelCell, column, excelRow, row)
             if (useStyle) {
               Object.assign(excelCell, {
@@ -601,7 +605,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         }
         return { type, content: '', blob }
       })
-    }).catch(() => {
+    }).catch((e) => {
+      console.log(e)
       if (modal) {
         modal.close(msgKey)
       }
