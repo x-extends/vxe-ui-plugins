@@ -23,6 +23,14 @@ const defaultFontSizeMaps: Record<string, number> = {
 const httpPromiseMaps: Record<string, Promise<any>> = {}
 const httpBufferMaps: Record<string, ArrayBuffer> = {}
 
+function isPx (val: any) {
+  return val && /^\d+(\.\d+)?(px)?$/.test(val)
+}
+
+function isScale (val: any) {
+  return val && /^\d+(\.\d+)?%$/.test(val)
+}
+
 function getExcelJS () {
   const ExcelJS = globalExcelJS || (window as any).ExcelJS
   if (!ExcelJS) {
@@ -126,7 +134,7 @@ function setExcelCellStyle (excelCell: ExcelJS.Cell, cellAlign: VxeTablePropType
   excelCell.alignment = {
     vertical: 'middle',
     horizontal: cellAlign || 'left',
-    wrapText: !cellOverflow 
+    wrapText: !cellOverflow
   }
 }
 
@@ -365,9 +373,11 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const { $table, $grid, options, columns, colgroups, datas } = params
   const tableProps = $table.props
   const tableReactData = $table.reactData
+  const tableInternalData = $table.internalData
   const { computeSize, computeColumnOpts } = $table.getComputeMaps()
   const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign, showOverflow: allShowOverflow, showHeaderOverflow: allShowHeaderOverflow, showFooterOverflow: allShowFooterOverflow } = tableProps
   const { rowHeight } = tableReactData
+  const { tableWidth } = tableInternalData
   const { message, download, sheetName, isHeader, isFooter, isMerge, isColgroup, isTitle, useStyle, sheetMethod } = options
   const vSize = computeSize.value
   const columnOpts = computeColumnOpts.value
@@ -380,11 +390,27 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
   const sheetCols: any[] = []
   const sheetMerges: { s: { r: number, c: number }, e: { r: number, c: number } }[] = []
   let beforeRowCount = 0
+  const meanWidth = tableWidth ? tableWidth / 100 : 0
   columns.forEach((column) => {
-    const { id, renderWidth } = column
+    const { id, renderWidth, width, minWidth } = column
+    let colWidth = renderWidth
+    if (!colWidth) {
+      if (isPx(width)) {
+        colWidth = XEUtils.toInteger(width)
+      } else if (meanWidth && isScale(width)) {
+        colWidth = Math.floor(XEUtils.toInteger(width) * meanWidth)
+      } else if (isPx(minWidth)) {
+        colWidth = XEUtils.toInteger(minWidth)
+      } else if (meanWidth && isScale(minWidth)) {
+        colWidth = Math.floor(XEUtils.toInteger(minWidth) * meanWidth)
+      } else {
+        // 默认 100px
+        colWidth = 100
+      }
+    }
     sheetCols.push({
       key: id,
-      width: XEUtils.ceil(renderWidth / 7.2, 1)
+      width: XEUtils.ceil(colWidth / 7.2, 1)
     })
   })
   // 处理表头
@@ -487,7 +513,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         excelRow.eachCell(excelCell => {
           const excelCol = sheet.getColumn(excelCell.col)
           const column: any = $table.getColumnById(excelCol.key as string)
-          const { headerAlign, align ,showHeaderOverflow} = column
+          const { headerAlign, align, showHeaderOverflow } = column
           const headOverflow = XEUtils.eqNull(showHeaderOverflow) ? allShowHeaderOverflow : showHeaderOverflow
           setExcelCellStyle(excelCell, headerAlign || align || allHeaderAlign || allAlign, headOverflow)
           if (useStyle) {
