@@ -500,7 +500,12 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       createTableFilterOptions: defaultFilterOptions,
       renderTableFilter: createFilterRender(),
       renderTableFloatingFilter: createFloatingFilterRender(),
-      tableFilterDefaultMethod: defaultFuzzyFilterMethod
+      tableFilterDefaultMethod (params) {
+        const { option, row, column } = params
+        const { data } = option
+        const cellValue = XEUtils.get(row, column.field)
+        return cellValue == data
+      }
     },
     ElSelect: {
       tableAutoFocus: 'input',
