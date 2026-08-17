@@ -156,6 +156,66 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
+  function handleFormatSelect (renderOpts: VxeGlobalRendererHandles.RenderTableDefaultOptions, renderParams: VxeGlobalRendererHandles.TableCellFormatterParams | VxeGlobalRendererHandles.TableCellCopyMethodParams) {
+    const { cellValue } = renderParams
+    return handleSelectCellValue(cellValue, renderOpts)
+  }
+
+  function handleSetSelectValue (renderOpts: VxeGlobalRendererHandles.RenderTableDefaultOptions, renderParams: VxeGlobalRendererHandles.TableCellFormatterParams | VxeGlobalRendererHandles.TableCellCopyMethodParams) {
+    const { row, column, cellValue } = renderParams
+    const { field } = column
+    if (field) {
+      const { options, optionGroups, optionProps = {}, optionGroupProps = {}, props } = renderOpts
+      if (isEmptyValue(cellValue)) {
+        XEUtils.set(row, field, props && props.mode === 'multiple' ? [] : null)
+        return
+      }
+      const isMultiVal = XEUtils.indexOf(`${cellValue}`, ',') > -1
+      const labelProp = optionProps.label || 'label'
+      const valueProp = optionProps.value || 'value'
+      const labelMpas: Record<string, any> = {}
+      if (optionGroups && optionGroups.length) {
+        const groupOptions = optionGroupProps.options || 'options'
+        for (let i = 0; i < optionGroups.length; i++) {
+          const opts = optionGroups[i][groupOptions] || {}
+          for (let j = 0; j < opts.length; j++) {
+            const item = opts[j]
+            if (isMultiVal) {
+              labelMpas[item[labelProp]] = item
+              /* eslint-disable eqeqeq */
+            } else if (item[labelProp] == cellValue) {
+              XEUtils.set(row, field, item[valueProp])
+              return
+            }
+          }
+        }
+      } else {
+        if (options) {
+          for (let i = 0; i < options.length; i++) {
+            const item = options[i]
+            if (isMultiVal) {
+              labelMpas[item[labelProp]] = item
+              /* eslint-disable eqeqeq */
+            } else if (item[labelProp] == cellValue) {
+              XEUtils.set(row, field, item[valueProp])
+              return
+            }
+          }
+        }
+      }
+      if (isMultiVal) {
+        XEUtils.set(row, field, (isMultiVal
+          ? cellValue.split(',')
+          : [cellValue]).map((label: any) => {
+          const item = labelMpas[label]
+          return item ? item[valueProp] : label
+        }))
+      } else {
+        XEUtils.set(row, field, cellValue)
+      }
+    }
+  }
+
   function handleSelectCellValue (cellValue: any, renderOpts: VxeGlobalRendererHandles.RenderTableCellOptions) {
     const { options = [], optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = renderOpts
     const labelProp = optionProps.label || 'label'
@@ -467,6 +527,9 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             }))
         ]
       },
+      tableCellFormatter: handleFormatSelect,
+      tableCellCopyMethod: handleFormatSelect,
+      tableCellPasteMethod: handleSetSelectValue,
       tableFilterDefaultMethod (params) {
         const { option, row, column } = params
         const { data } = option
