@@ -149,9 +149,69 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
-  function handleSelectCellValue (cellValue: any, renderOpts: VxeGlobalRendererHandles.RenderTableCellOptions, renderParams: VxeGlobalRendererHandles.RenderCellParams) {
+  function handleFormatSelect (renderOpts: VxeGlobalRendererHandles.RenderTableDefaultOptions, renderParams: VxeGlobalRendererHandles.TableCellFormatterParams | VxeGlobalRendererHandles.TableCellCopyMethodParams) {
+    const { cellValue } = renderParams
+    return handleSelectCellValue(cellValue, renderOpts, renderParams)
+  }
+
+  function handleSetSelectValue (renderOpts: VxeGlobalRendererHandles.RenderTableDefaultOptions, renderParams: VxeGlobalRendererHandles.TableCellFormatterParams | VxeGlobalRendererHandles.TableCellCopyMethodParams) {
+    const { row, column, cellValue } = renderParams
+    const { field } = column
+    if (field) {
+      const { options, optionGroups, optionProps = {}, optionGroupProps = {}, props } = renderOpts
+      if (isEmptyValue(cellValue)) {
+        XEUtils.set(row, field, props && props.multiple ? [] : null)
+        return
+      }
+      const isMultiVal = XEUtils.indexOf(`${cellValue}`, ',') > -1
+      const labelProp = optionProps.label || 'label'
+      const valueProp = optionProps.value || 'value'
+      const labelMpas: Record<string, any> = {}
+      if (optionGroups && optionGroups.length) {
+        const groupOptions = optionGroupProps.options || 'options'
+        for (let i = 0; i < optionGroups.length; i++) {
+          const opts = optionGroups[i][groupOptions] || {}
+          for (let j = 0; j < opts.length; j++) {
+            const item = opts[j]
+            if (isMultiVal) {
+              labelMpas[item[labelProp]] = item
+            /* eslint-disable eqeqeq */
+            } else if (item[labelProp] == cellValue) {
+              XEUtils.set(row, field, item[valueProp])
+              return
+            }
+          }
+        }
+      } else {
+        if (options) {
+          for (let i = 0; i < options.length; i++) {
+            const item = options[i]
+            if (isMultiVal) {
+              labelMpas[item[labelProp]] = item
+            /* eslint-disable eqeqeq */
+            } else if (item[labelProp] == cellValue) {
+              XEUtils.set(row, field, item[valueProp])
+              return
+            }
+          }
+        }
+      }
+      if (isMultiVal) {
+        XEUtils.set(row, field, (isMultiVal
+          ? cellValue.split(',')
+          : [cellValue]).map((label: any) => {
+          const item = labelMpas[label]
+          return item ? item[valueProp] : label
+        }))
+      } else {
+        XEUtils.set(row, field, cellValue)
+      }
+    }
+  }
+
+  function handleSelectCellValue (cellValue: any, renderOpts: VxeGlobalRendererHandles.RenderTableCellOptions, renderParams: VxeGlobalRendererHandles.RenderTableCellParams | VxeGlobalRendererHandles.TableCellFormatterParams | VxeGlobalRendererHandles.TableCellCopyMethodParams) {
     const { options = [], optionGroups, props = {}, optionProps = {}, optionGroupProps = {} } = renderOpts
-    const { $table, rowid, column } = renderParams
+    const { $table, row, column } = renderParams
     const { filterable, multiple } = props
     const labelProp = optionProps.label || 'label'
     const valueProp = optionProps.value || 'value'
@@ -161,6 +221,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     if (filterable) {
       const tableInternalData = $table as unknown as TableInternalData
       const { fullAllDataRowIdData } = tableInternalData
+      const rowid = (renderParams as any).rowid || $table.getRowid(row)
       const rest: any = fullAllDataRowIdData[rowid]
       if (rest) {
         cellData = rest.cellData
@@ -196,13 +257,13 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return ''
   }
 
-  function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, renderParams: VxeGlobalRendererHandles.RenderCellParams) {
+  function getSelectCellValue (renderOpts: VxeColumnPropTypes.EditRender, renderParams: VxeGlobalRendererHandles.RenderTableCellParams) {
     const { row, column } = renderParams
     const cellValue = XEUtils.get(row, column.field)
     return handleSelectCellValue(cellValue, renderOpts, renderParams)
   }
 
-  function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams) {
+  function getCascaderCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderTableCellParams) {
     const { props = {} } = renderOpts
     const { row, column } = params
     const cellValue = XEUtils.get(row, column.field)
@@ -212,7 +273,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     return (props.showAllLevels === false ? labels.slice(labels.length - 1, labels.length) : labels).join(` ${props.separator || '/'} `)
   }
 
-  function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderCellParams | VxeGlobalRendererHandles.ExportMethodParams) {
+  function getDatePickerCellValue (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderTableCellParams | VxeGlobalRendererHandles.ExportMethodParams) {
     const { props = {} } = renderOpts
     const { row, column } = params
     const { rangeSeparator = '-' } = props
@@ -474,35 +535,35 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             class: 'vxe-table--filter-element-wrapper'
           }, optionGroups
             ? column.filters.map((option, oIndex) => {
-                const optionValue = option.data
-                const props = getCellEditFilterProps(renderOpts, params, optionValue)
-                return h('el-select', {
-                  key: oIndex,
-                  attrs,
-                  props,
-                  on: {
-                    ...getFilterOns(renderOpts, params, option, () => {
+              const optionValue = option.data
+              const props = getCellEditFilterProps(renderOpts, params, optionValue)
+              return h('el-select', {
+                key: oIndex,
+                attrs,
+                props,
+                on: {
+                  ...getFilterOns(renderOpts, params, option, () => {
                     // 处理 change 事件相关逻辑
-                      handleConfirmFilter(params, props.multiple ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
-                    })
-                  },
-                  scopedSlots: {
-                    default: () => {
-                      return XEUtils.map(optionGroups, (group, gIndex) => {
-                        return h('el-option-group', {
-                          key: gIndex,
-                          props: {
-                            label: group[groupLabel]
-                          },
-                          scopedSlots: {
-                            default: () => renderOptions(h, group[groupOptions], optionProps)
-                          }
-                        })
+                    handleConfirmFilter(params, props.multiple ? (option.data && option.data.length > 0) : !XEUtils.eqNull(option.data), option)
+                  })
+                },
+                scopedSlots: {
+                  default: () => {
+                    return XEUtils.map(optionGroups, (group, gIndex) => {
+                      return h('el-option-group', {
+                        key: gIndex,
+                        props: {
+                          label: group[groupLabel]
+                        },
+                        scopedSlots: {
+                          default: () => renderOptions(h, group[groupOptions], optionProps)
+                        }
                       })
-                    }
+                    })
                   }
-                })
+                }
               })
+            })
             : column.filters.map((option, oIndex) => {
               const optionValue = option.data
               const props = getCellEditFilterProps(renderOpts, params, optionValue)
@@ -523,6 +584,9 @@ export function defineTableRender (VxeUI: VxeUIExport) {
             }))
         ]
       },
+      tableCellFormatter: handleFormatSelect,
+      tableCellCopyMethod: handleFormatSelect,
+      tableCellPasteMethod: handleSetSelectValue,
       tableFilterDefaultMethod (params) {
         const { option, row, column } = params
         const { data } = option
