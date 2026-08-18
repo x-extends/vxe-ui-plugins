@@ -48,13 +48,13 @@ export function defineFormRender (VxeUI: VxeUIExport) {
     return '' + (isEmptyValue(cellValue) ? '' : cellValue)
   }
 
-  function getOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderParams, inputFunc?: Function, changeFunc?: Function) {
+  function getOns (renderOpts: VxeGlobalRendererHandles.RenderOptions, params: VxeGlobalRendererHandles.RenderParams, inputFunc?: (...args: any[]) => any, changeFunc?: (...args: any[]) => any) {
     const { events } = renderOpts
     const modelEvent = getModelEvent(renderOpts)
     const changeEvent = getChangeEvent(renderOpts)
     const isSameEvent = changeEvent === modelEvent
-    const ons: { [type: string]: Function } = {}
-    XEUtils.objectEach(events, (func: Function, key: string) => {
+    const ons: { [type: string]: (...args: any[]) => any } = {}
+    XEUtils.objectEach(events, (func: (...args: any[]) => any, key: string) => {
       ons[getOnName(key)] = function (...args: any[]) {
         func(params, ...args)
       }

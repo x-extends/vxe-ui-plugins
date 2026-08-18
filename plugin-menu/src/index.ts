@@ -91,7 +91,7 @@ function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams & 
     const { mouseConfig } = tableProps
     const { computeMouseOpts } = $table.getComputeMaps()
     const mouseOpts = computeMouseOpts.value
-    let text = ''
+    let text: string
     if (mouseConfig && mouseOpts.area) {
       if (isCut) {
         $table.triggerCutCellAreaEvent($event)

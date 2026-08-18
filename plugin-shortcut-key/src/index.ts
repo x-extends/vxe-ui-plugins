@@ -77,10 +77,10 @@ export const enum FUNC_NANE {
 }
 
 export class SKey {
-  realKey: string;
-  specialKey: string;
-  funcName?: FUNC_NANE;
-  kConf?: ShortcutKeyConf;
+  realKey: string
+  specialKey: string
+  funcName?: FUNC_NANE
+  kConf?: ShortcutKeyConf
   constructor (realKey: string, specialKey: string, funcName?: FUNC_NANE, kConf?: ShortcutKeyConf) {
     this.realKey = realKey
     this.specialKey = specialKey
@@ -320,7 +320,7 @@ function parseSettingKey (options: VxeUIPluginShortcutKeyOptions) {
 }
 
 function parseListenerKey (options: VxeUIPluginShortcutKeyOptions) {
-  XEUtils.each(options.tableListener, (callback: Function, key: string) => {
+  XEUtils.each(options.tableListener, (callback: () => any, key: string) => {
     if (!XEUtils.isFunction(callback)) {
       console.error(`[VUE_APP_VXE_PLUGIN_VERSION] '${key}' requires the callback function to be set.`)
     }

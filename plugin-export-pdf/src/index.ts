@@ -9,6 +9,7 @@ let VxeUI: VxeUIExport
 let globalJsPDF: any
 
 declare module 'vxe-table' {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   export namespace VxeTablePropTypes {
     export interface ExportConfig {
       fontName?: string;
@@ -106,7 +107,6 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
     }
   }
   const exportMethod = () => {
-    /* eslint-disable new-cap */
     const doc: jsPDF = new (globalJsPDF || ((window as any).jspdf ? (window as any).jspdf.jsPDF : (window as any).jsPDF))({ orientation: 'landscape' })
     // 设置字体
     doc.setFontSize(10)

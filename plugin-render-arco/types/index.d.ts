@@ -5,8 +5,7 @@ import { VxeUIExport } from 'vxe-pc-ui'
  */
 export declare const VxeUIPluginRenderArco: {
   component (comp: any): void
-  install (VxeUI: VxeUIExport, options?: {
-  }): void
+  install (VxeUI: VxeUIExport, options?: {}): void
 }
 
 export default VxeUIPluginRenderArco
