@@ -64,7 +64,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   const footList: { [key: string]: any }[] = []
   const headers: any[] = columns.map((column) => {
     const { id, field, renderWidth } = column
-    const headExportMethod = (column as any).headerExportMethod || (columnOpts as any).headerExportMethod
+    const headExportMethod = column.headerExportMethod || columnOpts.headerExportMethod
     const title = headExportMethod ? headExportMethod({ column, options, $table }) : (XEUtils.toValueString(isTitle ? column.getTitle() : field))
     const width = renderWidth / ratio
     colWidth += width
@@ -78,7 +78,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
   headers.forEach((column) => {
     column.width = column.width - offsetWidth
   })
-  const rowList: any[] = datas.map((row) => {
+  const rowList = datas.map((row) => {
     const item: any = {}
     columns.forEach((column) => {
       item[column.id] = getCellText(treeConfig && column.treeNode ? (' '.repeat(row._level * treeOpts.indent / 8) + row[column.id]) : row[column.id])
@@ -122,7 +122,7 @@ function exportPDF (params: VxeGlobalInterceptorHandles.InterceptorExportParams)
       modal.close(msgKey)
     }
     if (beforeMethod && beforeMethod({ $pdf: doc, $table, options, columns, datas }) === false) {
-      const e = { status: false }
+      const e = { status: false, mas: 'before prevent' }
       return Promise.reject(e)
     }
     if (options.sheetName) {
@@ -192,7 +192,7 @@ function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExpor
     if (VxeUI && hasAdvancedVersion(VxeUI.tableVersion || '')) {
       return {
         result: exportPDF(params),
-        status: false
+        status: false // 阻止默认
       }
     }
     return false

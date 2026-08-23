@@ -426,7 +426,7 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
           const { _colSpan, _rowSpan } = column
           const validColumn = getValidColumn(column)
           const columnIndex = columns.indexOf(validColumn)
-          const headExportMethod = (column as any).headerExportMethod || (columnOpts as any).headerExportMethod
+          const headExportMethod = column.headerExportMethod || columnOpts.headerExportMethod
           groupHead[validColumn.id] = headExportMethod ? headExportMethod({ column, options, $table }) : (isTitle ? column.getTitle() : validColumn.field)
           if (_colSpan > 1 || _rowSpan > 1) {
             sheetMerges.push({
@@ -440,8 +440,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
     } else {
       const colHead: any = {}
       columns.forEach((column) => {
-        const { id, field } = column as any
-        const headExportMethod = (column as any).headerExportMethod || (columnOpts as any).headerExportMethod
+        const { id, field } = column
+        const headExportMethod = column.headerExportMethod || columnOpts.headerExportMethod
         colHead[id] = headExportMethod ? headExportMethod({ column, options, $table }) : (isTitle ? column.getTitle() : field)
       })
       colList.push(colHead)
@@ -498,7 +498,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         modal.close(msgKey)
       }
       return Promise.resolve({
-        status: false
+        status: false,
+        msg: 'ExcelJS not exist'
       })
     }
     const workbook: ExcelJS.Workbook = new ExcelObj.Workbook()
@@ -512,8 +513,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         }
         excelRow.eachCell(excelCell => {
           const excelCol = sheet.getColumn(excelCell.col)
-          const column: any = $table.getColumnById(excelCol.key as string)
-          const { headerAlign, align, showHeaderOverflow } = column
+          const column = $table.getColumnById(excelCol.key as string)
+          const { headerAlign, align, showHeaderOverflow } = column || {}
           const headOverflow = XEUtils.eqNull(showHeaderOverflow) ? allShowHeaderOverflow : showHeaderOverflow
           setExcelCellStyle(excelCell, headerAlign || align || allHeaderAlign || allAlign, headOverflow)
           if (useStyle) {
@@ -719,7 +720,8 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
   if (!ExcelObj) {
     if (_importResolve) {
       _importResolve({
-        status: false
+        status: false,
+        msg: 'ExcelJS not exist'
       })
     }
     return
@@ -821,7 +823,7 @@ function handleImportEvent (params: VxeGlobalInterceptorHandles.InterceptorImpor
     if (VxeUI && hasAdvancedVersion(VxeUI.tableVersion || '')) {
       return {
         result: importXLSX(params),
-        status: false
+        status: false // 阻止默认
       }
     }
     return false
@@ -833,7 +835,7 @@ function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExpor
     if (VxeUI && hasAdvancedVersion(VxeUI.tableVersion || '')) {
       return {
         result: exportXLSX(params),
-        status: false
+        status: false // 阻止默认
       }
     }
     return false
