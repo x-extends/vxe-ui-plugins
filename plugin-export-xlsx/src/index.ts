@@ -495,7 +495,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         modal.close(msgKey)
       }
       return Promise.resolve({
-        status: false
+        status: false,
+        msg: 'ExcelJS not exist'
       })
     }
     const workbook: ExcelJS.Workbook = new ExcelObj.Workbook()
@@ -509,8 +510,8 @@ function exportXLSX (params: VxeGlobalInterceptorHandles.InterceptorExportParams
         }
         excelRow.eachCell(excelCell => {
           const excelCol = sheet.getColumn(excelCell.col)
-          const column: any = $table.getColumnById(excelCol.key as string)
-          const { headerAlign, align, showHeaderOverflow } = column
+          const column = $table.getColumnById(excelCol.key as string)
+          const { headerAlign, align, showHeaderOverflow } = column || {}
           const headOverflow = XEUtils.eqNull(showHeaderOverflow) ? allShowHeaderOverflow : showHeaderOverflow
           setExcelCellStyle(excelCell, headerAlign || align || allHeaderAlign || allAlign, headOverflow)
           if (useStyle) {
@@ -716,7 +717,8 @@ function importXLSX (params: VxeGlobalInterceptorHandles.InterceptorImportParams
   if (!ExcelObj) {
     if (_importResolve) {
       _importResolve({
-        status: false
+        status: false,
+        msg: 'ExcelJS not exist'
       })
     }
     return
@@ -818,7 +820,7 @@ function handleImportEvent (params: VxeGlobalInterceptorHandles.InterceptorImpor
     if (VxeUI && hasAdvancedVersion(VxeUI.tableVersion || '')) {
       return {
         result: importXLSX(params),
-        status: false
+        status: false // 阻止默认
       }
     }
     return false
@@ -830,7 +832,7 @@ function handleExportEvent (params: VxeGlobalInterceptorHandles.InterceptorExpor
     if (VxeUI && hasAdvancedVersion(VxeUI.tableVersion || '')) {
       return {
         result: exportXLSX(params),
-        status: false
+        status: false // 阻止默认
       }
     }
     return false
