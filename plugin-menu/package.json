@@ -1,6 +1,6 @@
 {
   "name": "@vxe-ui/plugin-menu",
-  "version": "3.3.2",
+  "version": "3.3.4",
   "description": "Vxe UI plug-in supports context menu.",
   "scripts": {
     "update": "npm install --legacy-peer-deps",

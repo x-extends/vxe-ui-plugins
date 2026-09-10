@@ -227,10 +227,14 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
     }
     case 'EDIT_CELL':
     case 'CLEAR_CELL':
+    case 'CLEAR_AREA_CELL':
     case 'CLEAR_ROW':
     case 'COPY_CELL':
+    case 'COPY_AREA_CELL':
     case 'CUT_CELL':
+    case 'CUT_AREA_CELL':
     case 'PASTE_CELL':
+    case 'PASTE_AREA_CELL':
     case 'MERGE_OR_CLEAR':
     case 'MERGE_CELL':
     case 'REVERT_CELL':
@@ -291,13 +295,17 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
             break
           }
           case 'COPY_CELL':
+          case 'COPY_AREA_CELL':
           case 'CUT_CELL':
-          case 'PASTE_CELL': {
+          case 'CUT_AREA_CELL':
+          case 'PASTE_CELL':
+          case 'PASTE_AREA_CELL': {
             const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
             item.disabled = cellAreas.length > 1
             if (!item.disabled) {
               switch (code) {
-                case 'PASTE_CELL': {
+                case 'PASTE_CELL':
+                case 'PASTE_AREA_CELL': {
                   const clipboard = getClipboardObj()
                   item.disabled = !clipboard || !clipboard.text
                   break
@@ -493,6 +501,34 @@ export const VxeUIPluginMenu = {
        * 清除单元格数据的值；如果启用 mouse-config.area 功能，则清除区域范围内的单元格数据
        */
       CLEAR_CELL: {
+        tableMenuMethod (params) {
+          const { $table, row, column } = params
+          if (row && column) {
+            const tableProps = $table
+            const { mouseConfig } = tableProps
+            const mouseOpts = $table.computeMouseOpts
+            if (mouseConfig && mouseOpts.area) {
+              const cellAreas = $table.getCellAreas()
+              if (cellAreas && cellAreas.length) {
+                cellAreas.forEach(areaItem => {
+                  const { rows, cols } = areaItem
+                  cols.forEach(column => {
+                    rows.forEach(row => {
+                      $table.clearData(row, column.field)
+                    })
+                  })
+                })
+              }
+            } else {
+              $table.clearData(row, column.field)
+            }
+          }
+        }
+      },
+      /**
+       * 清除单元格数据的值；如果启用 mouse-config.area 功能，则清除区域范围内的单元格数据
+       */
+      CLEAR_AREA_CELL: {
         tableMenuMethod (params) {
           const { $table, row, column } = params
           if (row && column) {
@@ -800,9 +836,25 @@ export const VxeUIPluginMenu = {
         }
       },
       /**
+       * 复制单元格数据的值；用于 mouse-config.area 功能，复制区域范围内的单元格数据，支持 Excel 和 WPS
+       */
+      COPY_AREA_CELL: {
+        tableMenuMethod (params) {
+          handleCopyOrCut(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods })
+        }
+      },
+      /**
        * 剪贴单元格数据的值；如果启用 mouse-config.area 功能，则剪贴区域范围内的单元格数据，支持 Excel 和 WPS
        */
       CUT_CELL: {
+        tableMenuMethod (params) {
+          handleCopyOrCut(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, true)
+        }
+      },
+      /**
+       * 剪贴单元格数据的值；用于 mouse-config.area 功能，剪贴区域范围内的单元格数据，支持 Excel 和 WPS
+       */
+      CUT_AREA_CELL: {
         tableMenuMethod (params) {
           handleCopyOrCut(params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }, true)
         }
@@ -824,6 +876,20 @@ export const VxeUIPluginMenu = {
             if (clipboard && clipboard.text) {
               XEUtils.set(row, column.field, clipboard.text)
             }
+          }
+        }
+      },
+      /**
+       * 粘贴从表格中被复制的数据；用于 mouse-config.area 功能，粘贴区域范围内的单元格数据，不支持读取剪贴板
+       */
+      PASTE_AREA_CELL: {
+        tableMenuMethod (params) {
+          const { $event, $table } = params as VxeGlobalMenusHandles.TableMenuMethodParams & { $table: VxeTableConstructor & VxeTablePrivateMethods }
+          const tableProps = $table
+          const { mouseConfig } = tableProps
+          const mouseOpts = $table.computeMouseOpts
+          if (mouseConfig && mouseOpts.area) {
+            $table.triggerPasteCellAreaEvent($event)
           }
         }
       },
