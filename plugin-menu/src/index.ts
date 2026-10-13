@@ -7,6 +7,16 @@ import type { VxeUIPluginMenuOptions } from '../types'
 let VxeUI: VxeUIExport
 let handleCopy: ((content: string | number) => boolean) | undefined
 
+/**
+ * 用于开关类型的配置项
+ * 局部启用规则：conf={}
+ * 局部禁用规则：conf={enabled:false}
+ * 全局默认启用规则：conf.enabled=true
+ */
+export function hasEnableConf (conf: any, opts: any): boolean {
+  return opts && (conf ? opts.enabled !== false : opts.enabled)
+}
+
 const columnIndexOf = (cols: VxeTableDefines.ColumnInfo[], column: VxeTableDefines.ColumnInfo) => {
   return XEUtils.findIndexOf(cols, item => item.id === column.id)
 }
@@ -90,7 +100,7 @@ function handleCopyOrCut (params: VxeGlobalMenusHandles.TableMenuMethodParams & 
     const { mouseConfig } = props
     const mouseOpts = $table.computeMouseOpts
     let text = ''
-    if (mouseConfig && mouseOpts.area) {
+    if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
       if (isCut) {
         $table.triggerCutCellAreaEvent($event)
       } else {
@@ -153,7 +163,7 @@ function getBeenMerges (params: (VxeGlobalMenusHandles.TableMenuMethodParams | V
   const mouseOpts = $table.computeMouseOpts
   const { visibleData } = $table.getTableData()
   const { visibleColumn } = $table.getTableColumn()
-  const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
+  const cellAreas = hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area ? $table.getCellAreas() : []
   const mergeList = $table.getMergeCells()
   return mergeList.filter(({ row: mergeRowIndex, col: mergeColIndex, rowspan: mergeRowspan, colspan: mergeColspan }) => {
     return cellAreas.some(areaItem => {
@@ -287,7 +297,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
           }
           case 'OPEN_FIND':
           case 'OPEN_REPLACE': {
-            item.disabled = !(mouseConfig && mouseOpts.area)
+            item.disabled = !(hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area)
             break
           }
           case 'EDIT_CELL': {
@@ -300,7 +310,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
           case 'CUT_AREA_CELL':
           case 'PASTE_CELL':
           case 'PASTE_AREA_CELL': {
-            const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
+            const cellAreas = hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area ? $table.getCellAreas() : []
             item.disabled = cellAreas.length > 1
             if (!item.disabled) {
               switch (code) {
@@ -316,7 +326,7 @@ function checkPrivilege (item: VxeTableDefines.MenuFirstOption | VxeTableDefines
           }
           case 'MERGE_OR_CLEAR':
           case 'MERGE_CELL': {
-            const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
+            const cellAreas = hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area ? $table.getCellAreas() : []
             item.disabled = !cellAreas.length || (cellAreas.length === 1 && cellAreas[0].rows.length === 1 && cellAreas[0].cols.length === 1) || !checkCellOverlay(params, cellAreas)
             break
           }
@@ -507,7 +517,7 @@ export const VxeUIPluginMenu = {
             const tableProps = $table
             const { mouseConfig } = tableProps
             const mouseOpts = $table.computeMouseOpts
-            if (mouseConfig && mouseOpts.area) {
+            if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
               const cellAreas = $table.getCellAreas()
               if (cellAreas && cellAreas.length) {
                 cellAreas.forEach(areaItem => {
@@ -535,7 +545,7 @@ export const VxeUIPluginMenu = {
             const tableProps = $table
             const { mouseConfig } = tableProps
             const mouseOpts = $table.computeMouseOpts
-            if (mouseConfig && mouseOpts.area) {
+            if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
               const cellAreas = $table.getCellAreas()
               if (cellAreas && cellAreas.length) {
                 cellAreas.forEach(areaItem => {
@@ -582,8 +592,8 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
-            const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
+            const cellAreas = mouseOpts.area ? $table.getCellAreas() : []
             cellAreas.forEach(areaItem => {
               const { rows, cols } = areaItem
               rows.forEach(row => {
@@ -617,7 +627,7 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
             const { visibleData } = $table.getTableData()
             const { visibleColumn } = $table.getTableColumn()
             $table.setCellAreas([{
@@ -638,7 +648,7 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
             const { visibleColumn } = $table.getTableColumn()
             const cellAreas = $table.getCellAreas()
             if (cellAreas.length === 1) {
@@ -669,7 +679,7 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
             const { visibleColumn } = $table.getTableColumn()
             const cellAreas = $table.getCellAreas()
             if (cellAreas.length === 1) {
@@ -700,7 +710,7 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
             const { visibleData } = $table.getTableData()
             const cellAreas = $table.getCellAreas()
             if (cellAreas.length === 1) {
@@ -731,7 +741,7 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
             const { visibleData } = $table.getTableData()
             const cellAreas = $table.getCellAreas()
             if (cellAreas.length === 1) {
@@ -763,7 +773,7 @@ export const VxeUIPluginMenu = {
             const tableProps = $table
             const { mouseConfig } = tableProps
             const mouseOpts = $table.computeMouseOpts
-            if (mouseConfig && mouseOpts.area) {
+            if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
               const cellAreas = $table.getCellAreas()
               if (cellAreas && cellAreas.length) {
                 cellAreas.forEach(areaItem => {
@@ -868,7 +878,7 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
             $table.triggerPasteCellAreaEvent($event)
           } else {
             const clipboard = getClipboardObj()
@@ -888,7 +898,7 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
             $table.triggerPasteCellAreaEvent($event)
           }
         }
@@ -1014,7 +1024,7 @@ export const VxeUIPluginMenu = {
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
           $table.insert(menu.params || {}).then(({ rows }) => {
-            if (column && mouseConfig && mouseOpts.area) {
+            if (column && hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
               $table.setCellAreas([
                 { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
               ])
@@ -1032,7 +1042,7 @@ export const VxeUIPluginMenu = {
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts;
           (row ? $table.insertAt(menu.params || {}, row) : $table.insert(menu.params || {})).then(({ rows }) => {
-            if (column && mouseConfig && mouseOpts.area) {
+            if (column && hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
               $table.setCellAreas([
                 { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
               ])
@@ -1053,7 +1063,7 @@ export const VxeUIPluginMenu = {
             if (size) {
               const records = XEUtils.range(0, size).map(() => Object.assign({}, menu.params));
               (row ? $table.insertAt(records, row) : $table.insert(records)).then(({ rows }) => {
-                if (column && mouseConfig && mouseOpts.area) {
+                if (column && hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
                   $table.setCellAreas([
                     { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
                   ])
@@ -1073,7 +1083,7 @@ export const VxeUIPluginMenu = {
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts;
           (row ? $table.insertNextAt(menu.params || {}, row) : $table.insert(menu.params || {})).then(({ rows }) => {
-            if (column && mouseConfig && mouseOpts.area) {
+            if (column && hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
               $table.setCellAreas([
                 { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
               ])
@@ -1094,7 +1104,7 @@ export const VxeUIPluginMenu = {
             if (size) {
               const records = XEUtils.range(0, size).map(() => Object.assign({}, menu.params));
               (row ? $table.insertNextAt(records, row) : $table.insert(records)).then(({ rows }) => {
-                if (column && mouseConfig && mouseOpts.area) {
+                if (column && hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
                   $table.setCellAreas([
                     { startRow: XEUtils.first(rows), endRow: XEUtils.last(rows), startColumn: column, endColumn: column }
                   ])
@@ -1260,8 +1270,8 @@ export const VxeUIPluginMenu = {
           const tableProps = $table
           const { mouseConfig } = tableProps
           const mouseOpts = $table.computeMouseOpts
-          if (mouseConfig && mouseOpts.area) {
-            const cellAreas = mouseConfig && mouseOpts.area ? $table.getCellAreas() : []
+          if (hasEnableConf(mouseConfig, mouseOpts) && mouseOpts.area) {
+            const cellAreas = $table.getCellAreas()
             cellAreas.forEach(areaItem => {
               const { rows } = areaItem
               $table.remove(rows)
