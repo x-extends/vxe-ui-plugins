@@ -435,11 +435,18 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
+  function handleDefaultCellValue (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderTableCellOptions, renderParams: VxeGlobalRendererHandles.RenderTableCellParams) {
+    const { row, column } = renderParams
+    const cellValue = XEUtils.get(row, column.field)
+    return formatText(cellValue)
+  }
+
   VxeUI.renderer.mixin({
     AAutoComplete: {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
@@ -447,6 +454,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
@@ -454,6 +462,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
@@ -630,12 +639,14 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     ARate: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
     ASwitch: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter (h, renderOpts, params) {
         const { column } = params
         const { name, attrs } = renderOpts

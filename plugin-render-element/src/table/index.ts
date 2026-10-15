@@ -428,11 +428,18 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
+  function handleDefaultCellValue (h: CreateElement, renderOpts: VxeGlobalRendererHandles.RenderTableCellOptions, renderParams: VxeGlobalRendererHandles.RenderTableCellParams) {
+    const { row, column } = renderParams
+    const cellValue = XEUtils.get(row, column.field)
+    return formatText(cellValue)
+  }
+
   VxeUI.renderer.mixin({
     ElAutocomplete: {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
@@ -440,6 +447,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
@@ -447,6 +455,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod (params) {
         const { option, row, column } = params
@@ -674,17 +683,20 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     },
     ElTimeSelect: {
       tableAutoFocus: 'input',
-      renderTableEdit: createEditRender()
+      renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue
     },
     ElRate: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
     ElSwitch: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter (h, renderOpts, params) {
         const { column } = params
         const { name, attrs } = renderOpts
@@ -714,6 +726,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     ElSlider: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
