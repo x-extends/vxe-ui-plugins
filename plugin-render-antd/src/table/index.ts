@@ -416,11 +416,18 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     }
   }
 
+  function handleDefaultCellValue (renderOpts: VxeGlobalRendererHandles.RenderTableCellOptions, renderParams: VxeGlobalRendererHandles.RenderTableCellParams) {
+    const { row, column } = renderParams
+    const cellValue = XEUtils.get(row, column.field)
+    return formatText(cellValue)
+  }
+
   VxeUI.renderer.mixin({
     AAutoComplete: {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
@@ -428,6 +435,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
@@ -435,6 +443,7 @@ export function defineTableRender (VxeUI: VxeUIExport) {
       tableAutoFocus: 'input',
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultFuzzyFilterMethod
     },
@@ -591,12 +600,14 @@ export function defineTableRender (VxeUI: VxeUIExport) {
     ARate: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter: createFilterRender(),
       tableFilterDefaultMethod: defaultExactFilterMethod
     },
     ASwitch: {
       renderTableDefault: createEditRender(),
       renderTableEdit: createEditRender(),
+      renderTableCell: handleDefaultCellValue,
       renderTableFilter (renderOpts, params) {
         const { column } = params
         const { name, attrs } = renderOpts
