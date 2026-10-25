@@ -1,5 +1,6 @@
 .DS_Store
 .history
+.tsconfig.build-dts.json
 node_modules
 /dist
 package-lock.json
